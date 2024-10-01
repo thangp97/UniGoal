@@ -1,6 +1,8 @@
 package src;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 class ThiSinh {
@@ -30,7 +32,6 @@ class TinhDiemCong {
         this.diemCongKhac = taoDiemCongKhac();
     }
 
-    // Tạo bảng điểm cộng theo vùng (VD: KV1: 0.75, KV2: 0.5, KV3: 0)
     private Map<String, Double> taoDiemCongTheoVung() {
         Map<String, Double> diemCongVung = new HashMap<>();
         diemCongVung.put("KV1", 0.75);  // Khu vực 1
@@ -40,7 +41,6 @@ class TinhDiemCong {
         return diemCongVung;
     }
 
-    // Tạo bảng điểm cộng theo các yếu tố khác (VD: diện ưu tiên 1, ưu tiên 2)
     private Map<String, Double> taoDiemCongKhac() {
         Map<String, Double> diemCongKhac = new HashMap<>();
         diemCongKhac.put("UT1", 2.0);  // Ưu tiên 1 (Dân tộc thiểu số, vùng đặc biệt khó khăn)
@@ -48,23 +48,21 @@ class TinhDiemCong {
         return diemCongKhac;
     }
 
-    // Hàm tính điểm cộng dựa trên khu vực của thí sinh
     public double tinhDiemCongVung(String khuVuc) {
-        return diemCongTheoVung.getOrDefault(khuVuc, 0.0);  // Nếu không có khu vực thì không được cộng điểm
+        return diemCongTheoVung.getOrDefault(khuVuc, 0.0);
     }
 
-    // Hàm tính điểm cộng theo các yếu tố khác như đối tượng ưu tiên
     public double tinhDiemCongKhac(String doiTuong) {
-        return diemCongKhac.getOrDefault(doiTuong, 0.0);  // Nếu không có đối tượng ưu tiên thì không được cộng điểm
+        return diemCongKhac.getOrDefault(doiTuong, 0.0);
     }
 
-    // Hàm tổng hợp điểm cộng
     public double tinhTongDiemCong(String khuVuc, String doiTuong) {
         double diemCongVung = tinhDiemCongVung(khuVuc);
         double diemCongKhac = tinhDiemCongKhac(doiTuong);
         return diemCongVung + diemCongKhac;
     }
 }
+
 class KetQua {
     private String hinhThucThi;  // Ví dụ: "THPTQG"
     private Map<String, Double> diemThanhPhan;  // Map lưu điểm của từng môn
@@ -80,9 +78,9 @@ class KetQua {
 }
 
 class ToHop {
-    private String tenToHop;  // Ví dụ: "A00"
-    private List<String> monThuocTH;  // Danh sách các môn trong tổ hợp
-    private Map<String, Double> trongSo;  // Trọng số cho từng môn
+    private String tenToHop;
+    private List<String> monThuocTH;
+    private Map<String, Double> trongSo;
 
     public ToHop(String tenToHop, List<String> monThuocTH, Map<String, Double> trongSo) {
         this.tenToHop = tenToHop;
@@ -90,7 +88,6 @@ class ToHop {
         this.trongSo = (trongSo != null) ? trongSo : getTrongSoMacDinh();
     }
 
-    // Trọng số mặc định là 1 nếu không có
     private Map<String, Double> getTrongSoMacDinh() {
         return monThuocTH.stream().collect(java.util.stream.Collectors.toMap(mon -> mon, mon -> 1.0));
     }
@@ -115,7 +112,6 @@ class TinhKetQua {
         this.tinhDiemCong = tinhDiemCong;
     }
 
-    // Tính điểm tổng cho tổ hợp bao gồm cả điểm cộng
     public double tinhKQTH(String khuVuc, String doiTuong) {
         double tongDiem = 0.0;
         Map<String, Double> diemThanhPhan = thiSinh.getKetQua().getDiemThanhPhan();
@@ -126,13 +122,13 @@ class TinhKetQua {
             tongDiem += diem * trongSoMon;
         }
 
-        // Cộng thêm điểm ưu tiên
         double diemCong = tinhDiemCong.tinhTongDiemCong(khuVuc, doiTuong);
         tongDiem += diemCong;
 
         return tongDiem;
     }
 }
+
 class DaiHoc {
     private String tenTruong;
     private String diaChiTruong;
@@ -176,23 +172,25 @@ class ChuyenNganh {
         return tenChuyenNganh;
     }
 }
-class deXuat {
+
+class DeXuat {
     private ThiSinh thiSinh;
     private List<DaiHoc> DHDuDK;
 
-    public deXuat(ThiSinh thiSinh, List<DaiHoc> DHDuDK) {
+    public DeXuat(ThiSinh thiSinh, List<DaiHoc> DHDuDK) {
         this.thiSinh = thiSinh;
         this.DHDuDK = DHDuDK;
     }
 
-    public List<String> deXuatCN() {
+    public List<String> deXuatCN(String khuVuc, String doiTuong) {
         List<String> suggestions = new ArrayList<>();
 
         for (DaiHoc daiHoc : DHDuDK) {
             for (ChuyenNganh chuyenNganh : daiHoc.getCN()) {
                 for (ToHop toHop : chuyenNganh.getTHXT()) {
-                    TinhKetQua calculator = new TinhKetQua(thiSinh, toHop);
-                    double score = calculator.tinhKQTH();
+                    TinhDiemCong tinhDiemCong = new TinhDiemCong(thiSinh);
+                    TinhKetQua calculator = new TinhKetQua(thiSinh, toHop, tinhDiemCong);
+                    double score = calculator.tinhKQTH(khuVuc, doiTuong);
 
                     if (score >= chuyenNganh.getDiemSan()) {
                         suggestions.add(String.format("Trường: %s, Ngành: %s, Điểm của bạn: %.2f, Điểm chuẩn: %.2f",
