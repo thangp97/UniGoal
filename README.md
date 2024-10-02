@@ -3,5 +3,5 @@ Hệ thống tính toán điểm xét tuyển Đại học với đầy đủ c�
 
 UML class diagram
 
-![z5887367149047_74088bea5e0e22e0d99f4ae250991e76](https://github.com/user-attachments/assets/d6b6fd89-1f65-4ef4-ba8c-8e0b2acb15b5)
+![OOP Diagram drawio (1)](https://github.com/user-attachments/assets/43968df7-5ae4-439a-a6a2-991bd320b84e)
 
