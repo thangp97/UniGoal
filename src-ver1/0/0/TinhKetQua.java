@@ -2,18 +2,18 @@ package src;
 
 import java.util.Map;
 
-public class TinhKetQua {
+public class KetQua {
     private ThiSinh thiSinh;
     private ToHop toHop;
     private TinhDiemCong tinhDiemCong;
 
-    public TinhKetQua(ThiSinh thiSinh, ToHop toHop, TinhDiemCong tinhDiemCong) {
+    public KetQua(ThiSinh thiSinh, ToHop toHop, TinhDiemCong tinhDiemCong) {
         this.thiSinh = thiSinh;
         this.toHop = toHop;
         this.tinhDiemCong = tinhDiemCong;
     }
 
-    public double tinhKQTH(String khuVuc, String doiTuong) {
+    public double KQTH(String khuVuc, String doiTuong) {
         double tongDiem = 0.0;
         Map<String, Double> diemThanhPhan = thiSinh.getKetQua().getDiemThanhPhan();
 

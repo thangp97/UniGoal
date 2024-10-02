@@ -3,12 +3,12 @@ package src;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TinhDiemCong {
+public class DiemCong {
     private ThiSinh thiSinh;
     private Map<String, Double> diemCongTheoVung;  // Điểm cộng theo vùng
     private Map<String, Double> diemCongKhac;      // Điểm cộng theo các tiêu chí khác (đối tượng ưu tiên)
 
-    public TinhDiemCong(ThiSinh thiSinh) {
+    public DiemCong(ThiSinh thiSinh) {
         this.thiSinh = thiSinh;
         this.diemCongTheoVung = taoDiemCongTheoVung();
         this.diemCongKhac = taoDiemCongKhac();
@@ -30,17 +30,17 @@ public class TinhDiemCong {
         return diemCongKhac;
     }
 
-    public double tinhDiemCongVung(String khuVuc) {
+    public double DiemCongVung(String khuVuc) {
         return diemCongTheoVung.getOrDefault(khuVuc, 0.0);
     }
 
-    public double tinhDiemCongKhac(String doiTuong) {
+    public double DiemCongKhac(String doiTuong) {
         return diemCongKhac.getOrDefault(doiTuong, 0.0);
     }
 
     public double tinhTongDiemCong(String khuVuc, String doiTuong) {
-        double diemCongVung = tinhDiemCongVung(khuVuc);
-        double diemCongKhac = tinhDiemCongKhac(doiTuong);
+        double diemCongVung = DiemCongVung(khuVuc);
+        double diemCongKhac = DiemCongKhac(doiTuong);
         return diemCongVung + diemCongKhac;
     }
 }
