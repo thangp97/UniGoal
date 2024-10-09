@@ -13,6 +13,18 @@ public class ToHop {
         this.trongSo = (trongSo != null) ? trongSo : getTrongSoMacDinh();
     }
 
+    public void setMonThuocTH(List<String> monThuocTH) {
+        this.monThuocTH = monThuocTH;
+    }
+
+    public void setTrongSo(Map<String, Double> trongSo) {
+        this.trongSo = trongSo;
+    }
+
+    public void setTenToHop(String tenToHop) {
+        this.tenToHop = tenToHop;
+    }
+
     private Map<String, Double> getTrongSoMacDinh() {
         return monThuocTH.stream().collect(java.util.stream.Collectors.toMap(mon -> mon, mon -> 1.0));
     }
