@@ -13,7 +13,7 @@ public class ToHop {
         this.trongSo = (trongSo != null) ? trongSo : getTrongSoMacDinh();
     }
 
-    private Map<String, Double> getTrongSoMacDinh() {
+    public Map<String, Double> getTrongSoMacDinh() {
         return monThuocTH.stream().collect(java.util.stream.Collectors.toMap(mon -> mon, mon -> 1.0));
     }
 
