@@ -1,3 +1,5 @@
+
+package Version2.src;
 import java.util.*;
 public class ThiSinh {
     private String khuVuc;            // Khu vực của thí sinh

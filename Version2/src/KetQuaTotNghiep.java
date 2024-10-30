@@ -1,3 +1,4 @@
+package Version2.src;
 public class KetQuaTotNghiep {
     private ThiSinh thiSinh;
     private double diemTotNghiep;

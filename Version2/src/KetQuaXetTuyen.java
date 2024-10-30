@@ -1,3 +1,4 @@
+package Version2.src;
 public class KetQuaXetTuyen {
 
     // Static nested class cho xét tuyển THPT
