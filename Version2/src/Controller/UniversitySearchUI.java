@@ -1,8 +1,11 @@
 package Version2.src.Controller;
 
+import Version2.src.Model.FavoriteItem;
+
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.sql.*;
 import java.util.ArrayList;
@@ -12,7 +15,7 @@ public class UniversitySearchUI {
     private JTable table;
     private Connection connection;
     private int pageNumber = 1;
-    private int pageSize = 16;
+    private int pageSize = 10;
 
     // Các trường tìm kiếm
     private JTextField maTruongField;
@@ -22,11 +25,29 @@ public class UniversitySearchUI {
     private JTextField diemSanField;
 
     // Danh sách yêu thích
-    private DefaultListModel<String> favoriteListModel;
-    private JList<String> favoriteList;
+    private DefaultListModel<FavoriteItem> favoriteListModel;
+    private JList<FavoriteItem> favoriteList;
+
+    private boolean isSearchMode = false; // Chế độ tìm kiếm hay không
+    private int searchPageNumber = 1; // Trang hiện tại trong chế độ tìm kiếm
+    private int searchPageSize = 10; // Kích thước trang trong chế độ tìm kiếm
+
+
+
 
     public static void main(String[] args) {
-        new UniversitySearchUI().init();
+        SwingUtilities.invokeLater(() -> new UniversitySearchUI().init());
+    }
+
+    private static class NonEditableTableModel extends javax.swing.table.DefaultTableModel {
+        public NonEditableTableModel(Object[][] data, Object[] columnNames) {
+            super(data, columnNames);
+        }
+
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false; // Không cho phép chỉnh sửa bất kỳ ô nào
+        }
     }
 
     public void init() {
@@ -73,7 +94,7 @@ public class UniversitySearchUI {
             searchPanel.add(diemSanField);
 
             // Nút tìm kiếm
-            JButton searchButton = new JButton("Tìm Kiếm", new ImageIcon("search_icon.png"));
+            JButton searchButton = new JButton("Tìm Kiếm", new ImageIcon("Version2/src/Icons/icons8-search-15.png"));
             searchButton.setBackground(Color.BLUE);
             searchButton.setForeground(Color.WHITE);
             searchButton.setFont(new Font("Arial", Font.BOLD, 14));
@@ -112,13 +133,11 @@ public class UniversitySearchUI {
             JPanel bottomPanel = new JPanel(new BorderLayout(10, 10));
 
             // Panel phân trang
-            JPanel paginationPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
-            JButton prevButton = new JButton("Trước", new ImageIcon("prev_icon.png"));
-            JButton nextButton = new JButton("Tiếp", new ImageIcon("next_icon.png"));
+            JPanel paginationPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 3, 3));
+            JButton prevButton = new JButton(new ImageIcon("Version2/src/Icons/icons8-chevron-left-25.png"));
+            JButton nextButton = new JButton(new ImageIcon("Version2/src/Icons/icons8-chevron-right-25.png"));
 
-            prevButton.setFont(new Font("Arial", Font.BOLD, 12));
             prevButton.addActionListener(e -> prevPage());
-            nextButton.setFont(new Font("Arial", Font.BOLD, 12));
             nextButton.addActionListener(e -> nextPage());
 
             paginationPanel.add(prevButton);
@@ -135,6 +154,19 @@ public class UniversitySearchUI {
             bottomPanel.add(addToFavoritesButton, BorderLayout.SOUTH);
 
             // Danh sách yêu thích
+//            favoriteListModel = new DefaultListModel<>();
+//            favoriteList = new JList<>(favoriteListModel);
+//            favoriteList.setBorder(BorderFactory.createTitledBorder(
+//                    BorderFactory.createLineBorder(Color.GRAY, 1),
+//                    "Danh Sách Yêu Thích",
+//                    TitledBorder.DEFAULT_JUSTIFICATION,
+//                    TitledBorder.DEFAULT_POSITION,
+//                    new Font("Arial", Font.BOLD, 14),
+//                    Color.BLUE
+//            ));
+//            bottomPanel.add(new JScrollPane(favoriteList), BorderLayout.CENTER);
+
+            // Danh sách yêu thích sử dụng DefaultListModel<FavoriteItem>
             favoriteListModel = new DefaultListModel<>();
             favoriteList = new JList<>(favoriteListModel);
             favoriteList.setBorder(BorderFactory.createTitledBorder(
@@ -147,6 +179,7 @@ public class UniversitySearchUI {
             ));
             bottomPanel.add(new JScrollPane(favoriteList), BorderLayout.CENTER);
 
+
             mainPanel.add(bottomPanel, BorderLayout.SOUTH);
 
             frame.add(mainPanel);
@@ -157,6 +190,7 @@ public class UniversitySearchUI {
     }
 
     public void loadUniversityData() {
+        isSearchMode = false; // Quay lại chế độ hiển thị toàn bộ
         try {
             String query = "SELECT * FROM daihoc LIMIT ?, ?";
             PreparedStatement stmt = connection.prepareStatement(query);
@@ -174,19 +208,26 @@ public class UniversitySearchUI {
             for (int i = 0; i < data.size(); i++) {
                 dataArray[i] = data.get(i);
             }
-            table.setModel(new javax.swing.table.DefaultTableModel(
+            NonEditableTableModel model = new NonEditableTableModel(
                     dataArray, new String[]{"Mã Trường", "Tên Trường", "Điểm Sàn"}
-            ));
+            );
+            table.setModel(model);
+
+            // Thêm sắp xếp cho bảng
+            TableRowSorter<NonEditableTableModel> sorter = new TableRowSorter<>(model);
+            table.setRowSorter(sorter);
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(frame, "Error: " + e.getMessage());
         }
     }
 
-    // Tìm kiếm trường đại học theo các tiêu chí
+
+
     public void searchUniversityData() {
+        isSearchMode = true; // Chuyển sang chế độ tìm kiếm
         try {
             StringBuilder query = new StringBuilder(
-                    "SELECT DISTINCT d.maTruong, d.tenTruong, d.diemSan " +
+                    "SELECT d.maTruong, d.tenTruong, d.diemSan, c.tenNganh " +
                             "FROM daihoc d " +
                             "INNER JOIN chuyennganh c ON d.maTruong = c.maTruong " +
                             "WHERE 1=1"
@@ -208,6 +249,8 @@ public class UniversitySearchUI {
                 query.append(" AND d.diemSan >= ?");
             }
 
+            query.append(" LIMIT ?, ?");
+
             PreparedStatement stmt = connection.prepareStatement(query.toString());
             int index = 1;
             if (!maTruongField.getText().isEmpty()) {
@@ -226,52 +269,75 @@ public class UniversitySearchUI {
                 stmt.setDouble(index++, Double.parseDouble(diemSanField.getText()));
             }
 
+            stmt.setInt(index++, (searchPageNumber - 1) * searchPageSize);
+            stmt.setInt(index, searchPageSize);
+
             ResultSet rs = stmt.executeQuery();
             ArrayList<Object[]> data = new ArrayList<>();
             while (rs.next()) {
                 String maTruong = rs.getString("maTruong");
                 String tenTruong = rs.getString("tenTruong");
                 double diemSan = rs.getDouble("diemSan");
-                data.add(new Object[]{maTruong, tenTruong, diemSan});
+                String tenNganh = rs.getString("tenNganh");
+                data.add(new Object[]{maTruong, tenTruong, diemSan, tenNganh});
             }
-
-            Object[][] dataArray = new Object[data.size()][3];
+            Object[][] dataArray = new Object[data.size()][4];
             for (int i = 0; i < data.size(); i++) {
                 dataArray[i] = data.get(i);
             }
+            NonEditableTableModel model = new NonEditableTableModel(
+                    dataArray, new String[]{"Mã Trường", "Tên Trường", "Điểm Sàn", "Tên Ngành"}
+            );
+            table.setModel(model);
 
-            table.setModel(new javax.swing.table.DefaultTableModel(
-                    dataArray, new String[]{"Mã Trường", "Tên Trường", "Điểm Sàn"}
-            ));
+            // Thêm sắp xếp cho bảng
+            TableRowSorter<NonEditableTableModel> sorter = new TableRowSorter<>(model);
+            table.setRowSorter(sorter);
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(frame, "Error: " + e.getMessage());
         }
     }
 
-
-    // Chuyển đến trang trước
+    // Chuyển trang trước
     private void prevPage() {
-        if (pageNumber > 1) {
-            pageNumber--;
+        if (isSearchMode) {
+            if (searchPageNumber > 1) {
+                searchPageNumber--;
+                searchUniversityData();
+            }
+        } else {
+            if (pageNumber > 1) {
+                pageNumber--;
+                loadUniversityData();
+            }
+        }
+    }
+
+    // Chuyển trang tiếp
+    private void nextPage() {
+        if (isSearchMode) {
+            searchPageNumber++;
+            searchUniversityData();
+        } else {
+            pageNumber++;
             loadUniversityData();
         }
     }
 
-    // Chuyển đến trang tiếp theo
-    private void nextPage() {
-        pageNumber++;
-        loadUniversityData();
-    }
-
-    // Thêm trường đại học vào danh sách yêu thích
     private void addToFavorites() {
         int selectedRow = table.getSelectedRow();
         if (selectedRow != -1) {
-            String maTruong = (String) table.getValueAt(selectedRow, 0);
-            String tenTruong = (String) table.getValueAt(selectedRow, 1);
-            favoriteListModel.addElement(maTruong + " - " + tenTruong);
+            String maTruong = (String) table.getValueAt(selectedRow, 0); // Cột 0
+            String tenTruong = (String) table.getValueAt(selectedRow, 1); // Cột 1
+            String tenNganh = (String) table.getValueAt(selectedRow, 3);
+            double diemSan = (double) table.getValueAt(selectedRow, 2);   // Cột 2
+
+            // Nếu bạn cần thêm cột khác, hãy chắc chắn chỉ số cột hợp lệ.
+            FavoriteItem favoriteItem = new FavoriteItem(maTruong, tenTruong, tenNganh, diemSan);
+            favoriteListModel.addElement(favoriteItem);
         } else {
-            JOptionPane.showMessageDialog(frame, "Hãy chọn một trường để thêm vào yêu thích.");
+            JOptionPane.showMessageDialog(frame, "Vui lòng chọn một trường để thêm vào yêu thích.");
         }
     }
+
 }
