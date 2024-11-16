@@ -1,4 +1,5 @@
-package Version2.src;
+package Version2.src.Model;
+
 public class KetQuaXetTuyen {
 
     // Static nested class cho xét tuyển THPT

@@ -1,5 +1,5 @@
 
-package Version2.src;
+package Version2.src.Model;
 import java.util.*;
 public class ThiSinh {
     private String khuVuc;            // Khu vực của thí sinh

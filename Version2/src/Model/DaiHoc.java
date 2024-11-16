@@ -1,4 +1,5 @@
-package Version2.src;
+package Version2.src.Model;
+
 import java.util.List;
 
 public class DaiHoc {
