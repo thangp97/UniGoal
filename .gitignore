@@ -1,0 +1,13 @@
+# Ignore out folder (thư mục build)
+/out/
+
+# Ignore compiled class files
+*.class
+
+# Ignore IntelliJ IDEA configuration files
+.idea/
+*.iml
+
+# Ignore build output directories
+/target/
+/build/
