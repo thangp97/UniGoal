@@ -1,6 +1,7 @@
 package Version2.src.Controller;
 
-import Version2.src.Model.FavoriteItem;
+
+import Version2.src.Model.*;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -32,27 +33,14 @@ public class UniversitySearchUI {
     private int searchPageNumber = 1; // Trang hiện tại trong chế độ tìm kiếm
     private int searchPageSize = 10; // Kích thước trang trong chế độ tìm kiếm
 
-
-
-
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new UniversitySearchUI().init());
     }
 
-    private static class NonEditableTableModel extends javax.swing.table.DefaultTableModel {
-        public NonEditableTableModel(Object[][] data, Object[] columnNames) {
-            super(data, columnNames);
-        }
-
-        @Override
-        public boolean isCellEditable(int row, int column) {
-            return false; // Không cho phép chỉnh sửa bất kỳ ô nào
-        }
-    }
-
     public void init() {
         try {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/unigoal", "root", "29102004");
+           connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/unigoal", "root", "29102004");
+
 
             // Thiết lập frame chính
             frame = new JFrame("University Management");
@@ -94,10 +82,7 @@ public class UniversitySearchUI {
             searchPanel.add(diemSanField);
 
             // Nút tìm kiếm
-            JButton searchButton = new JButton("Tìm Kiếm", new ImageIcon("Version2/src/Icons/icons8-search-15.png"));
-            searchButton.setBackground(Color.BLUE);
-            searchButton.setForeground(Color.WHITE);
-            searchButton.setFont(new Font("Arial", Font.BOLD, 14));
+            JButton searchButton = new JButton("Tìm kiếm", new ImageIcon("Version2/src/Icons/icons8-search-15.png"));
             searchButton.addActionListener(e -> searchUniversityData());
             searchPanel.add(new JLabel());
             searchPanel.add(searchButton);
@@ -118,6 +103,7 @@ public class UniversitySearchUI {
             table.setDefaultRenderer(Object.class, centerRenderer);
 
             loadUniversityData();
+
             JScrollPane tableScrollPane = new JScrollPane(table);
             tableScrollPane.setBorder(BorderFactory.createTitledBorder(
                     BorderFactory.createLineBorder(Color.GRAY, 1),
@@ -144,27 +130,11 @@ public class UniversitySearchUI {
             paginationPanel.add(nextButton);
 
             // Nút thêm vào yêu thích
-            JButton addToFavoritesButton = new JButton("Thêm vào yêu thích", new ImageIcon("favorite_icon.png"));
-            addToFavoritesButton.setFont(new Font("Arial", Font.BOLD, 12));
-            addToFavoritesButton.setBackground(Color.ORANGE);
-            addToFavoritesButton.setForeground(Color.WHITE);
+            JButtonConfig addToFavoritesButton = new JButtonConfig("Thêm vào yêu thích", new ImageIcon("Version2/src/Icons/icons8-add-properties-15.png"));
             addToFavoritesButton.addActionListener(e -> addToFavorites());
 
             bottomPanel.add(paginationPanel, BorderLayout.NORTH);
             bottomPanel.add(addToFavoritesButton, BorderLayout.SOUTH);
-
-            // Danh sách yêu thích
-//            favoriteListModel = new DefaultListModel<>();
-//            favoriteList = new JList<>(favoriteListModel);
-//            favoriteList.setBorder(BorderFactory.createTitledBorder(
-//                    BorderFactory.createLineBorder(Color.GRAY, 1),
-//                    "Danh Sách Yêu Thích",
-//                    TitledBorder.DEFAULT_JUSTIFICATION,
-//                    TitledBorder.DEFAULT_POSITION,
-//                    new Font("Arial", Font.BOLD, 14),
-//                    Color.BLUE
-//            ));
-//            bottomPanel.add(new JScrollPane(favoriteList), BorderLayout.CENTER);
 
             // Danh sách yêu thích sử dụng DefaultListModel<FavoriteItem>
             favoriteListModel = new DefaultListModel<>();
@@ -197,16 +167,20 @@ public class UniversitySearchUI {
             stmt.setInt(1, (pageNumber - 1) * pageSize);
             stmt.setInt(2, pageSize);
             ResultSet rs = stmt.executeQuery();
-            ArrayList<Object[]> data = new ArrayList<>();
+            ArrayList<DaiHocLoadData> data = new ArrayList<>();
             while (rs.next()) {
-                String maTruong = rs.getString("maTruong");
-                String tenTruong = rs.getString("tenTruong");
-                double diemSan = rs.getDouble("diemSan");
-                data.add(new Object[]{maTruong, tenTruong, diemSan});
+                DaiHocLoadData daiHocLoadData = new DaiHocLoadData("", "",0);
+                daiHocLoadData.setMaTruong(rs.getString("maTruong"));
+                daiHocLoadData.setTenTruong(rs.getString("tenTruong"));
+                daiHocLoadData.setDiemSan(rs.getDouble("diemSan"));
+                data.add(daiHocLoadData);
             }
             Object[][] dataArray = new Object[data.size()][3];
             for (int i = 0; i < data.size(); i++) {
-                dataArray[i] = data.get(i);
+                DaiHocLoadData daiHocLoadData = data.get(i);
+                dataArray[i][0] = daiHocLoadData.getMaTruong();
+                dataArray[i][1] = daiHocLoadData.getTenTruong();
+                dataArray[i][2] = daiHocLoadData.getDiemSan();
             }
             NonEditableTableModel model = new NonEditableTableModel(
                     dataArray, new String[]{"Mã Trường", "Tên Trường", "Điểm Sàn"}
@@ -220,8 +194,6 @@ public class UniversitySearchUI {
             JOptionPane.showMessageDialog(frame, "Error: " + e.getMessage());
         }
     }
-
-
 
     public void searchUniversityData() {
         isSearchMode = true; // Chuyển sang chế độ tìm kiếm
@@ -273,17 +245,27 @@ public class UniversitySearchUI {
             stmt.setInt(index, searchPageSize);
 
             ResultSet rs = stmt.executeQuery();
-            ArrayList<Object[]> data = new ArrayList<>();
+//            ArrayList<Object[]> data = new ArrayList<>();
+            ArrayList<DaiHocSearchResult> data = new ArrayList<>();
             while (rs.next()) {
-                String maTruong = rs.getString("maTruong");
-                String tenTruong = rs.getString("tenTruong");
-                double diemSan = rs.getDouble("diemSan");
-                String tenNganh = rs.getString("tenNganh");
-                data.add(new Object[]{maTruong, tenTruong, diemSan, tenNganh});
+                DaiHocSearchResult daiHocSearchResult = new DaiHocSearchResult("", "",0,"");
+//                String maTruong = rs.getString("maTruong");
+//                String tenTruong = rs.getString("tenTruong");
+//                double diemSan = rs.getDouble("diemSan");
+//                String tenNganh = rs.getString("tenNganh");
+                daiHocSearchResult.setMaTruong(rs.getString("maTruong"));
+                daiHocSearchResult.setTenTruong(rs.getString("tenTruong"));
+                daiHocSearchResult.setDiemSan(rs.getDouble("diemSan"));
+                daiHocSearchResult.setTenNganh(rs.getString("tenNganh"));
+                data.add(daiHocSearchResult);
             }
             Object[][] dataArray = new Object[data.size()][4];
             for (int i = 0; i < data.size(); i++) {
-                dataArray[i] = data.get(i);
+                DaiHocSearchResult daiHocSearchResult = data.get(i);
+                dataArray[i][0] = daiHocSearchResult.getMaTruong();
+                dataArray[i][1] = daiHocSearchResult.getTenTruong();
+                dataArray[i][2] = daiHocSearchResult.getDiemSan();
+                dataArray[i][3] = daiHocSearchResult.getTenNganh();
             }
             NonEditableTableModel model = new NonEditableTableModel(
                     dataArray, new String[]{"Mã Trường", "Tên Trường", "Điểm Sàn", "Tên Ngành"}
