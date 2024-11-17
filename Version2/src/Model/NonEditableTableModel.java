@@ -7,6 +7,6 @@ public class NonEditableTableModel extends javax.swing.table.DefaultTableModel {
 
     @Override
     public boolean isCellEditable(int row, int column) {
-        return false; // Không cho phép chỉnh sửa bất kỳ ô nào
+        return false;
     }
 }
