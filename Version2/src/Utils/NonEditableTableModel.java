@@ -1,4 +1,4 @@
-package Version2.src.Model;
+package Version2.src.Utils;
 
 public class NonEditableTableModel extends javax.swing.table.DefaultTableModel {
     public NonEditableTableModel(Object[][] data, Object[] columnNames) {

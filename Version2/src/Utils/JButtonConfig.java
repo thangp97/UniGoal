@@ -1,4 +1,4 @@
-package Version2.src.Model;
+package Version2.src.Utils;
 
 import javax.swing.*;
 import java.awt.*;
