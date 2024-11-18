@@ -2,9 +2,13 @@ package Version2.src.GUI;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class ShowInputTab1 {
     private JPanel tab1;
+    private JTextField[] subjectTextFields;
+    private JTextField tb12Field, khuyenKhichField, doiTuongField;
 
     public ShowInputTab1() {
         tab1 = new JPanel();
@@ -78,6 +82,12 @@ public class ShowInputTab1 {
         gbc.gridy++;
         gbc.gridwidth = 2;
         JButton calcGradScoreButton = new JButton("Tính điểm");
+        calcGradScoreButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                calculateGrade();
+            }
+        });
         tab1.add(calcGradScoreButton, gbc);
 
         tab1.revalidate();
@@ -85,25 +95,73 @@ public class ShowInputTab1 {
     }
 
     private void addSubjectFields(JPanel panel, GridBagConstraints gbc, String[] subjects) {
+        subjectTextFields = new JTextField[subjects.length];
         gbc.gridwidth = 1;
-        for (String subject : subjects) {
+        for (int i = 0; i < subjects.length; i++) {
             gbc.gridx = 0;
             gbc.gridy++;
-            panel.add(new JLabel(subject + ":"), gbc);
+            panel.add(new JLabel(subjects[i] + ":"), gbc);
             gbc.gridx = 1;
-            panel.add(new JTextField(15), gbc);
+            subjectTextFields[i] = new JTextField(15);
+            panel.add(subjectTextFields[i], gbc);
         }
     }
 
     private void addAdditionalFields(JPanel panel, GridBagConstraints gbc) {
-        String[] additionalLabels = {"Điểm TB lớp 12:", "Điểm khuyến khích:", "Điểm đối tượng:"};
-        for (String label : additionalLabels) {
-            gbc.gridx = 0;
-            gbc.gridy++;
-            panel.add(new JLabel(label), gbc);
-            gbc.gridx = 1;
-            panel.add(new JTextField(15), gbc);
+        gbc.gridx = 0;
+        gbc.gridy++;
+        panel.add(new JLabel("Điểm TB lớp 12:"), gbc);
+        gbc.gridx = 1;
+        tb12Field = new JTextField(15);
+        panel.add(tb12Field, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        panel.add(new JLabel("Điểm khuyến khích:"), gbc);
+        gbc.gridx = 1;
+        khuyenKhichField = new JTextField(15);
+        panel.add(khuyenKhichField, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        panel.add(new JLabel("Điểm đối tượng:"), gbc);
+        gbc.gridx = 1;
+        doiTuongField = new JTextField(15);
+        panel.add(doiTuongField, gbc);
+    }
+
+    private void calculateGrade() {
+        try {
+            // Lấy điểm môn học
+            double totalScore = 0;
+            for (JTextField subjectField : subjectTextFields) {
+                String text = subjectField.getText();
+                if (text.isEmpty()) {
+                    throw new NumberFormatException("Điểm môn không được để trống");
+                }
+                totalScore += Double.parseDouble(text);
+            }
+
+            // Lấy điểm bổ sung
+            String tb12Text = tb12Field.getText();
+            String khuyenKhichText = khuyenKhichField.getText();
+            String doiTuongText = doiTuongField.getText();
+
+            if (tb12Text.isEmpty() || khuyenKhichText.isEmpty() || doiTuongText.isEmpty()) {
+                throw new NumberFormatException("Điểm bổ sung không được để trống");
+            }
+
+            double tb12 = Double.parseDouble(tb12Text);
+            double khuyenKhich = Double.parseDouble(khuyenKhichText);
+            double doiTuong = Double.parseDouble(doiTuongText);
+
+            // Tính điểm tổng
+            double finalScore = totalScore + tb12 + khuyenKhich + doiTuong;
+
+            // Hiển thị kết quả
+            JOptionPane.showMessageDialog(tab1, "Điểm tổng: " + finalScore);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(tab1, "Vui lòng nhập đúng định dạng điểm! " + e.getMessage());
         }
     }
 }
-

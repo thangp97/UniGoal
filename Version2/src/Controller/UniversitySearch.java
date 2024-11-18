@@ -13,7 +13,7 @@ import java.awt.*;
 import java.sql.*;
 import java.util.ArrayList;
 
-public class UniversitySearchUI {
+public class UniversitySearch {
     private JFrame frame;
     private JTable table;
     private Connection connection;
@@ -317,6 +317,5 @@ public class UniversitySearchUI {
             JOptionPane.showMessageDialog(frame, "Vui lòng chọn một trường để thêm vào yêu thích.");
         }
     }
+
 }
-
-
