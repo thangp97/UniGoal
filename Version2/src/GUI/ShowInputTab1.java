@@ -6,15 +6,28 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ShowInputTab1 {
     private JPanel tab1;
     private JTextField[] subjectTextFields;
-    private JTextField tb12Field, khuyenKhichField, doiTuongField;
+    private JTextField tb12Field, khuyenKhichField, uuTienField;
+    private String khuVuc;
+
+    // Tạo bản đồ điểm cộng cho các khu vực
+    private static final Map<String, Double> khuVucPoints = new HashMap<>();
+    static {
+        khuVucPoints.put("KV1", 1.0); // Khu vực 1 cộng 1 điểm
+        khuVucPoints.put("KV2", 0.5); // Khu vực 2 cộng 0.5 điểm
+        khuVucPoints.put("KV2-NT", 0.5); // Khu vực 2-NT cộng 0.5 điểm
+        khuVucPoints.put("KV3", 0.0); // Khu vực 3 không cộng điểm
+    }
 
     public ShowInputTab1() {
         tab1 = new JPanel();
         tab1.setLayout(new GridBagLayout());
+        tab1.setBackground(new Color(255, 255, 255)); // Màu nền trắng cho tab1
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -22,6 +35,8 @@ public class ShowInputTab1 {
 
         String[] subjectsOptions = {"Chọn tổ hợp", "KHTN", "KHXH"};
         JComboBox<String> subjectsComboBox = new JComboBox<>(subjectsOptions);
+        subjectsComboBox.setBackground(new Color(240, 240, 240)); // Màu nền cho combo box
+        subjectsComboBox.setForeground(new Color(50, 50, 50)); // Màu chữ cho combo box
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 2;
@@ -42,15 +57,18 @@ public class ShowInputTab1 {
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(5, 5, 5, 5);
-        gbc.weightx = 0;
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.weightx = 1.0;
+        gbc.weighty = 0;
         gbc.gridx = 0;
         gbc.gridy = 0;
 
         String[] subjectsOptions = {"Chọn tổ hợp", "KHTN", "KHXH"};
         JComboBox<String> newSubjectsComboBox = new JComboBox<>(subjectsOptions);
         newSubjectsComboBox.setSelectedItem(selectedOption);
-        newSubjectsComboBox.setPreferredSize(new Dimension(150, 25));
+        newSubjectsComboBox.setPreferredSize(new Dimension(200, 30));
+        newSubjectsComboBox.setBackground(new Color(240, 240, 240)); // Màu nền cho combo box
+        newSubjectsComboBox.setForeground(new Color(50, 50, 50)); // Màu chữ cho combo box
         tab1.add(newSubjectsComboBox, gbc);
 
         newSubjectsComboBox.addActionListener(e -> {
@@ -64,12 +82,15 @@ public class ShowInputTab1 {
             return;
         }
 
-        gbc.gridx = 0;
         gbc.gridy++;
         tab1.add(new JLabel("Khu vực:"), gbc);
         gbc.gridx = 1;
+        gbc.weightx = 1.0;
         String[] khuVucOptions = {"Chọn khu vực", "KV1", "KV2", "KV2-NT", "KV3"};
         JComboBox<String> khuVucComboBox = new JComboBox<>(khuVucOptions);
+        khuVucComboBox.setPreferredSize(new Dimension(200, 30));
+        khuVucComboBox.setBackground(new Color(240, 240, 240)); // Màu nền cho combo box khu vực
+        khuVucComboBox.setForeground(new Color(50, 50, 50)); // Màu chữ cho combo box khu vực
         tab1.add(khuVucComboBox, gbc);
 
         if ("KHTN".equals(selectedOption)) {
@@ -82,9 +103,26 @@ public class ShowInputTab1 {
 
         gbc.gridx = 0;
         gbc.gridy++;
-        gbc.gridwidth = 2;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
         JButton calcGradScoreButton = new JButton("Tính điểm");
+        calcGradScoreButton.setBackground(new Color(0, 123, 255)); // Màu nền cho nút
+        calcGradScoreButton.setForeground(Color.WHITE); // Màu chữ cho nút
+        calcGradScoreButton.setPreferredSize(new Dimension(200, 40));
+        calcGradScoreButton.setFocusPainted(false);
         calcGradScoreButton.addActionListener(e -> calculateGrade());
+        calcGradScoreButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        // Hiệu ứng hover cho nút
+        calcGradScoreButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                calcGradScoreButton.setBackground(new Color(0, 105, 217));
+            }
+
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                calcGradScoreButton.setBackground(new Color(0, 123, 255));
+            }
+        });
+
         tab1.add(calcGradScoreButton, gbc);
 
         tab1.revalidate();
@@ -97,9 +135,15 @@ public class ShowInputTab1 {
         for (int i = 0; i < subjects.length; i++) {
             gbc.gridx = 0;
             gbc.gridy++;
-            panel.add(new JLabel(subjects[i] + ":"), gbc);
+            JLabel subjectLabel = new JLabel(subjects[i] + ":");
+            subjectLabel.setForeground(new Color(50, 50, 50)); // Màu chữ của các nhãn môn học
+            panel.add(subjectLabel, gbc);
             gbc.gridx = 1;
-            subjectTextFields[i] = new JTextField(15);
+            gbc.weightx = 1.0;
+            subjectTextFields[i] = new JTextField(20);
+            subjectTextFields[i].setPreferredSize(new Dimension(200, 30));
+            subjectTextFields[i].setBackground(new Color(240, 240, 240)); // Màu nền cho các trường nhập
+            subjectTextFields[i].setForeground(new Color(50, 50, 50)); // Màu chữ cho các trường nhập
             panel.add(subjectTextFields[i], gbc);
         }
     }
@@ -109,34 +153,74 @@ public class ShowInputTab1 {
         gbc.gridy++;
         panel.add(new JLabel("Điểm TB lớp 12:"), gbc);
         gbc.gridx = 1;
-        tb12Field = new JTextField(15);
+        tb12Field = new JTextField(20);
+        tb12Field.setPreferredSize(new Dimension(200, 30));
+        tb12Field.setBackground(new Color(240, 240, 240)); // Màu nền cho trường nhập điểm lớp 12
         panel.add(tb12Field, gbc);
 
         gbc.gridx = 0;
         gbc.gridy++;
         panel.add(new JLabel("Điểm khuyến khích:"), gbc);
         gbc.gridx = 1;
-        khuyenKhichField = new JTextField(15);
+        khuyenKhichField = new JTextField(20);
+        khuyenKhichField.setPreferredSize(new Dimension(200, 30));
+        khuyenKhichField.setBackground(new Color(240, 240, 240)); // Màu nền cho trường nhập điểm khuyến khích
         panel.add(khuyenKhichField, gbc);
 
         gbc.gridx = 0;
         gbc.gridy++;
-        panel.add(new JLabel("Điểm đối tượng:"), gbc);
+        panel.add(new JLabel("Điểm ưu tiên:"), gbc);
         gbc.gridx = 1;
-        doiTuongField = new JTextField(15);
-        panel.add(doiTuongField, gbc);
+        uuTienField = new JTextField(20);
+        uuTienField.setPreferredSize(new Dimension(200, 30));
+        uuTienField.setBackground(new Color(240, 240, 240)); // Màu nền cho trường nhập điểm đối tượng
+        panel.add(uuTienField, gbc);
     }
 
     private void calculateGrade() {
         try {
-            // Lấy điểm Toán, Văn, Anh
-            if (subjectTextFields.length < 3) {
-                throw new IllegalArgumentException("Cần nhập đủ điểm Toán, Văn, Anh và các môn tổ hợp");
+
+            // Lấy tổ hợp được chọn
+            JComboBox<String> comboBox = (JComboBox<String>) tab1.getComponent(0); // Giả định comboBox là thành phần đầu tiên
+            String selectedOption = (String) comboBox.getSelectedItem();
+
+            if ("Chọn tổ hợp".equals(selectedOption)) {
+                throw new IllegalArgumentException("Vui lòng chọn tổ hợp môn!");
             }
 
+            JComboBox<String> khuVucComboBox = null;
+            for (Component comp : tab1.getComponents()) {
+                if (comp instanceof JComboBox && !comp.equals(comboBox)) {
+                    khuVucComboBox = (JComboBox<String>) comp;
+                    break;
+                }
+            }
+            if (khuVucComboBox != null) {
+                khuVuc = (String) khuVucComboBox.getSelectedItem();
+                if ("Chọn khu vực".equals(khuVuc)) {
+                    throw new IllegalArgumentException("Vui lòng chọn khu vực!");
+                }
+            }
+
+            // Kiểm tra các trường nhập liệu
+            for (int i = 0; i < subjectTextFields.length; i++) {
+                if (subjectTextFields[i].getText().trim().isEmpty()) {
+                    throw new IllegalArgumentException("Vui lòng nhập điểm cho môn: " + (i == 0 ? "Toán" :
+                                                        i == 1 ? "Văn" :
+                                                        i == 2 ? "Tiếng Anh" : "Môn tổ hợp " + (i - 2)));
+                }
+            }
+
+            if (tb12Field.getText().trim().isEmpty()) {
+                throw new IllegalArgumentException("Vui lòng nhập điểm trung bình lớp 12!");
+            }
+
+            // Lấy điểm Toán, Văn, Anh
             double mathScore = Double.parseDouble(subjectTextFields[0].getText());
             double literatureScore = Double.parseDouble(subjectTextFields[1].getText());
             double englishScore = Double.parseDouble(subjectTextFields[2].getText());
+            double areaBonus = khuVucPoints.getOrDefault(khuVuc, 0.0);
+
 
             if (mathScore < 0 || mathScore > 10 || literatureScore < 0 || literatureScore > 10 || englishScore < 0 || englishScore > 10) {
                 throw new IllegalArgumentException("Điểm Toán, Văn, Anh phải trong khoảng từ 0 đến 10");
@@ -146,11 +230,7 @@ public class ShowInputTab1 {
             double totalCombinationScore = 0;
             int combinationCount = 0;
             for (int i = 3; i < subjectTextFields.length; i++) {
-                String text = subjectTextFields[i].getText();
-                if (text.isEmpty()) {
-                    throw new NumberFormatException("Điểm bài thi tổ hợp không được để trống");
-                }
-                double score = Double.parseDouble(text);
+                double score = Double.parseDouble(subjectTextFields[i].getText());
                 if (score < 0 || score > 10) {
                     throw new IllegalArgumentException("Điểm các môn tổ hợp phải trong khoảng từ 0 đến 10");
                 }
@@ -158,16 +238,12 @@ public class ShowInputTab1 {
                 combinationCount++;
             }
 
-            if (combinationCount == 0) {
-                throw new IllegalArgumentException("Cần nhập ít nhất một môn tổ hợp");
-            }
-
             double avgCombinationScore = totalCombinationScore / combinationCount;
 
             // Lấy điểm bổ sung
             double tb12 = Double.parseDouble(tb12Field.getText());
             double khuyenKhich = Double.parseDouble(khuyenKhichField.getText());
-            double doiTuong = Double.parseDouble(doiTuongField.getText());
+            double uuTien = Double.parseDouble(uuTienField.getText()) + areaBonus;
 
             if (tb12 < 0 || tb12 > 10) {
                 throw new IllegalArgumentException("Điểm trung bình lớp 12 phải trong khoảng từ 0 đến 10");
@@ -175,21 +251,24 @@ public class ShowInputTab1 {
             if (khuyenKhich < 0 || khuyenKhich > 5) {
                 throw new IllegalArgumentException("Điểm khuyến khích phải trong khoảng từ 0 đến 5");
             }
-            if (doiTuong < 0 || doiTuong > 10) {
+            if (uuTien < 0 || uuTien > 10) {
                 throw new IllegalArgumentException("Điểm ưu tiên phải trong khoảng từ 0 đến 10");
             }
 
             // Tính điểm tốt nghiệp
-//            double totalScore = mathScore + literatureScore + englishScore + avgCombinationScore;
-//            double avgScore = (totalScore + khuyenKhich) / 4;
-//            double finalScore = ((avgScore * 7) + (tb12 * 3)) / 10 + doiTuong;
+            double result = GraduateScoreResult.calculateGraduationScore(
+                    mathScore, literatureScore, englishScore, avgCombinationScore, tb12, khuyenKhich, uuTien);
 
             // Hiển thị kết quả
-            JOptionPane.showMessageDialog(tab1, "Điểm tốt nghiệp: " + String.format("%.2f", GraduateScoreResult.calculateGraduationScore(mathScore, literatureScore,englishScore,avgCombinationScore,tb12,khuyenKhich,doiTuong)));
+            JOptionPane.showMessageDialog(tab1, "Điểm tốt nghiệp: " + String.format("%.2f", result));
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(tab1, "Vui lòng nhập đúng định dạng điểm! " + e.getMessage());
+            JOptionPane.showMessageDialog(tab1, "Vui lòng nhập đúng định dạng điểm!");
         } catch (IllegalArgumentException e) {
-            JOptionPane.showMessageDialog(tab1, "Lỗi: " + e.getMessage());
+            JOptionPane.showMessageDialog(tab1, e.getMessage());
         }
     }
+
 }
+
+
+
