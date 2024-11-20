@@ -1,4 +1,4 @@
-package Version2.src;
+package Version2.src.Controller;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -37,18 +37,18 @@ public class UniversityCheckUI {
         });
     }
 
-    public static void main(String[] args) {
-        try {
-            UIManager.getLookAndFeel();
-        }catch (Exception e){
-            e.getStackTrace();
-        }
-
-        JFrame frame = new JFrame("University");
-        frame.setSize(600,400);
-        frame.setContentPane(new UniversityCheckUI().panelMain);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setVisible(true);
-    }
+//    public static void main(String[] args) {
+//        try {
+//            UIManager.getLookAndFeel();
+//        }catch (Exception e){
+//            e.getStackTrace();
+//        }
+//
+//        JFrame frame = new JFrame("University");
+//        frame.setSize(600,400);
+//        frame.setContentPane(new UniversityCheckUI().panelMain);
+//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        frame.pack();
+//        frame.setVisible(true);
+//    }
 }

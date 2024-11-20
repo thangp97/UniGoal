@@ -1,5 +1,7 @@
 package Version2.src.GUI;
 
+import Version2.src.Controller.GraduateScoreResult;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -82,12 +84,7 @@ public class ShowInputTab1 {
         gbc.gridy++;
         gbc.gridwidth = 2;
         JButton calcGradScoreButton = new JButton("Tính điểm");
-        calcGradScoreButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                calculateGrade();
-            }
-        });
+        calcGradScoreButton.addActionListener(e -> calculateGrade());
         tab1.add(calcGradScoreButton, gbc);
 
         tab1.revalidate();
@@ -132,36 +129,67 @@ public class ShowInputTab1 {
 
     private void calculateGrade() {
         try {
-            // Lấy điểm môn học
-            double totalScore = 0;
-            for (JTextField subjectField : subjectTextFields) {
-                String text = subjectField.getText();
-                if (text.isEmpty()) {
-                    throw new NumberFormatException("Điểm môn không được để trống");
-                }
-                totalScore += Double.parseDouble(text);
+            // Lấy điểm Toán, Văn, Anh
+            if (subjectTextFields.length < 3) {
+                throw new IllegalArgumentException("Cần nhập đủ điểm Toán, Văn, Anh và các môn tổ hợp");
             }
+
+            double mathScore = Double.parseDouble(subjectTextFields[0].getText());
+            double literatureScore = Double.parseDouble(subjectTextFields[1].getText());
+            double englishScore = Double.parseDouble(subjectTextFields[2].getText());
+
+            if (mathScore < 0 || mathScore > 10 || literatureScore < 0 || literatureScore > 10 || englishScore < 0 || englishScore > 10) {
+                throw new IllegalArgumentException("Điểm Toán, Văn, Anh phải trong khoảng từ 0 đến 10");
+            }
+
+            // Lấy điểm trung bình bài thi tổ hợp
+            double totalCombinationScore = 0;
+            int combinationCount = 0;
+            for (int i = 3; i < subjectTextFields.length; i++) {
+                String text = subjectTextFields[i].getText();
+                if (text.isEmpty()) {
+                    throw new NumberFormatException("Điểm bài thi tổ hợp không được để trống");
+                }
+                double score = Double.parseDouble(text);
+                if (score < 0 || score > 10) {
+                    throw new IllegalArgumentException("Điểm các môn tổ hợp phải trong khoảng từ 0 đến 10");
+                }
+                totalCombinationScore += score;
+                combinationCount++;
+            }
+
+            if (combinationCount == 0) {
+                throw new IllegalArgumentException("Cần nhập ít nhất một môn tổ hợp");
+            }
+
+            double avgCombinationScore = totalCombinationScore / combinationCount;
 
             // Lấy điểm bổ sung
-            String tb12Text = tb12Field.getText();
-            String khuyenKhichText = khuyenKhichField.getText();
-            String doiTuongText = doiTuongField.getText();
+            double tb12 = Double.parseDouble(tb12Field.getText());
+            double khuyenKhich = Double.parseDouble(khuyenKhichField.getText());
+            double doiTuong = Double.parseDouble(doiTuongField.getText());
 
-            if (tb12Text.isEmpty() || khuyenKhichText.isEmpty() || doiTuongText.isEmpty()) {
-                throw new NumberFormatException("Điểm bổ sung không được để trống");
+            if (tb12 < 0 || tb12 > 10) {
+                throw new IllegalArgumentException("Điểm trung bình lớp 12 phải trong khoảng từ 0 đến 10");
+            }
+            if (khuyenKhich < 0 || khuyenKhich > 5) {
+                throw new IllegalArgumentException("Điểm khuyến khích phải trong khoảng từ 0 đến 5");
+            }
+            if (doiTuong < 0 || doiTuong > 10) {
+                throw new IllegalArgumentException("Điểm ưu tiên phải trong khoảng từ 0 đến 10");
             }
 
-            double tb12 = Double.parseDouble(tb12Text);
-            double khuyenKhich = Double.parseDouble(khuyenKhichText);
-            double doiTuong = Double.parseDouble(doiTuongText);
-
-            // Tính điểm tổng
-            double finalScore = totalScore + tb12 + khuyenKhich + doiTuong;
+            // Tính điểm tốt nghiệp
+//            double totalScore = mathScore + literatureScore + englishScore + avgCombinationScore;
+//            double avgScore = (totalScore + khuyenKhich) / 4;
+//            double finalScore = ((avgScore * 7) + (tb12 * 3)) / 10 + doiTuong;
 
             // Hiển thị kết quả
-            JOptionPane.showMessageDialog(tab1, "Điểm tổng: " + finalScore);
+            JOptionPane.showMessageDialog(tab1, "Điểm tốt nghiệp: " + String.format("%.2f", GraduateScoreResult.calculateGraduationScore(mathScore, literatureScore,englishScore,avgCombinationScore,tb12,khuyenKhich,doiTuong)));
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(tab1, "Vui lòng nhập đúng định dạng điểm! " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(tab1, "Lỗi: " + e.getMessage());
         }
     }
 }
