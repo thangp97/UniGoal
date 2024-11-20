@@ -20,7 +20,7 @@ public class UniversitySearch {
     private int pageNumber = 1;
     private int pageSize = 10;
 
-    private JTextField maTruongField, maNganhField, tenTruongField, tenNganhField, diemSanField;
+    private JTextField maTruongField, maNganhField, tenTruongField, tenNganhField, diemTrungTuyenField;
     private DefaultListModel<FavoriteItem> favoriteListModel;
     private JList<FavoriteItem> favoriteList;
 
@@ -71,7 +71,7 @@ public class UniversitySearch {
         maNganhField = new JTextField();
         tenTruongField = new JTextField();
         tenNganhField = new JTextField();
-        diemSanField = new JTextField();
+        diemTrungTuyenField = new JTextField();
 
         searchPanel.add(new JLabel("Mã Trường:"));
         searchPanel.add(maTruongField);
@@ -81,8 +81,8 @@ public class UniversitySearch {
         searchPanel.add(tenTruongField);
         searchPanel.add(new JLabel("Tên Ngành:"));
         searchPanel.add(tenNganhField);
-        searchPanel.add(new JLabel("Điểm Sàn:"));
-        searchPanel.add(diemSanField);
+        searchPanel.add(new JLabel("Điểm Trúng Tuyển:"));
+        searchPanel.add(diemTrungTuyenField);
 
         // Nút tìm kiếm
         JButton searchButton = new JButton("Tìm kiếm", new ImageIcon("Version2/src/Icons/icons8-search-15.png"));
@@ -163,7 +163,7 @@ public class UniversitySearch {
     private void loadUniversityData() {
         isSearchMode = false; // Quay lại chế độ hiển thị toàn bộ
         try {
-            String query = "SELECT * FROM daihoc LIMIT ?, ?";
+            String query = "SELECT * FROM truongdaihoc LIMIT ?, ?";
             PreparedStatement stmt = connection.prepareStatement(query);
             stmt.setInt(1, (pageNumber - 1) * pageSize);
             stmt.setInt(2, pageSize);
@@ -200,9 +200,9 @@ public class UniversitySearch {
         isSearchMode = true; // Chuyển sang chế độ tìm kiếm
         try {
             StringBuilder query = new StringBuilder(
-                    "SELECT d.maTruong, d.tenTruong, d.diemSan, c.tenNganh " +
-                            "FROM daihoc d " +
-                            "INNER JOIN chuyennganh c ON d.maTruong = c.maTruong " +
+                    "SELECT d.maTruong, d.tenTruong, dt.diemTrungTuyen, dt.tenNganh " +
+                            "FROM truongdaihoc d " +
+                            "INNER JOIN diemtrungtuyen dt ON d.maTruong = dt.maTruong " +
                             "WHERE 1=1"
             );
 
@@ -210,16 +210,16 @@ public class UniversitySearch {
                 query.append(" AND d.maTruong LIKE ?");
             }
             if (!maNganhField.getText().isEmpty()) {
-                query.append(" AND c.maNganh LIKE ?");
+                query.append(" AND dt.maNganh LIKE ?");
             }
             if (!tenTruongField.getText().isEmpty()) {
                 query.append(" AND d.tenTruong LIKE ?");
             }
             if (!tenNganhField.getText().isEmpty()) {
-                query.append(" AND c.tenNganh LIKE ?");
+                query.append(" AND dt.tenNganh LIKE ?");
             }
-            if (!diemSanField.getText().isEmpty()) {
-                query.append(" AND d.diemSan >= ?");
+            if (!diemTrungTuyenField.getText().isEmpty()) {
+                query.append(" AND dt.diemTrungTuyen >= ?");
             }
 
             query.append(" LIMIT ?, ?");
@@ -238,8 +238,8 @@ public class UniversitySearch {
             if (!tenNganhField.getText().isEmpty()) {
                 stmt.setString(index++, "%" + tenNganhField.getText() + "%");
             }
-            if (!diemSanField.getText().isEmpty()) {
-                stmt.setDouble(index++, Double.parseDouble(diemSanField.getText()));
+            if (!diemTrungTuyenField.getText().isEmpty()) {
+                stmt.setDouble(index++, Double.parseDouble(diemTrungTuyenField.getText()));
             }
 
             stmt.setInt(index++, (searchPageNumber - 1) * searchPageSize);
@@ -248,10 +248,10 @@ public class UniversitySearch {
             ResultSet rs = stmt.executeQuery();
             ArrayList<DaiHocSearchResult> data = new ArrayList<>();
             while (rs.next()) {
-                DaiHocSearchResult daiHocSearchResult = new DaiHocSearchResult("", "",0,"");
+                DaiHocSearchResult daiHocSearchResult = new DaiHocSearchResult("", "",0,"", 0);
                 daiHocSearchResult.setMaTruong(rs.getString("maTruong"));
                 daiHocSearchResult.setTenTruong(rs.getString("tenTruong"));
-                daiHocSearchResult.setDiemSan(rs.getDouble("diemSan"));
+                daiHocSearchResult.setDiemTrungTuyen(rs.getDouble("diemTrungTuyen"));
                 daiHocSearchResult.setTenNganh(rs.getString("tenNganh"));
                 data.add(daiHocSearchResult);
             }
@@ -260,11 +260,11 @@ public class UniversitySearch {
                 DaiHocSearchResult daiHocSearchResult = data.get(i);
                 dataArray[i][0] = daiHocSearchResult.getMaTruong();
                 dataArray[i][1] = daiHocSearchResult.getTenTruong();
-                dataArray[i][2] = daiHocSearchResult.getDiemSan();
+                dataArray[i][2] = daiHocSearchResult.getDiemTrungTuyen();
                 dataArray[i][3] = daiHocSearchResult.getTenNganh();
             }
             NonEditableTableModel model = new NonEditableTableModel(
-                    dataArray, new String[]{"Mã Trường", "Tên Trường", "Điểm Sàn", "Tên Ngành"}
+                    dataArray, new String[]{"Mã Trường", "Tên Trường", "Điểm Trúng Tuyển", "Tên Ngành"}
             );
             table.setModel(model);
 
@@ -310,7 +310,6 @@ public class UniversitySearch {
             String tenNganh = (String) table.getValueAt(selectedRow, 3);
             double diemSan = (double) table.getValueAt(selectedRow, 2);   // Cột 2
 
-            // Nếu bạn cần thêm cột khác, hãy chắc chắn chỉ số cột hợp lệ.
             FavoriteItem favoriteItem = new FavoriteItem(maTruong, tenTruong, tenNganh, diemSan);
             favoriteListModel.addElement(favoriteItem);
         } else {

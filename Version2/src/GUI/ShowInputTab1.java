@@ -104,7 +104,7 @@ public class ShowInputTab1 {
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.gridwidth = GridBagConstraints.REMAINDER;
-        JButton calcGradScoreButton = new JButton("Tính điểm");
+        JButton calcGradScoreButton = new JButton("Tính điểm tốt nghiệp");
         calcGradScoreButton.setBackground(new Color(0, 123, 255)); // Màu nền cho nút
         calcGradScoreButton.setForeground(Color.WHITE); // Màu chữ cho nút
         calcGradScoreButton.setPreferredSize(new Dimension(200, 40));
