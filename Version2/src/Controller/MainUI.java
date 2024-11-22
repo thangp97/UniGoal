@@ -9,7 +9,7 @@ public class MainUI {
         // Khởi tạo kết nối đến cơ sở dữ liệu
         Connection connection = null;
         try {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/uni", "root", "thangpham04");
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/uni", "root", "29102004");
         } catch (SQLException e) {
             e.printStackTrace();
             return;
