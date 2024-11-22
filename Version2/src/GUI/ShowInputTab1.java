@@ -18,8 +18,8 @@ public class ShowInputTab1 {
     // Tạo bản đồ điểm cộng cho các khu vực
     private static final Map<String, Double> khuVucPoints = new HashMap<>();
     static {
-        khuVucPoints.put("KV1", 1.0); // Khu vực 1 cộng 1 điểm
-        khuVucPoints.put("KV2", 0.5); // Khu vực 2 cộng 0.5 điểm
+        khuVucPoints.put("KV1", 0.75); // Khu vực 1 cộng 0.75 điểm
+        khuVucPoints.put("KV2", 0.25); // Khu vực 2 cộng 0.25 điểm
         khuVucPoints.put("KV2-NT", 0.5); // Khu vực 2-NT cộng 0.5 điểm
         khuVucPoints.put("KV3", 0.0); // Khu vực 3 không cộng điểm
     }

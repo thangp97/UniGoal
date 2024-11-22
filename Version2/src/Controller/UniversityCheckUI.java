@@ -9,7 +9,7 @@ import java.sql.*;
 import java.util.HashSet;
 import java.util.Set;
 
-public class UniversityCheckUI {
+public class    UniversityCheckUI {
     private Connection connection;
     private JFrame frame;
     private JPanel panelMain;
