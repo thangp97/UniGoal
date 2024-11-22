@@ -202,7 +202,7 @@ public class UniversitySearch {
         isSearchMode = true; // Chuyển sang chế độ tìm kiếm
         try {
             StringBuilder query = new StringBuilder(
-                    "SELECT d.maTruong, d.tenTruong, dt.diemTrungTuyen, dt.tenNganh " +
+                    "SELECT DISTINCT d.maTruong, d.tenTruong, dt.diemTrungTuyen, dt.tenNganh " +
                             "FROM truongdaihoc d " +
                             "INNER JOIN diemtrungtuyen dt ON d.maTruong = dt.maTruong " +
                             "WHERE 1=1"
