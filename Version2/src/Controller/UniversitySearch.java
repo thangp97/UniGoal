@@ -13,6 +13,8 @@ import java.awt.*;
 import java.sql.*;
 import java.util.ArrayList;
 
+import static Version2.src.Utils.Constants.*;
+
 public class UniversitySearch {
     private JFrame frame;
     private JTable table;
@@ -85,7 +87,7 @@ public class UniversitySearch {
         searchPanel.add(diemTrungTuyenField);
 
         // Nút tìm kiếm
-        JButton searchButton = new JButton("Tìm kiếm", new ImageIcon("Version2/src/Icons/icons8-search-15.png"));
+        JButton searchButton = new JButton("Tìm kiếm", new ImageIcon(SEARCH_ICON_PATH));
         searchButton.addActionListener(e -> searchUniversityData());
         searchPanel.add(new JLabel());
         searchPanel.add(searchButton);
@@ -127,8 +129,8 @@ public class UniversitySearch {
 
         // Pagination
         JPanel paginationPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 3, 3));
-        JButton prevButton = new JButton(new ImageIcon("Version2/src/Icons/icons8-chevron-left-25.png"));
-        JButton nextButton = new JButton(new ImageIcon("Version2/src/Icons/icons8-chevron-right-25.png"));
+        JButton prevButton = new JButton(new ImageIcon(LEFT_ARROW_ICON_PATH));
+        JButton nextButton = new JButton(new ImageIcon(RIGHT_ARROW_ICON_PATH));
 
         prevButton.addActionListener(e -> prevPage());
         nextButton.addActionListener(e -> nextPage());
@@ -137,7 +139,7 @@ public class UniversitySearch {
         paginationPanel.add(nextButton);
 
         // Nút thêm vào yêu thích
-        JButtonConfig addToFavoritesButton = new JButtonConfig("Thêm vào yêu thích", new ImageIcon("Version2/src/Icons/icons8-add-properties-15.png"));
+        JButtonConfig addToFavoritesButton = new JButtonConfig("Thêm vào yêu thích", new ImageIcon(ADD_TO_FAVORITES_ICON_PATH));
         addToFavoritesButton.addActionListener(e -> addToFavorites());
 
         bottomPanel.add(paginationPanel, BorderLayout.NORTH);

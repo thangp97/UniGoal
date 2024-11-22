@@ -1,5 +1,7 @@
 package Version2.src.Controller;
 
+import Version2.src.Utils.DatabaseConnection;
+
 import javax.swing.*;
 import java.awt.*;
 import java.sql.*;
@@ -12,8 +14,8 @@ public class RecommendDGTD extends JPanel {
     private JTable bangGoiY;
     private JButton goiYTruongDaiHoc;
 
-    public RecommendDGTD(Connection connection) {
-        this.connection = connection;
+    public RecommendDGTD() throws SQLException {
+        connection = DatabaseConnection.getConnection();
         setLayout(new BorderLayout());
 
         // Khởi tạo các thành phần giao diện
