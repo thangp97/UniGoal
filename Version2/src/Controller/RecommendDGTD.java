@@ -50,7 +50,7 @@ public class RecommendDGTD extends JPanel {
 
     private void loadNganhData() {
         try {
-            String sql = "SELECT DISTINCT c.tenNganh FROM chuyennganh c JOIN dgtv d ON c.maNganh = d.maNganh";
+            String sql = "SELECT DISTINCT c.tenNganh FROM chuyennganh c JOIN dgtd d ON c.maNganh = d.maNganh";
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
 

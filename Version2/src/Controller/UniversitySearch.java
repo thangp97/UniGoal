@@ -219,7 +219,7 @@ public class UniversitySearch {
                 query.append(" AND dt.tenNganh LIKE ?");
             }
             if (!diemTrungTuyenField.getText().isEmpty()) {
-                query.append(" AND dt.diemTrungTuyen >= ?");
+                query.append(" AND dt.diemTrungTuyen <= ?");
             }
 
             query.append(" LIMIT ?, ?");
