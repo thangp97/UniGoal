@@ -14,7 +14,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ShowInputTab2 {
+public class UniversityCaculateTab {
     private JPanel tab2;
 
     private static final Map<String, Double> khuVucPoints = new HashMap<>();
@@ -93,7 +93,7 @@ public class ShowInputTab2 {
     }
 
 
-    public ShowInputTab2() {
+    public UniversityCaculateTab() {
         tab2 = new JPanel();
         tab2.setLayout(new GridBagLayout());
 

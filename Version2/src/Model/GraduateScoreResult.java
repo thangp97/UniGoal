@@ -1,4 +1,4 @@
-package Version2.src.Controller;
+package Version2.src.Model;
 
 public class GraduateScoreResult {
     public static double calculateGraduationScore(double mathScore, double literatureScore, double englishScore,

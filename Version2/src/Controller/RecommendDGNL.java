@@ -121,4 +121,8 @@ public class RecommendDGNL extends JPanel {
             JOptionPane.showMessageDialog(this, "Không tìm thấy trường phù hợp với điểm của bạn.");
         }
     }
+
+    public JPanel getPanel() {
+        return this;
+    }
 }

@@ -1,15 +1,13 @@
 package Version2.src.GUI;
 
-import Version2.src.Controller.GraduateScoreResult;
+import Version2.src.Model.GraduateScoreResult;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ShowInputTab1 {
+public class GraduateCaculateTab {
     private JPanel tab1;
     private JTextField[] subjectTextFields;
     private JTextField tb12Field, khuyenKhichField, uuTienField;
@@ -24,7 +22,7 @@ public class ShowInputTab1 {
         khuVucPoints.put("KV3", 0.0); // Khu vực 3 không cộng điểm
     }
 
-    public ShowInputTab1() {
+    public GraduateCaculateTab() {
         tab1 = new JPanel();
         tab1.setLayout(new GridBagLayout());
         tab1.setBackground(new Color(240, 240, 240)); // Màu nền trắng cho tab1

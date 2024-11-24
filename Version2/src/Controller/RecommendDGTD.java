@@ -99,4 +99,8 @@ public class RecommendDGTD extends JPanel {
             JOptionPane.showMessageDialog(this, "Error loading data: " + e.getMessage());
         }
     }
+
+    public JPanel getPanel() {
+        return this;
+    }
 }
