@@ -27,7 +27,7 @@ public class ShowInputTab1 {
     public ShowInputTab1() {
         tab1 = new JPanel();
         tab1.setLayout(new GridBagLayout());
-        tab1.setBackground(new Color(255, 255, 255)); // Màu nền trắng cho tab1
+        tab1.setBackground(new Color(240, 240, 240)); // Màu nền trắng cho tab1
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -35,7 +35,7 @@ public class ShowInputTab1 {
 
         String[] subjectsOptions = {"Chọn tổ hợp", "KHTN", "KHXH"};
         JComboBox<String> subjectsComboBox = new JComboBox<>(subjectsOptions);
-        subjectsComboBox.setBackground(new Color(240, 240, 240)); // Màu nền cho combo box
+        subjectsComboBox.setBackground(new Color(255, 255, 255)); // Màu nền cho combo box
         subjectsComboBox.setForeground(new Color(50, 50, 50)); // Màu chữ cho combo box
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -67,7 +67,7 @@ public class ShowInputTab1 {
         JComboBox<String> newSubjectsComboBox = new JComboBox<>(subjectsOptions);
         newSubjectsComboBox.setSelectedItem(selectedOption);
         newSubjectsComboBox.setPreferredSize(new Dimension(200, 30));
-        newSubjectsComboBox.setBackground(new Color(240, 240, 240)); // Màu nền cho combo box
+        newSubjectsComboBox.setBackground(new Color(255, 255, 255)); // Màu nền cho combo box
         newSubjectsComboBox.setForeground(new Color(50, 50, 50)); // Màu chữ cho combo box
         tab1.add(newSubjectsComboBox, gbc);
 
@@ -89,7 +89,7 @@ public class ShowInputTab1 {
         String[] khuVucOptions = {"Chọn khu vực", "KV1", "KV2", "KV2-NT", "KV3"};
         JComboBox<String> khuVucComboBox = new JComboBox<>(khuVucOptions);
         khuVucComboBox.setPreferredSize(new Dimension(200, 30));
-        khuVucComboBox.setBackground(new Color(240, 240, 240)); // Màu nền cho combo box khu vực
+        khuVucComboBox.setBackground(new Color(255, 255, 255)); // Màu nền cho combo box khu vực
         khuVucComboBox.setForeground(new Color(50, 50, 50)); // Màu chữ cho combo box khu vực
         tab1.add(khuVucComboBox, gbc);
 
@@ -142,7 +142,7 @@ public class ShowInputTab1 {
             gbc.weightx = 1.0;
             subjectTextFields[i] = new JTextField(20);
             subjectTextFields[i].setPreferredSize(new Dimension(200, 30));
-            subjectTextFields[i].setBackground(new Color(240, 240, 240)); // Màu nền cho các trường nhập
+            subjectTextFields[i].setBackground(new Color(255, 255, 255)); // Màu nền cho các trường nhập
             subjectTextFields[i].setForeground(new Color(50, 50, 50)); // Màu chữ cho các trường nhập
             panel.add(subjectTextFields[i], gbc);
         }
@@ -155,7 +155,7 @@ public class ShowInputTab1 {
         gbc.gridx = 1;
         tb12Field = new JTextField(20);
         tb12Field.setPreferredSize(new Dimension(200, 30));
-        tb12Field.setBackground(new Color(240, 240, 240)); // Màu nền cho trường nhập điểm lớp 12
+        tb12Field.setBackground(new Color(255, 255, 255)); // Màu nền cho trường nhập điểm lớp 12
         panel.add(tb12Field, gbc);
 
         gbc.gridx = 0;
@@ -164,7 +164,7 @@ public class ShowInputTab1 {
         gbc.gridx = 1;
         khuyenKhichField = new JTextField(20);
         khuyenKhichField.setPreferredSize(new Dimension(200, 30));
-        khuyenKhichField.setBackground(new Color(240, 240, 240)); // Màu nền cho trường nhập điểm khuyến khích
+        khuyenKhichField.setBackground(new Color(255, 255, 255)); // Màu nền cho trường nhập điểm khuyến khích
         panel.add(khuyenKhichField, gbc);
 
         gbc.gridx = 0;
@@ -173,7 +173,7 @@ public class ShowInputTab1 {
         gbc.gridx = 1;
         uuTienField = new JTextField(20);
         uuTienField.setPreferredSize(new Dimension(200, 30));
-        uuTienField.setBackground(new Color(240, 240, 240)); // Màu nền cho trường nhập điểm đối tượng
+        uuTienField.setBackground(new Color(255, 255, 255)); // Màu nền cho trường nhập điểm đối tượng
         panel.add(uuTienField, gbc);
     }
 

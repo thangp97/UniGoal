@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import static Version2.src.Utils.Constants.*;
 
 public class UniversitySearch {
-    private JFrame frame;
     private JTable table;
     private Connection connection;
     private int pageNumber = 1;
@@ -30,21 +29,23 @@ public class UniversitySearch {
     private int searchPageNumber = 1;
     private int searchPageSize = 10;
 
-    public void init() {
+    public UniversitySearch() {
         try {
             connection = DatabaseConnection.getConnection();
-
-            frame = new JFrame("University Management");
-            frame.setSize(900, 700);
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setLayout(new BorderLayout());
-
-            JPanel mainPanel = createMainPanel();
-            frame.add(mainPanel);
-            frame.setVisible(true);
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(frame, "Error: " + e.getMessage());
+            e.printStackTrace();
         }
+    }
+
+    public JPanel getPanel() {
+        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        mainPanel.add(createSearchPanel(), BorderLayout.NORTH);
+        mainPanel.add(createTablePanel(), BorderLayout.CENTER);
+        mainPanel.add(createBottomPanel(), BorderLayout.SOUTH);
+
+        return mainPanel;
     }
 
     private JPanel createMainPanel() {
@@ -194,7 +195,7 @@ public class UniversitySearch {
             TableRowSorter<NonEditableTableModel> sorter = new TableRowSorter<>(model);
             table.setRowSorter(sorter);
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(frame, "Error: " + e.getMessage());
+            JOptionPane.showMessageDialog(table, "Error: " + e.getMessage());
         }
     }
 
@@ -274,7 +275,7 @@ public class UniversitySearch {
             TableRowSorter<NonEditableTableModel> sorter = new TableRowSorter<>(model);
             table.setRowSorter(sorter);
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(frame, "Error: " + e.getMessage());
+            JOptionPane.showMessageDialog(table, "Error: " + e.getMessage());
         }
     }
 
@@ -315,7 +316,7 @@ public class UniversitySearch {
             FavoriteItem favoriteItem = new FavoriteItem(maTruong, tenTruong, tenNganh, diemSan);
             favoriteListModel.addElement(favoriteItem);
         } else {
-            JOptionPane.showMessageDialog(frame, "Vui lòng chọn một trường để thêm vào yêu thích.");
+            JOptionPane.showMessageDialog(table, "Vui lòng chọn một trường để thêm vào yêu thích.");
         }
     }
 

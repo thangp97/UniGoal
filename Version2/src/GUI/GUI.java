@@ -1,5 +1,7 @@
 package Version2.src.GUI;
 
+import Version2.src.Controller.UniversitySearch;
+
 import javax.swing.*;
 
 public class GUI {
@@ -13,11 +15,13 @@ public class GUI {
 
         JTabbedPane tabbedPane = new JTabbedPane();
 
-        ShowInputTab1 Tab1 = new ShowInputTab1();
-        ShowInputTab2 Tab2 = new ShowInputTab2();
+        ShowInputTab1 tab1 = new ShowInputTab1();
+        ShowInputTab2 tab2 = new ShowInputTab2();
+        UniversitySearch tab3 = new UniversitySearch();
 
-        tabbedPane.add("Tính điểm tốt nghiệp THPT", Tab1.getPanel());
-        tabbedPane.add("Tính điểm xét tuyển đại học", Tab2.getPanel());
+        tabbedPane.add("Tính điểm tốt nghiệp THPT", tab1.getPanel());
+        tabbedPane.add("Tính điểm xét tuyển đại học", tab2.getPanel());
+        tabbedPane.add("Tìm kiếm trường đại học", tab3.getPanel());
 
         frame.add(tabbedPane);
         frame.setVisible(true);

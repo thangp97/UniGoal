@@ -101,7 +101,7 @@ public class ShowInputTab2 {
         gbcAdmission.fill = GridBagConstraints.HORIZONTAL;
         gbcAdmission.insets = new Insets(5, 5, 5, 5);
 
-        String[] Method = {"Chọn phương thức", "Xét THPT", "Xét học bạ", "Chứng chỉ"};
+        String[] Method = {"Chọn phương thức", "Xét THPT", "Xét DGNL", "Xét DGTD"};
         JComboBox<String> MethodComboBox = new JComboBox<>(Method);
         gbcAdmission.gridx = 0;
         gbcAdmission.gridy = 0;
