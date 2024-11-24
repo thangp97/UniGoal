@@ -2,6 +2,7 @@ package Version2.src.GUI;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -170,7 +171,6 @@ public class ShowInputTab2 {
                     public void componentResized(ComponentEvent e) {
                         int panelWidth = dynamicPanel.getWidth();
                         int panelHeight = dynamicPanel.getHeight() - khoiFieldsPanel.getHeight() - 50;
-
                         if (panelWidth > 0 && panelHeight > 0) {
                             BufferedImage resizedImage = resizeImage(originalImage, Math.min(panelWidth, 1500), Math.min(panelHeight, 650));
                             chuThichLabel.setIcon(new ImageIcon(resizedImage));
@@ -216,71 +216,137 @@ public class ShowInputTab2 {
         g2d.dispose();
         return resizedImage;
     }
-
-
-
     private void showKhoiFields(String selectedKhoi, JPanel khoiFieldsPanel) {
-        khoiFieldsPanel.removeAll();
+        khoiFieldsPanel.removeAll(); // Xóa toàn bộ nội dung cũ
 
-        GridBagConstraints gbcKhoi = new GridBagConstraints();
-        gbcKhoi.fill = GridBagConstraints.HORIZONTAL;
-        gbcKhoi.insets = new Insets(5, 5, 5, 5);
-        gbcKhoi.gridx = 0;
-        gbcKhoi.gridy = 0;
+        // Sử dụng GridBagLayout
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+
+        // Tạo bảng danh sách ngành học
+        JTable resultTable = new JTable(new DefaultTableModel(
+                new Object[]{"Tên ngành", "Điểm chuẩn", "Trường"}, 0
+        ));
+        JScrollPane resultScrollPane = new JScrollPane(resultTable);
 
         if (!"Chọn khối".equals(selectedKhoi)) {
             // Thêm các trường nhập liệu cho các môn trong khối
             String[] subjects = khoiSubjects.get(selectedKhoi);
             if (subjects != null) {
                 for (String subject : subjects) {
-                    khoiFieldsPanel.add(new JLabel(subject + ":"), gbcKhoi);
-                    gbcKhoi.gridx = 1;
-                    khoiFieldsPanel.add(new JTextField(15), gbcKhoi);
+                    gbc.gridx = 0;
+                    gbc.gridy++;
+                    khoiFieldsPanel.add(new JLabel(subject + ":"), gbc);
+                    gbc.gridx = 1;
+                    JTextField subjectField = new JTextField(15);
+                    subjectField.setPreferredSize(new Dimension(200, 25)); // Đảm bảo kích thước
+                    khoiFieldsPanel.add(subjectField, gbc);
 
-                    gbcKhoi.gridx = 0;
-                    gbcKhoi.gridy++;
+                    gbc.gridx = 0;
+                    gbc.gridy++;
                 }
             }
 
             // Thêm trường chọn khu vực
-            khoiFieldsPanel.add(new JLabel("Chọn khu vực:"), gbcKhoi);
-            gbcKhoi.gridx = 1;
+            khoiFieldsPanel.add(new JLabel("Khu vực:"), gbc);
+            gbc.gridx = 1;
 
             String[] khuVucOptions = {"KV1", "KV2", "KV2-NT", "KV3"};
             JComboBox<String> khuVucComboBox = new JComboBox<>(khuVucOptions);
-            khoiFieldsPanel.add(khuVucComboBox, gbcKhoi);
+            khoiFieldsPanel.add(khuVucComboBox, gbc);
 
-            gbcKhoi.gridx = 0;
-            gbcKhoi.gridy++;
+            gbc.gridx = 0;
+            gbc.gridy++;
 
-            // Thêm các trường nhập liệu khác (ví dụ: điểm trung bình lớp 12, điểm khuyến khích)
-            khoiFieldsPanel.add(new JLabel("Điểm TB lớp 12:"), gbcKhoi);
-            gbcKhoi.gridx = 1;
-            khoiFieldsPanel.add(new JTextField(15), gbcKhoi);
+            // Thêm các trường nhập liệu khác (ví dụ: điểm ưu tiên, điểm khuyến khích)
+            khoiFieldsPanel.add(new JLabel("Điểm ưu tiên:"), gbc);
+            gbc.gridx = 1;
+            JTextField priorityField = new JTextField(15);
+            priorityField.setPreferredSize(new Dimension(200, 25));
+            khoiFieldsPanel.add(priorityField, gbc);
 
-            gbcKhoi.gridx = 0;
-            gbcKhoi.gridy++;
-            khoiFieldsPanel.add(new JLabel("Điểm khuyến khích:"), gbcKhoi);
-            gbcKhoi.gridx = 1;
-            khoiFieldsPanel.add(new JTextField(15), gbcKhoi);
+            gbc.gridx = 0;
+            gbc.gridy++;
+            khoiFieldsPanel.add(new JLabel("Điểm khuyến khích:"), gbc);
+            gbc.gridx = 1;
+            JTextField bonusField = new JTextField(15);
+            bonusField.setPreferredSize(new Dimension(200, 25));
+            khoiFieldsPanel.add(bonusField, gbc);
 
-            gbcKhoi.gridx = 0;
-            gbcKhoi.gridy++;
-            JButton calcAdmissionButton = new JButton("Tính điểm");
-            gbcKhoi.gridwidth = 2;
-            khoiFieldsPanel.add(calcAdmissionButton, gbcKhoi);
+            gbc.gridx = 0;
+            gbc.gridy++;
+            khoiFieldsPanel.add(new JLabel("Tên ngành học:"), gbc);
+            gbc.gridx = 1;
+            JTextField field_of_study = new JTextField(15);
+            bonusField.setPreferredSize(new Dimension(200, 25));
+            khoiFieldsPanel.add(field_of_study, gbc);
 
-            // Xử lý chọn khu vực nếu cần
-            khuVucComboBox.addActionListener(e -> {
-                String selectedKhuVuc = (String) khuVucComboBox.getSelectedItem();
-                System.out.println("Khu vực đã chọn: " + selectedKhuVuc + " (Cộng điểm: " + khuVucPoints.get(selectedKhuVuc) + ")");
+            // Thêm nút "Tính điểm tốt nghiệp"
+            gbc.gridx = 0;
+            gbc.gridy++;
+            gbc.gridwidth = GridBagConstraints.REMAINDER;
+            JButton calcadmissionButton = new JButton("Tính điểm xét tuyển và đề xuất ngành học phù hợp");
+            calcadmissionButton.setBackground(new Color(0, 123, 255)); // Màu nền cho nút
+            calcadmissionButton.setForeground(Color.WHITE); // Màu chữ cho nút
+            calcadmissionButton.setPreferredSize(new Dimension(200, 40));
+            calcadmissionButton.setFocusPainted(false);
+            calcadmissionButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+            // Hiệu ứng hover cho nút
+            calcadmissionButton.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseEntered(java.awt.event.MouseEvent evt) {
+                    calcadmissionButton.setBackground(new Color(0, 105, 217));
+                }
+
+                public void mouseExited(java.awt.event.MouseEvent evt) {
+                    calcadmissionButton.setBackground(new Color(0, 123, 255));
+                }
+            });
+
+            // Thêm nút vào `khoiFieldsPanel`
+            khoiFieldsPanel.add(calcadmissionButton, gbc);
+
+            // Đẩy các trường nhập liệu lên trên cùng
+            gbc.gridy++;
+            gbc.weighty = 1.0; // Trường nhập liệu chiếm không gian ưu tiên
+            gbc.fill = GridBagConstraints.BOTH; // Đảm bảo danh sách ngành học chiếm toàn bộ chiều rộng
+            gbc.weighty = 5.0; // Phần danh sách chiếm nhiều không gian hơn
+            khoiFieldsPanel.add(resultScrollPane, gbc);
+
+            // Xử lý sự kiện nhấn nút "Tính điểm tốt nghiệp"
+            calcadmissionButton.addActionListener(e -> {
+                // Lấy thông tin từ các trường nhập liệu
+                String khuVuc = (String) khuVucComboBox.getSelectedItem();
+                double priorityPoints = 0;
+                double bonusPoints = 0;
+
+                try {
+                    priorityPoints = Double.parseDouble(priorityField.getText());
+                    bonusPoints = Double.parseDouble(bonusField.getText());
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(khoiFieldsPanel, "Vui lòng nhập đúng định dạng điểm.", "Lỗi nhập liệu", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                double totalPoints = priorityPoints + bonusPoints;
+                System.out.println("Điểm tổng: " + totalPoints);
+
+                // Cập nhật danh sách ngành học (chỉ là ví dụ)
+                DefaultTableModel model = (DefaultTableModel) resultTable.getModel();
+                model.setRowCount(0); // Xóa dữ liệu cũ
+                model.addRow(new Object[]{"Kỹ thuật phần mềm", "25.5", "Đại học ABC"});
+                model.addRow(new Object[]{"Công nghệ thông tin", "24.0", "Đại học XYZ"});
+                model.addRow(new Object[]{"Hệ thống thông tin", "23.0", "Đại học DEF"});
             });
         }
 
+        // Cập nhật giao diện
         khoiFieldsPanel.revalidate();
         khoiFieldsPanel.repaint();
     }
-
 
     private void addKhoiFields(JPanel panel, GridBagConstraints gbc, String[] subjects) {
         for (String subject : subjects) {
