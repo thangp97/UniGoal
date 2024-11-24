@@ -1,9 +1,13 @@
 package Version2.src.GUI;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -122,73 +126,95 @@ public class ShowInputTab2 {
     public JPanel getPanel() {
         return tab2;
     }
-
     private void showInputTab2(String selectedMethod, JPanel dynamicPanel) {
         dynamicPanel.removeAll();
+        dynamicPanel.setLayout(new GridBagLayout());
 
         GridBagConstraints gbcDynamic = new GridBagConstraints();
-        gbcDynamic.fill = GridBagConstraints.HORIZONTAL;
         gbcDynamic.insets = new Insets(5, 5, 5, 5);
 
-        // Khu vực "Chọn khối"
         if ("Xét THPT".equals(selectedMethod)) {
-            // Label "Chọn khối"
+            // Label và JComboBox
             gbcDynamic.gridx = 0;
             gbcDynamic.gridy = 0;
-            gbcDynamic.anchor = GridBagConstraints.NORTH; // Đẩy lên trên
+            gbcDynamic.anchor = GridBagConstraints.WEST;
             dynamicPanel.add(new JLabel("Chọn khối:"), gbcDynamic);
 
-            // JComboBox chọn khối
             gbcDynamic.gridx = 1;
             ArrayList<String> sortedKhoiList = new ArrayList<>(khoiSubjects.keySet());
             Collections.sort(sortedKhoiList);
             sortedKhoiList.add(0, "Chọn khối");
-
             JComboBox<String> khoiComboBox = new JComboBox<>(sortedKhoiList.toArray(new String[0]));
             dynamicPanel.add(khoiComboBox, gbcDynamic);
 
-            // Khu vực các trường nhập liệu động
+            // Khu vực các trường nhập liệu
             gbcDynamic.gridx = 0;
             gbcDynamic.gridy = 1;
             gbcDynamic.gridwidth = 2;
             JPanel khoiFieldsPanel = new JPanel(new GridBagLayout());
             dynamicPanel.add(khoiFieldsPanel, gbcDynamic);
 
+            // Ảnh chú thích
+            gbcDynamic.gridy = 2;
+            gbcDynamic.fill = GridBagConstraints.BOTH;
+            gbcDynamic.weighty = 1.0;
+
+            JLabel chuThichLabel = new JLabel(); // Đặt JLabel ở đây để có thể xóa sau này
+            try {
+                BufferedImage originalImage = ImageIO.read(new File("D:/TableIilustration.png"));
+                dynamicPanel.add(chuThichLabel, gbcDynamic);
+
+                // Tự động điều chỉnh kích thước ảnh
+                dynamicPanel.addComponentListener(new ComponentAdapter() {
+                    @Override
+                    public void componentResized(ComponentEvent e) {
+                        int panelWidth = dynamicPanel.getWidth();
+                        int panelHeight = dynamicPanel.getHeight() - khoiFieldsPanel.getHeight() - 50;
+
+                        if (panelWidth > 0 && panelHeight > 0) {
+                            BufferedImage resizedImage = resizeImage(originalImage, Math.min(panelWidth, 1500), Math.min(panelHeight, 650));
+                            chuThichLabel.setIcon(new ImageIcon(resizedImage));
+                        }
+                    }
+                });
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                dynamicPanel.add(new JLabel("Không thể tải ảnh"), gbcDynamic);
+            }
+
+            // Xử lý khi chọn khối
             khoiComboBox.addActionListener(e -> {
                 String selectedKhoi = (String) khoiComboBox.getSelectedItem();
-                showKhoiFields(selectedKhoi, khoiFieldsPanel);
-            });
 
-            // Ảnh chú thích
-            gbcDynamic.gridy = 2; // Đẩy ảnh xuống dưới cùng
-            gbcDynamic.weighty = 1.0; // Phần còn lại dành cho ảnh
-            gbcDynamic.anchor = GridBagConstraints.SOUTH; // Gắn ảnh vào phần cuối cùng
-            gbcDynamic.fill = GridBagConstraints.BOTH; // Ảnh chiếm toàn bộ phần còn lại
+                if (!"Chọn khối".equals(selectedKhoi)) {
+                    // Xóa ảnh chú thích khi đã chọn khối
+                    dynamicPanel.remove(chuThichLabel);
 
-            JLabel chuThichLabel = new JLabel();
-            chuThichLabel.setHorizontalAlignment(JLabel.CENTER); // Ảnh căn giữa
-            dynamicPanel.add(chuThichLabel, gbcDynamic);
-
-            // Tự động điều chỉnh kích thước ảnh
-            dynamicPanel.addComponentListener(new ComponentAdapter() {
-                @Override
-                public void componentResized(ComponentEvent e) {
-                    int panelWidth = dynamicPanel.getWidth();
-                    int panelHeight = dynamicPanel.getHeight() - khoiFieldsPanel.getHeight() - 50; // Trừ chiều cao phần trên
-
-                    ImageIcon originalIcon = new ImageIcon("D:/TableIilustration.png");
-                    Image scaledImage = originalIcon.getImage().getScaledInstance(
-                            panelWidth, // Đặt chiều rộng bằng panel
-                            panelHeight > 0 ? panelHeight : -1, // Tự động điều chỉnh chiều cao nếu hợp lệ
-                            Image.SCALE_SMOOTH
-                    );
-                    chuThichLabel.setIcon(new ImageIcon(scaledImage));
+                    // Hiển thị các trường nhập liệu tương ứng với khối đã chọn
+                    showKhoiFields(selectedKhoi, khoiFieldsPanel);
+                } else {
+                    // Nếu chọn lại "Chọn khối", xóa các trường nhập liệu và hiển thị lại ảnh
+                    khoiFieldsPanel.removeAll();
+                    dynamicPanel.add(chuThichLabel, gbcDynamic);
                 }
+
+                // Cập nhật giao diện
+                dynamicPanel.revalidate();
+                dynamicPanel.repaint();
             });
         }
 
         dynamicPanel.revalidate();
         dynamicPanel.repaint();
+    }
+
+    private BufferedImage resizeImage(BufferedImage originalImage, int targetWidth, int targetHeight) {
+        BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = resizedImage.createGraphics();
+        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2d.drawImage(originalImage, 0, 0, targetWidth, targetHeight, null);
+        g2d.dispose();
+        return resizedImage;
     }
 
 
