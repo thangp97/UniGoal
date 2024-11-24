@@ -1,4 +1,4 @@
-package Version2.src.GUI;
+package Version2.src.View;
 
 import Version2.src.Model.GraduateScoreResult;
 
