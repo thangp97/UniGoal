@@ -13,14 +13,39 @@ public class RecommendDGTDController {
         this.connection = DatabaseConnection.getConnection();
     }
 
+    public void loadAllUniversitySuggestions(JTable bangGoiY) {
+        String sql = "SELECT DISTINCT t.maTruong, t.tenTruong, c.tenNganh, d.toHopMon, d.diemChuan " +
+                "FROM truongdaihoc t " +
+                "JOIN dgtd d ON t.maTruong = d.maTruong " +
+                "JOIN chuyennganh c ON d.maNganh = c.maNganh";
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(sql)) {
+
+            DefaultTableModel model = (DefaultTableModel) bangGoiY.getModel();
+            model.setRowCount(0); // Xóa dữ liệu cũ
+
+            while (resultSet.next()) {
+                String maTruong = resultSet.getString("maTruong");
+                String tenTruong = resultSet.getString("tenTruong");
+                String tenNganh = resultSet.getString("tenNganh");
+                String toHopMon = resultSet.getString("toHopMon");
+                int diemChuan = resultSet.getInt("diemChuan");
+
+                model.addRow(new Object[]{maTruong, tenTruong, tenNganh, toHopMon, diemChuan});
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Error loading all data: " + e.getMessage());
+        }
+    }
+
     public void loadNganhData(JComboBox<String> comboBoxChonNganh) {
         try {
             String sql = "SELECT DISTINCT c.tenNganh FROM chuyennganh c JOIN dgtd d ON c.maNganh = d.maNganh";
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
 
-            // Xóa các item cũ trong comboBox
-            comboBoxChonNganh.removeAllItems();
+            comboBoxChonNganh.removeAllItems(); // Xóa các item cũ
+            comboBoxChonNganh.addItem("Tất Cả Các Ngành"); // Thêm lựa chọn mặc định
 
             while (resultSet.next()) {
                 comboBoxChonNganh.addItem(resultSet.getString("tenNganh"));
@@ -30,16 +55,32 @@ public class RecommendDGTDController {
         }
     }
 
-    public void getUniversitySuggestionsByDGTYDiem(int diem, String selectedNganh, JTable bangGoiY) {
-        try {
-            String sql = "SELECT DISTINCT t.maTruong, t.tenTruong, c.tenNganh, d.diemChuan " +
+    public void getUniversitySuggestionsByDGTD(int diem, String selectedNganh, String selectedToHopMon, JTable bangGoiY) {
+        String sql;
+
+        if ("Tất Cả Các Ngành".equals(selectedNganh)) {
+            sql = "SELECT DISTINCT t.maTruong, t.tenTruong, c.tenNganh, d.toHopMon, d.diemChuan " +
                     "FROM truongdaihoc t " +
                     "JOIN dgtd d ON t.maTruong = d.maTruong " +
                     "JOIN chuyennganh c ON d.maNganh = c.maNganh " +
-                    "WHERE c.tenNganh = ? AND d.diemChuan <= ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, selectedNganh);
-            preparedStatement.setInt(2, diem);
+                    "WHERE d.toHopMon = ? AND d.diemChuan <= ?";
+        } else {
+            sql = "SELECT DISTINCT t.maTruong, t.tenTruong, c.tenNganh, d.toHopMon, d.diemChuan " +
+                    "FROM truongdaihoc t " +
+                    "JOIN dgtd d ON t.maTruong = d.maTruong " +
+                    "JOIN chuyennganh c ON d.maNganh = c.maNganh " +
+                    "WHERE c.tenNganh = ? AND d.toHopMon = ? AND d.diemChuan <= ?";
+        }
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            if ("Tất Cả Các Ngành".equals(selectedNganh)) {
+                preparedStatement.setString(1, selectedToHopMon);
+                preparedStatement.setInt(2, diem);
+            } else {
+                preparedStatement.setString(1, selectedNganh);
+                preparedStatement.setString(2, selectedToHopMon);
+                preparedStatement.setInt(3, diem);
+            }
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -51,10 +92,11 @@ public class RecommendDGTDController {
                 String maTruong = resultSet.getString("maTruong");
                 String tenTruong = resultSet.getString("tenTruong");
                 String tenNganh = resultSet.getString("tenNganh");
+                String toHopMon = resultSet.getString("toHopMon");
                 int diemChuan = resultSet.getInt("diemChuan");
 
                 if (diem >= diemChuan) {
-                    model.addRow(new Object[]{maTruong, tenTruong, tenNganh, diemChuan});
+                    model.addRow(new Object[]{maTruong, tenTruong, tenNganh, toHopMon, diemChuan});
                     hasResults = true;
                 }
             }

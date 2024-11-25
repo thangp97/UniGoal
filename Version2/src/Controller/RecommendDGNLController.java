@@ -14,12 +14,37 @@ public class RecommendDGNLController {
         this.connection = DatabaseConnection.getConnection();
     }
 
+    public void loadAllUniversitySuggestions(JTable bangGoiY) {
+        String sql = "SELECT DISTINCT t.maTruong, t.tenTruong, c.tenNganh, d.diemChuan " +
+                "FROM truongdaihoc t " +
+                "JOIN dgnl d ON t.maTruong = d.maTruong " +
+                "JOIN chuyennganh c ON d.maNganh = c.maNganh";
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(sql)) {
+
+            DefaultTableModel model = (DefaultTableModel) bangGoiY.getModel();
+            model.setRowCount(0); // Xóa dữ liệu cũ
+
+            while (resultSet.next()) {
+                String maTruong = resultSet.getString("maTruong");
+                String tenTruong = resultSet.getString("tenTruong");
+                String tenNganh = resultSet.getString("tenNganh");
+                double diemChuan = resultSet.getDouble("diemChuan");
+
+                model.addRow(new Object[]{maTruong, tenTruong, tenNganh, diemChuan});
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Error loading all data: " + e.getMessage());
+        }
+    }
+
     public void loadNganhData(JComboBox<String> comboBoxChonNganh) {
         String sql = "SELECT DISTINCT c.tenNganh FROM chuyennganh c JOIN dgnl d ON c.maNganh = d.maNganh";
         try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(sql)) {
 
             comboBoxChonNganh.removeAllItems(); // Xóa các item cũ
+            comboBoxChonNganh.addItem("Tất Cả Các Ngành"); // Thêm lựa chọn mặc định
 
             while (resultSet.next()) {
                 comboBoxChonNganh.addItem(resultSet.getString("tenNganh"));
@@ -30,14 +55,29 @@ public class RecommendDGNLController {
     }
 
     public void getUniversitySuggestionsByDGNL(int diem, String selectedNganh, JTable bangGoiY) {
-        String sql = "SELECT DISTINCT t.maTruong, t.tenTruong, c.tenNganh, d.diemChuan " +
-                "FROM truongdaihoc t " +
-                "JOIN dgnl d ON t.maTruong = d.maTruong " +
-                "JOIN chuyennganh c ON d.maNganh = c.maNganh " +
-                "WHERE c.tenNganh = ? AND d.diemChuan <= ?";
+        String sql;
+
+        if ("Tất Cả Các Ngành".equals(selectedNganh)) {
+            sql = "SELECT DISTINCT t.maTruong, t.tenTruong, c.tenNganh, d.diemChuan " +
+                    "FROM truongdaihoc t " +
+                    "JOIN dgnl d ON t.maTruong = d.maTruong " +
+                    "JOIN chuyennganh c ON d.maNganh = c.maNganh " +
+                    "WHERE d.diemChuan <= ?";
+        } else {
+            sql = "SELECT DISTINCT t.maTruong, t.tenTruong, c.tenNganh, d.diemChuan " +
+                    "FROM truongdaihoc t " +
+                    "JOIN dgnl d ON t.maTruong = d.maTruong " +
+                    "JOIN chuyennganh c ON d.maNganh = c.maNganh " +
+                    "WHERE c.tenNganh = ? AND d.diemChuan <= ?";
+        }
+
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setString(1, selectedNganh);
-            preparedStatement.setInt(2, diem);
+            if (!"Tất Cả Các Ngành".equals(selectedNganh)) {
+                preparedStatement.setString(1, selectedNganh);
+                preparedStatement.setInt(2, diem);
+            } else {
+                preparedStatement.setInt(1, diem);
+            }
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 updateTableData(resultSet, diem, bangGoiY);
