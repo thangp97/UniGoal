@@ -1,10 +1,7 @@
 package Version2.src.Main;
 
-import Version2.src.View.RecommendDGNLView;
+import Version2.src.View.*;
 import Version2.src.Controller.UniversitySearch;
-import Version2.src.View.GraduateCaculateTab;
-import Version2.src.View.RecommendDGTDView;
-import Version2.src.View.UniversityCaculateTab;
 
 import javax.swing.*;
 
@@ -19,9 +16,9 @@ public class Main {
 
         JTabbedPane tabbedPane = new JTabbedPane();
 
-        GraduateCaculateTab tab1 = new GraduateCaculateTab();
+        GraduateCaculateView tab1 = new GraduateCaculateView();
         UniversityCaculateTab tab2 = new UniversityCaculateTab();
-        UniversitySearch tab3 = new UniversitySearch();
+        UniversitySearchView tab3 = new UniversitySearchView();
         RecommendDGNLView tab4 = new RecommendDGNLView();
         RecommendDGTDView tab5 = new RecommendDGTDView();
 
