@@ -20,7 +20,7 @@ public class RecommendDGTDView extends JPanel {
         // Khởi tạo giao diện
         textNhapDiem = new JTextField(10);
         comboBoxChonNganh = new JComboBox<>();
-        goiYTruongDaiHoc = new JButton("Gợi ý trường đại học");
+        goiYTruongDaiHoc = new JButton("Gợi ý ngành học phù hợp");
         bangGoiY = new JTable(new DefaultTableModel(new String[]{"Mã Trường", "Tên Trường", "Tên Ngành", "Điểm Đánh Giá Tư Duy"}, 0));
 
         setupUI();

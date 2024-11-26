@@ -22,14 +22,10 @@ public class Main {
         GraduateCaculateTab tab1 = new GraduateCaculateTab();
         UniversityCaculateTab tab2 = new UniversityCaculateTab();
         UniversitySearch tab3 = new UniversitySearch();
-        RecommendDGNLView tab4 = new RecommendDGNLView();
-        RecommendDGTDView tab5 = new RecommendDGTDView();
 
         tabbedPane.add("Tính điểm tốt nghiệp THPT", tab1.getPanel());
         tabbedPane.add("Tính điểm xét tuyển đại học", tab2.getPanel());
         tabbedPane.add("Tìm kiếm trường đại học", tab3.getPanel());
-        tabbedPane.add("Đề xuất dựa trên kết quả ĐGNL", tab4.getPanel());
-        tabbedPane.add("Đề xuất dựa trên kết quả ĐGTD", tab5.getPanel());
 
         frame.add(tabbedPane);
         frame.setVisible(true);

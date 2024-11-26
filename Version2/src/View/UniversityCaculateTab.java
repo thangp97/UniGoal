@@ -120,14 +120,18 @@ public class UniversityCaculateTab {
 
         MethodComboBox.addActionListener(e -> {
             String selectedMethod = (String) MethodComboBox.getSelectedItem();
-            showInputTab2(selectedMethod, dynamictab2);
+            try {
+                showInputTab2(selectedMethod, dynamictab2);
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
         });
     }
 
     public JPanel getPanel() {
         return tab2;
     }
-    private void showInputTab2(String selectedMethod, JPanel dynamicPanel) {
+    private void showInputTab2(String selectedMethod, JPanel dynamicPanel) throws Exception {
         dynamicPanel.removeAll();
         dynamicPanel.setLayout(new GridBagLayout());
 
@@ -202,6 +206,12 @@ public class UniversityCaculateTab {
                 dynamicPanel.revalidate();
                 dynamicPanel.repaint();
             });
+        } if ("Xét DGNL".equals(selectedMethod)) {
+            RecommendDGNLView recommendDGNLView = new RecommendDGNLView();
+            dynamicPanel.add(recommendDGNLView.getPanel(), gbcDynamic);
+        } if ("Xét DGTD".equals(selectedMethod)) {
+            RecommendDGTDView recommendDGTDView = new RecommendDGTDView();
+            dynamicPanel.add(recommendDGTDView.getPanel(), gbcDynamic);
         }
 
         dynamicPanel.revalidate();
@@ -288,7 +298,7 @@ public class UniversityCaculateTab {
             gbc.gridx = 0;
             gbc.gridy++;
             gbc.gridwidth = GridBagConstraints.REMAINDER;
-            JButton calcadmissionButton = new JButton("Tính điểm xét tuyển và đề xuất ngành học phù hợp");
+            JButton calcadmissionButton = new JButton("Tính điểm xét tuyển và gợi ý ngành học phù hợp");
             calcadmissionButton.setBackground(new Color(0, 123, 255)); // Màu nền cho nút
             calcadmissionButton.setForeground(Color.WHITE); // Màu chữ cho nút
             calcadmissionButton.setPreferredSize(new Dimension(200, 40));
