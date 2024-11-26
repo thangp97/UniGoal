@@ -20,14 +20,18 @@ public class RecommendDGNLView extends JPanel {
         // Khởi tạo giao diện
         textNhapDiem = new JTextField(10);
         comboBoxChonNganh = new JComboBox<>();
-        goiYTruongDaiHoc = new JButton("Gợi ý ngành học phù hợp");
-        bangGoiY = new JTable(new DefaultTableModel(new String[]{"Mã Trường", "Tên Trường", "Tên Ngành", "Điểm Đánh Giá Năng Lực"}, 0));
-
+        goiYTruongDaiHoc = new JButton("Gợi ý trường đại học");
+        bangGoiY = new JTable(new DefaultTableModel(
+                new String[]{"Mã Trường", "Tên Trường", "Tên Ngành", "Điểm Đánh Giá Năng Lực"}, 0));
+        bangGoiY.setAutoCreateRowSorter(true);
         setupUI();
         setupEvents();
 
-        // Load dữ liệu ngành từ controller
+        // Tải dữ liệu ngành
         controller.loadNganhData(comboBoxChonNganh);
+
+        // Hiển thị toàn bộ trường khi mở ứng dụng
+        controller.loadAllUniversitySuggestions(bangGoiY);
     }
 
     private void setupUI() {

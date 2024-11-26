@@ -7,7 +7,7 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GraduateCaculateTab {
+public class GraduateCaculateView {
     private JPanel tab1;
     private JTextField[] subjectTextFields;
     private JTextField tb12Field, khuyenKhichField, uuTienField;
@@ -22,7 +22,7 @@ public class GraduateCaculateTab {
         khuVucPoints.put("KV3", 0.0); // Khu vực 3 không cộng điểm
     }
 
-    public GraduateCaculateTab() {
+    public GraduateCaculateView() {
         tab1 = new JPanel();
         tab1.setLayout(new GridBagLayout());
         tab1.setBackground(new Color(240, 240, 240)); // Màu nền trắng cho tab1
@@ -204,8 +204,8 @@ public class GraduateCaculateTab {
             for (int i = 0; i < subjectTextFields.length; i++) {
                 if (subjectTextFields[i].getText().trim().isEmpty()) {
                     throw new IllegalArgumentException("Vui lòng nhập điểm cho môn: " + (i == 0 ? "Toán" :
-                                                        i == 1 ? "Văn" :
-                                                        i == 2 ? "Tiếng Anh" : "Môn tổ hợp " + (i - 2)));
+                            i == 1 ? "Văn" :
+                                    i == 2 ? "Tiếng Anh" : "Môn tổ hợp " + (i - 2)));
                 }
             }
 
@@ -267,6 +267,3 @@ public class GraduateCaculateTab {
     }
 
 }
-
-
-
