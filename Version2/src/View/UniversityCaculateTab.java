@@ -209,9 +209,13 @@ public class UniversityCaculateTab {
         } if ("Xét DGNL".equals(selectedMethod)) {
             RecommendDGNLView recommendDGNLView = new RecommendDGNLView();
             dynamicPanel.add(recommendDGNLView.getPanel(), gbcDynamic);
+
+            dynamicPanel.revalidate();
+            dynamicPanel.repaint();
         } if ("Xét DGTD".equals(selectedMethod)) {
             RecommendDGTDView recommendDGTDView = new RecommendDGTDView();
             dynamicPanel.add(recommendDGTDView.getPanel(), gbcDynamic);
+
         }
 
         dynamicPanel.revalidate();
