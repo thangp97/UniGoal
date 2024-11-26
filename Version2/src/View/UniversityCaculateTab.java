@@ -14,6 +14,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import static Version2.src.Utils.Constants.TABLE_ILLUSTRATION_PATH;
+
 public class UniversityCaculateTab {
     private JPanel tab2;
 
@@ -166,7 +168,7 @@ public class UniversityCaculateTab {
 
             JLabel chuThichLabel = new JLabel(); // Đặt JLabel ở đây để có thể xóa sau này
             try {
-                BufferedImage originalImage = ImageIO.read(new File("D:/TableIilustration.png"));
+                BufferedImage originalImage = ImageIO.read(new File(TABLE_ILLUSTRATION_PATH));
                 dynamicPanel.add(chuThichLabel, gbcDynamic);
 
                 // Tự động điều chỉnh kích thước ảnh
@@ -216,6 +218,8 @@ public class UniversityCaculateTab {
             RecommendDGTDView recommendDGTDView = new RecommendDGTDView();
             dynamicPanel.add(recommendDGTDView.getPanel(), gbcDynamic);
 
+            dynamicPanel.revalidate();
+            dynamicPanel.repaint();
         }
 
         dynamicPanel.revalidate();
