@@ -14,8 +14,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static Version2.src.Utils.Constants.TABLE_ILLUSTRATION_PATH;
-
 public class UniversityCaculateTab {
     private JPanel tab2;
 
@@ -141,73 +139,11 @@ public class UniversityCaculateTab {
         gbcDynamic.insets = new Insets(5, 5, 5, 5);
 
         if ("Xét THPT".equals(selectedMethod)) {
-            // Label và JComboBox
-            gbcDynamic.gridx = 0;
-            gbcDynamic.gridy = 0;
-            gbcDynamic.anchor = GridBagConstraints.WEST;
-            dynamicPanel.add(new JLabel("Chọn khối:"), gbcDynamic);
+            RecommendTHPTView recommendTHPTView = new RecommendTHPTView();
+            dynamicPanel.add(recommendTHPTView.getPanel(), gbcDynamic);
 
-            gbcDynamic.gridx = 1;
-            ArrayList<String> sortedKhoiList = new ArrayList<>(khoiSubjects.keySet());
-            Collections.sort(sortedKhoiList);
-            sortedKhoiList.add(0, "Chọn khối");
-            JComboBox<String> khoiComboBox = new JComboBox<>(sortedKhoiList.toArray(new String[0]));
-            dynamicPanel.add(khoiComboBox, gbcDynamic);
-
-            // Khu vực các trường nhập liệu
-            gbcDynamic.gridx = 0;
-            gbcDynamic.gridy = 1;
-            gbcDynamic.gridwidth = 2;
-            JPanel khoiFieldsPanel = new JPanel(new GridBagLayout());
-            dynamicPanel.add(khoiFieldsPanel, gbcDynamic);
-
-            // Ảnh chú thích
-            gbcDynamic.gridy = 2;
-            gbcDynamic.fill = GridBagConstraints.BOTH;
-            gbcDynamic.weighty = 1.0;
-
-            JLabel chuThichLabel = new JLabel(); // Đặt JLabel ở đây để có thể xóa sau này
-            try {
-                BufferedImage originalImage = ImageIO.read(new File(TABLE_ILLUSTRATION_PATH));
-                dynamicPanel.add(chuThichLabel, gbcDynamic);
-
-                // Tự động điều chỉnh kích thước ảnh
-                dynamicPanel.addComponentListener(new ComponentAdapter() {
-                    @Override
-                    public void componentResized(ComponentEvent e) {
-                        int panelWidth = dynamicPanel.getWidth();
-                        int panelHeight = dynamicPanel.getHeight() - khoiFieldsPanel.getHeight() - 50;
-                        if (panelWidth > 0 && panelHeight > 0) {
-                            BufferedImage resizedImage = resizeImage(originalImage, Math.min(panelWidth, 1500), Math.min(panelHeight, 650));
-                            chuThichLabel.setIcon(new ImageIcon(resizedImage));
-                        }
-                    }
-                });
-            } catch (IOException ex) {
-                ex.printStackTrace();
-                dynamicPanel.add(new JLabel("Không thể tải ảnh"), gbcDynamic);
-            }
-
-            // Xử lý khi chọn khối
-            khoiComboBox.addActionListener(e -> {
-                String selectedKhoi = (String) khoiComboBox.getSelectedItem();
-
-                if (!"Chọn khối".equals(selectedKhoi)) {
-                    // Xóa ảnh chú thích khi đã chọn khối
-                    dynamicPanel.remove(chuThichLabel);
-
-                    // Hiển thị các trường nhập liệu tương ứng với khối đã chọn
-                    showKhoiFields(selectedKhoi, khoiFieldsPanel);
-                } else {
-                    // Nếu chọn lại "Chọn khối", xóa các trường nhập liệu và hiển thị lại ảnh
-                    khoiFieldsPanel.removeAll();
-                    dynamicPanel.add(chuThichLabel, gbcDynamic);
-                }
-
-                // Cập nhật giao diện
-                dynamicPanel.revalidate();
-                dynamicPanel.repaint();
-            });
+            dynamicPanel.revalidate();
+            dynamicPanel.repaint();
         } if ("Xét DGNL".equals(selectedMethod)) {
             RecommendDGNLView recommendDGNLView = new RecommendDGNLView();
             dynamicPanel.add(recommendDGNLView.getPanel(), gbcDynamic);
@@ -218,8 +154,6 @@ public class UniversityCaculateTab {
             RecommendDGTDView recommendDGTDView = new RecommendDGTDView();
             dynamicPanel.add(recommendDGTDView.getPanel(), gbcDynamic);
 
-            dynamicPanel.revalidate();
-            dynamicPanel.repaint();
         }
 
         dynamicPanel.revalidate();

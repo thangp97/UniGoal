@@ -256,9 +256,12 @@ public class GraduateCaculateView {
             // Tính điểm tốt nghiệp
             double result = GraduateScoreResult.calculateGraduationScore(
                     mathScore, literatureScore, englishScore, avgCombinationScore, tb12, khuyenKhich, uuTien);
+            String x = "";
+            if(result >=5) x = "Bạn đã đủ điều kiện xét tốt nghiệp THPT.";
+            else x = "Bạn chưa đủ điều kiện xét tốt nghiệp THPT.";
 
             // Hiển thị kết quả
-            JOptionPane.showMessageDialog(tab1, "Điểm tốt nghiệp: " + String.format("%.2f", result));
+            JOptionPane.showMessageDialog(tab1, "Điểm tốt nghiệp: " + String.format("%.2f \n %s", result,x));
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(tab1, "Vui lòng nhập đúng định dạng điểm!");
         } catch (IllegalArgumentException e) {
