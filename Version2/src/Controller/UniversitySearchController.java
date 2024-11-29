@@ -1,93 +1,49 @@
 package Version2.src.Controller;
 
-import Version2.src.Model.*;
+import Version2.src.Model.DaiHocLoadData;
+import Version2.src.Model.DaiHocSearchResult;
+import Version2.src.Model.FavoriteItem;
 import Version2.src.Utils.DatabaseConnection;
 import Version2.src.Utils.NonEditableTableModel;
-import Version2.src.View.UniversitySearchView;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.*;
 import java.util.ArrayList;
 
 public class UniversitySearchController {
-    private UniversitySearchView view;
     private Connection connection;
-    private int pageNumber = 1;
-    private int pageSize = 10;
 
-    public UniversitySearchController(UniversitySearchView view){
-        this.view = view;
+    public UniversitySearchController() throws SQLException {
         try {
-        connection = DatabaseConnection.getConnection();
-    } catch (SQLException e) {
-        e.printStackTrace();
+            connection = DatabaseConnection.getConnection();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
-    initializeListeners();
-    loadUniversityData();
-}
 
-private void initializeListeners() {
-    view.addSearchButtonListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            searchUniversityData();
-        }
-    });
+    public void loadUniversityData(JTable universityTable) {
+        String sql = "SELECT * FROM truongdaihoc";
+        try (Statement statement = connection.createStatement();
+             ResultSet rs = statement.executeQuery(sql)) {
+            ArrayList<DaiHocLoadData> data = new ArrayList<>();
+            DefaultTableModel model = (DefaultTableModel) universityTable.getModel();
+            model.setRowCount(0);
 
-    view.addPrevButtonListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            prevPage();
-        }
-    });
+            while (rs.next()) {
+                String maTruong = rs.getString("maTruong");
+                String tenTruong = rs.getString("tenTruong");
+                double diemSan = rs.getDouble("diemSan");
 
-    view.addNextButtonListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            nextPage();
+                model.addRow(new Object[]{maTruong, tenTruong, diemSan});
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Error loading all data: " + e.getMessage());
         }
-    });
-}
-
-private void loadUniversityData() {
-    try {
-        String query = "SELECT * FROM truongdaihoc LIMIT ?, ?";
-        PreparedStatement stmt = connection.prepareStatement(query);
-        stmt.setInt(1, (pageNumber - 1) * pageSize);
-        stmt.setInt(2, pageSize);
-        ResultSet rs = stmt.executeQuery();
-        ArrayList<DaiHocLoadData> data = new ArrayList<>();
-        while (rs.next()) {
-            DaiHocLoadData daiHocLoadData = new DaiHocLoadData(
-                    rs.getString("maTruong"),
-                    rs.getString("tenTruong"),
-                    rs.getDouble("diemSan")
-            );
-            data.add(daiHocLoadData);
-        }
-        Object[][] dataArray = new Object[data.size()][3];
-        for (int i = 0; i < data.size(); i++) {
-            DaiHocLoadData daiHocLoadData = data.get(i);
-            dataArray[i][0] = daiHocLoadData.getMaTruong();
-            dataArray[i][1] = daiHocLoadData.getTenTruong();
-            dataArray[i][2] = daiHocLoadData.getDiemSan();
-        }
-        NonEditableTableModel model = new NonEditableTableModel(
-                dataArray, new String[]{"Mã Trường", "Tên Trường", "Điểm Sàn"}
-        );
-        view.getTable().setModel(model);
-        TableRowSorter<NonEditableTableModel> sorter = new TableRowSorter<>(model);
-        view.setTableModel(sorter);
-    } catch (SQLException e) {
-        JOptionPane.showMessageDialog(view.getTable(), "Error: " + e.getMessage());
     }
-}
 
-private void searchUniversityData() {
-    try {
+    public void searchUniversityData(String maTruong, String maNganh, String tenTruong, String tenNganh, String diemTrungTuyen, JTable universityTable) {
         StringBuilder query = new StringBuilder(
                 "SELECT DISTINCT d.maTruong, d.tenTruong, dt.diemTrungTuyen, dt.tenNganh " +
                         "FROM truongdaihoc d " +
@@ -95,98 +51,84 @@ private void searchUniversityData() {
                         "WHERE 1=1"
         );
 
-        if (!view.getMaTruongField().isEmpty()) {
+        if (!maTruong.isEmpty()) {
             query.append(" AND d.maTruong LIKE ?");
         }
-        if (!view.getMaNganhField().isEmpty()) {
+        if (!maNganh.isEmpty()) {
             query.append(" AND dt.maNganh LIKE ?");
         }
-        if (!view.getTenTruongField().isEmpty()) {
+        if (!tenTruong.isEmpty()) {
             query.append(" AND d.tenTruong LIKE ?");
         }
-        if (!view.getTenNganhField().isEmpty()) {
+        if (!tenNganh.isEmpty()) {
             query.append(" AND dt.tenNganh LIKE ?");
         }
-        if (!view.getDiemTrungTuyenField().isEmpty()) {
+        if (!diemTrungTuyen.isEmpty()) {
             query.append(" AND dt.diemTrungTuyen <= ?");
         }
 
-        query.append(" LIMIT ?, ?");
+        try (PreparedStatement stmt = connection.prepareStatement(query.toString())) {
+            int index = 1;
+            if (!maTruong.isEmpty()) {
+                stmt.setString(index++, "%" + maTruong + "%");
+            }
+            if (!maNganh.isEmpty()) {
+                stmt.setString(index++, "%" + maNganh + "%");
+            }
+            if (!tenTruong.isEmpty()) {
+                stmt.setString(index++, "%" + tenTruong + "%");
+            }
+            if (!tenNganh.isEmpty()) {
+                stmt.setString(index++, "%" + tenNganh + "%");
+            }
+            if (!diemTrungTuyen.isEmpty()) {
+                stmt.setDouble(index++, Double.parseDouble(diemTrungTuyen));
+            }
 
-        PreparedStatement stmt = connection.prepareStatement(query.toString());
-        int index = 1;
-        if (!view.getMaTruongField().isEmpty()) {
-            stmt.setString(index++, "%" + view.getMaTruongField() + "%");
-        }
-        if (!view.getMaNganhField().isEmpty()) {
-            stmt.setString(index++, "%" + view.getMaNganhField() + "%");
-        }
-        if (!view.getTenTruongField().isEmpty()) {
-            stmt.setString(index++, "%" + view.getTenTruongField() + "%");
-        }
-        if (!view.getTenNganhField().isEmpty()) {
-            stmt.setString(index++, "%" + view.getTenNganhField() + "%");
-        }
-        if (!view.getDiemTrungTuyenField().isEmpty()) {
-            stmt.setDouble(index++, Double.parseDouble(view.getDiemTrungTuyenField()));
-        }
+            try (ResultSet rs = stmt.executeQuery()) {
+                ArrayList<DaiHocSearchResult> data = new ArrayList<>();
+                while (rs.next()) {
+                    DaiHocSearchResult daiHocSearchResult = new DaiHocSearchResult("", "", 0, "", 0);
+                    daiHocSearchResult.setMaTruong(rs.getString("maTruong"));
+                    daiHocSearchResult.setTenTruong(rs.getString("tenTruong"));
+                    daiHocSearchResult.setDiemTrungTuyen(rs.getDouble("diemTrungTuyen"));
+                    daiHocSearchResult.setTenNganh(rs.getString("tenNganh"));
+                    data.add(daiHocSearchResult);
+                }
 
-        stmt.setInt(index++, (pageNumber - 1) * pageSize);
-        stmt.setInt(index, pageSize);
+                Object[][] dataArray = new Object[data.size()][4];
+                for (int i = 0; i < data.size(); i++) {
+                    DaiHocSearchResult result = data.get(i);
+                    dataArray[i][0] = result.getMaTruong();
+                    dataArray[i][1] = result.getTenTruong();
+                    dataArray[i][2] = result.getDiemTrungTuyen();
+                    dataArray[i][3] = result.getTenNganh();
+                }
 
-        ResultSet rs = stmt.executeQuery();
-        ArrayList<DaiHocSearchResult> data = new ArrayList<>();
-        while (rs.next()) {
-            DaiHocSearchResult daiHocSearchResult = new DaiHocSearchResult("", "",0,"", 0);
-            daiHocSearchResult.setMaTruong(rs.getString("maTruong"));
-            daiHocSearchResult.setTenTruong(rs.getString("tenTruong"));
-            daiHocSearchResult.setDiemTrungTuyen(rs.getDouble("diemTrungTuyen"));
-            daiHocSearchResult.setTenNganh(rs.getString("tenNganh"));
-            data.add(daiHocSearchResult);
+                NonEditableTableModel model = new NonEditableTableModel(dataArray, new String[]{"Mã Trường", "Tên Trường", "Điểm Trúng Tuyển", "Tên Ngành"});
+                universityTable.setModel(model);
+
+                // Sort the table
+                TableRowSorter<NonEditableTableModel> sorter = new TableRowSorter<>(model);
+                universityTable.setRowSorter(sorter);
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
         }
-        Object[][] dataArray = new Object[data.size()][4];
-        for (int i = 0; i < data.size(); i++) {
-            DaiHocSearchResult daiHocSearchResult = data.get(i);
-            dataArray[i][0] = daiHocSearchResult.getMaTruong();
-            dataArray[i][1] = daiHocSearchResult.getTenTruong();
-            dataArray[i][2] = daiHocSearchResult.getDiemTrungTuyen();
-            dataArray[i][3] = daiHocSearchResult.getTenNganh();
-        }
-        NonEditableTableModel model = new NonEditableTableModel(
-                dataArray, new String[]{"Mã Trường", "Tên Trường", "Điểm Trúng Tuyển", "Tên Ngành"}
-        );
-        view.getTable().setModel(model);
-        TableRowSorter<NonEditableTableModel> sorter = new TableRowSorter<>(model);
-        view.setTableModel(sorter);
-    } catch (SQLException e) {
-        JOptionPane.showMessageDialog(view.getTable(), "Error: " + e.getMessage());
     }
-}
 
-private void prevPage() {
-    if (pageNumber > 1) {
-        pageNumber--;
-        loadUniversityData();
+    public void addToFavorites(JTable universityTable, DefaultListModel<FavoriteItem> favoriteListModel) {
+        int selectedRow = universityTable.getSelectedRow();
+        if (selectedRow != -1) {
+            String maTruong = (String) universityTable.getValueAt(selectedRow, 0); // Cột 0
+            String tenTruong = (String) universityTable.getValueAt(selectedRow, 1); // Cột 1
+            String tenNganh = (String) universityTable.getValueAt(selectedRow, 3);
+            double diemSan = (double) universityTable.getValueAt(selectedRow, 2);   // Cột 2
+
+            FavoriteItem favoriteItem = new FavoriteItem(maTruong, tenTruong, tenNganh, diemSan);
+            favoriteListModel.addElement(favoriteItem);
+        } else {
+            JOptionPane.showMessageDialog(universityTable, "Vui lòng chọn một trường để thêm vào yêu thích.");
+        }
     }
-}
-
-private void nextPage() {
-    pageNumber++;
-    loadUniversityData();
-}
-
-private void addToFavorites() {
-    int selectedRow = view.getTable().getSelectedRow();
-    if (selectedRow != -1) {
-        String maTruong = (String) view.getTable().getValueAt(selectedRow, 0);
-        String tenTruong = (String) view.getTable().getValueAt(selectedRow, 1);
-        String tenNganh = (String) view.getTable().getValueAt(selectedRow, 3);
-        double diemSan = (double) view.getTable().getValueAt(selectedRow, 2);
-
-        FavoriteItem favoriteItem = new FavoriteItem(maTruong, tenTruong, tenNganh, diemSan);
-        view.addToFavorites(favoriteItem);
-    } else {
-        JOptionPane.showMessageDialog(view.getTable(), "Vui lòng chọn một trường để thêm vào yêu thích.");
-    }
-}
 }

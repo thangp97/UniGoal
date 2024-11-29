@@ -64,3 +64,12 @@ public class RecommendDGNLView extends JPanel {
         return this;
     }
 }
+
+
+
+
+
+
+
+
+

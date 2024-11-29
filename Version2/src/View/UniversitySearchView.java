@@ -1,56 +1,76 @@
 package Version2.src.View;
 
+import Version2.src.Controller.UniversitySearchController;
+import Version2.src.Model.DaiHocSearchResult;
 import Version2.src.Model.FavoriteItem;
+import Version2.src.Utils.JButtonConfig;
+import Version2.src.Utils.NonEditableTableModel;
 
 import javax.swing.*;
+import java.awt.*;
+import java.sql.SQLException;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableRowSorter;
-import java.awt.*;
-import java.awt.event.ActionListener;
+import javax.swing.table.DefaultTableModel;
 
-public class UniversitySearchView {
-    private JTable table;
-    private JTextField maTruongField, maNganhField, tenTruongField, tenNganhField, diemTrungTuyenField;
+import static Version2.src.Utils.Constants.ADD_TO_FAVORITES_ICON_PATH;
+import static Version2.src.Utils.Constants.SEARCH_ICON_PATH;
+
+public class UniversitySearchView extends JPanel {
+    private final JTextField maTruongField, maNganhField, tenTruongField, tenNganhField, diemTrungTuyenField;
+    private final JTable universityTable;
+    private final JButton searchButton;
+    private JButtonConfig addToFavoritesButton;
     private DefaultListModel<FavoriteItem> favoriteListModel;
     private JList<FavoriteItem> favoriteList;
+    private final UniversitySearchController controller;
 
-    // Declare buttons as member variables
-    private JButton searchButton;
-    private JButton prevButton;
-    private JButton nextButton;
+    public UniversitySearchView() throws SQLException {
+        controller = new UniversitySearchController();
+        setLayout(new BorderLayout());
 
-    public UniversitySearchView() {
-        table = new JTable();
-        favoriteListModel = new DefaultListModel<>();
-        favoriteList = new JList<>(favoriteListModel);
+        // Khởi tạo giao diện
+        maTruongField = new JTextField(10);
+        maNganhField = new JTextField(10);
+        tenTruongField = new JTextField(10);
+        tenNganhField = new JTextField(10);
+        diemTrungTuyenField = new JTextField(10);
+        searchButton = new JButton("Tìm kiếm", new ImageIcon(SEARCH_ICON_PATH));
+
+        universityTable = new JTable(new DefaultTableModel(
+                new String[]{"Mã Trường", "Tên Trường", "Điểm Sàn"}, 0));
+        universityTable.setRowHeight(25);
+        universityTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
+        universityTable.getTableHeader().setBackground(Color.LIGHT_GRAY);
+        universityTable.setSelectionBackground(Color.YELLOW);
+        universityTable.setSelectionForeground(Color.BLACK);
+        universityTable.setAutoCreateRowSorter(true);
+
+        // Căn giữa dữ liệu trong bảng
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+        universityTable.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+        universityTable.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
+
+        // khởi tạo giao diện
+        setupUI();
+        setupEvents();
+
+        // Tải dữ liệu trường đại học khi mở ứng dụng
+        controller.loadUniversityData(universityTable);
     }
 
-    public JPanel getPanel() {
-        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        mainPanel.add(createSearchPanel(), BorderLayout.NORTH);
-        mainPanel.add(createTablePanel(), BorderLayout.CENTER);
-        mainPanel.add(createBottomPanel(), BorderLayout.SOUTH);
-        return mainPanel;
-    }
-
-    private JPanel createSearchPanel() {
+    private void setupUI() {
+        // Tạo panel tìm kiếm
         JPanel searchPanel = new JPanel(new GridLayout(6, 2, 5, 5));
         searchPanel.setBorder(BorderFactory.createTitledBorder(
                 BorderFactory.createLineBorder(Color.GRAY, 1),
-                "Tìm Kiếm",
+                "Tìm Kiếm Trường Đại Học",
                 TitledBorder.DEFAULT_JUSTIFICATION,
                 TitledBorder.DEFAULT_POSITION,
                 new Font("Arial", Font.BOLD, 14),
                 Color.BLUE
         ));
-
-        maTruongField = new JTextField();
-        maNganhField = new JTextField();
-        tenTruongField = new JTextField();
-        tenNganhField = new JTextField();
-        diemTrungTuyenField = new JTextField();
 
         searchPanel.add(new JLabel("Mã Trường:"));
         searchPanel.add(maTruongField);
@@ -62,27 +82,10 @@ public class UniversitySearchView {
         searchPanel.add(tenNganhField);
         searchPanel.add(new JLabel("Điểm Trúng Tuyển:"));
         searchPanel.add(diemTrungTuyenField);
-
-        // Initialize the search button
-        searchButton = new JButton("Tìm kiếm");
-        searchPanel.add(new JLabel());
         searchPanel.add(searchButton);
 
-        return searchPanel;
-    }
-
-    private JScrollPane createTablePanel() {
-        table.setRowHeight(25);
-        table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
-        table.getTableHeader().setBackground(Color.LIGHT_GRAY);
-        table.setSelectionBackground(Color.YELLOW);
-        table.setSelectionForeground(Color.BLACK);
-
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-        table.setDefaultRenderer(Object.class, centerRenderer);
-
-        JScrollPane tableScrollPane = new JScrollPane(table);
+        // Bảng kết quả tìm kiếm
+        JScrollPane tableScrollPane = new JScrollPane(universityTable);
         tableScrollPane.setBorder(BorderFactory.createTitledBorder(
                 BorderFactory.createLineBorder(Color.GRAY, 1),
                 "Danh Sách Trường Đại Học",
@@ -91,68 +94,56 @@ public class UniversitySearchView {
                 new Font("Arial", Font.BOLD, 14),
                 Color.BLUE
         ));
-        return tableScrollPane;
-    }
 
-    private JPanel createBottomPanel() {
         JPanel bottomPanel = new JPanel(new BorderLayout(10, 10));
+        addToFavoritesButton = new JButtonConfig("Thêm vào yêu thích", new ImageIcon(ADD_TO_FAVORITES_ICON_PATH));
+        bottomPanel.add(addToFavoritesButton, BorderLayout.SOUTH);
 
-        JPanel paginationPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 3, 3));
+        // Favorite List
+        favoriteListModel = new DefaultListModel<>();
+        favoriteList = new JList<>(favoriteListModel);
+        favoriteList.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(Color.GRAY, 1),
+                "Danh Sách Yêu Thích",
+                TitledBorder.DEFAULT_JUSTIFICATION,
+                TitledBorder.DEFAULT_POSITION,
+                new Font("Arial", Font.BOLD, 14),
+                Color.BLUE
+        ));
 
-        // Initialize the previous and next buttons
-        prevButton = new JButton("Previous");
-        nextButton = new JButton("Next");
-
-        paginationPanel.add(prevButton);
-        paginationPanel.add(nextButton);
-
-        bottomPanel.add(paginationPanel, BorderLayout.NORTH);
         bottomPanel.add(new JScrollPane(favoriteList), BorderLayout.CENTER);
 
-        return bottomPanel;
+        add(searchPanel, BorderLayout.NORTH);
+        add(tableScrollPane, BorderLayout.CENTER);
+        add(bottomPanel, BorderLayout.SOUTH);
     }
 
-    public void setTableModel(TableRowSorter sorter) {
-        table .setRowSorter(sorter);
+    private void setupEvents() {
+        searchButton.addActionListener(e -> {
+            try {
+                controller.searchUniversityData(maTruongField.getText(), maNganhField.getText(),
+                        tenTruongField.getText(), tenNganhField.getText(), diemTrungTuyenField.getText(), universityTable);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Có lỗi xảy ra trong quá trình tìm kiếm!");
+            }
+        });
+
+        addToFavoritesButton.addActionListener(e -> {
+            try {
+                controller.addToFavorites(universityTable, favoriteListModel);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Có lỗi xảy ra trong quá trình tìm kiếm!");
+            }
+        });
     }
 
-    public String getMaTruongField() {
-        return maTruongField.getText();
+    public JPanel getPanel() {
+        return this;
     }
 
-    public String getMaNganhField() {
-        return maNganhField.getText();
+    public UniversitySearchController getController() {
+        return controller;
     }
 
-    public String getTenTruongField() {
-        return tenTruongField.getText();
-    }
 
-    public String getTenNganhField() {
-        return tenNganhField.getText();
-    }
-
-    public String getDiemTrungTuyenField() {
-        return diemTrungTuyenField.getText();
-    }
-
-    public void addSearchButtonListener(ActionListener listener) {
-        searchButton.addActionListener(listener);
-    }
-
-    public void addPrevButtonListener(ActionListener listener) {
-        prevButton.addActionListener(listener);
-    }
-
-    public void addNextButtonListener(ActionListener listener) {
-        nextButton.addActionListener(listener);
-    }
-
-    public void addToFavorites(FavoriteItem item) {
-        favoriteListModel.addElement(item);
-    }
-
-    public JTable getTable() {
-        return table;
-    }
 }
