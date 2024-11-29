@@ -1,11 +1,13 @@
 package Version2.src.Controller;
 
 import Version2.src.Utils.DatabaseConnection;
+import Version2.src.Utils.NonEditableTableModel;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.sql.*;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 
 public class RecommendDGNLController {
     private final Connection connection;
@@ -22,17 +24,25 @@ public class RecommendDGNLController {
         try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(sql)) {
 
-            DefaultTableModel model = (DefaultTableModel) bangGoiY.getModel();
-            model.setRowCount(0); // Xóa dữ liệu cũ
-
+            // Chuẩn bị dữ liệu cho bảng
+            ArrayList<Object[]> data = new ArrayList<>();
             while (resultSet.next()) {
                 String maTruong = resultSet.getString("maTruong");
                 String tenTruong = resultSet.getString("tenTruong");
                 String tenNganh = resultSet.getString("tenNganh");
                 double diemChuan = resultSet.getDouble("diemChuan");
 
-                model.addRow(new Object[]{maTruong, tenTruong, tenNganh, diemChuan});
+                data.add(new Object[]{maTruong, tenTruong, tenNganh, diemChuan});
             }
+
+            // Chuyển đổi dữ liệu sang mảng để truyền vào NonEditableTableModel
+            Object[][] dataArray = data.toArray(new Object[0][]);
+            String[] columnNames = {"Mã Trường", "Tên Trường", "Tên Ngành", "Điểm Chuẩn"};
+
+            // Áp dụng NonEditableTableModel
+            NonEditableTableModel model = new NonEditableTableModel(dataArray, columnNames);
+            bangGoiY.setModel(model); // Cập nhật bảng với mô hình mới
+
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Error loading all data: " + e.getMessage());
         }
