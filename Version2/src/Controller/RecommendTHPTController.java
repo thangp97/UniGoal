@@ -42,12 +42,13 @@ public class RecommendTHPTController {
             JOptionPane.showMessageDialog(null, "Error loading all data: " + e.getMessage());
         }
     }
-    public static void loadToHopMonToComboBox(JComboBox<String> comboBox) {
+    public void loadToHopMonToComboBox(JComboBox<String> comboBox) {
         String query = "SELECT maToHop, mon1, mon2, mon3 FROM toHopMon";  // Truy vấn lấy maToHop và các môn
 
-        try (Connection connection = DatabaseConnection.getConnection(); // Tạo kết nối trong try-with-resources
-             Statement statement = connection.createStatement();
+        try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(query)) {
+
+            comboBox.removeAllItems();
 
             // Duyệt qua các bản ghi trong kết quả truy vấn và thêm vào comboBox
             while (resultSet.next()) {
@@ -62,7 +63,7 @@ public class RecommendTHPTController {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();  // Xử lý lỗi
+            JOptionPane.showMessageDialog(null, "Error loading ngành data: " + e.getMessage());// Xử lý lỗi
         }
     }
 
