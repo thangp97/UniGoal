@@ -40,6 +40,7 @@ public class RecommendDGNLView extends JPanel {
         topPanel.add(textNhapDiem);
         topPanel.add(new JLabel("Chọn ngành:"));
         topPanel.add(comboBoxChonNganh);
+        getPanel().setPreferredSize(new Dimension(1500, 750));
 
         add(topPanel, BorderLayout.NORTH);
         add(new JScrollPane(bangGoiY), BorderLayout.CENTER);

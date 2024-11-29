@@ -6,7 +6,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
-public class        RecommendDGTDView extends JPanel {
+public class RecommendDGTDView extends JPanel {
     private final JTextField textNhapDiem;
     private final JComboBox<String> comboBoxChonNganh;
     private final JTable bangGoiY;
@@ -44,7 +44,7 @@ public class        RecommendDGTDView extends JPanel {
         topPanel.add(comboBoxChonNganh);
         topPanel.add(new JLabel("Chọn tổ hợp môn:"));
         topPanel.add(comboBoxChonToHopMon);
-        getPanel().setPreferredSize(new Dimension(800, 500)); // Ví dụ kích thước
+        getPanel().setPreferredSize(new Dimension(1500, 750)); // Ví dụ kích thước
 
         add(topPanel, BorderLayout.NORTH);
         add(new JScrollPane(bangGoiY), BorderLayout.CENTER);

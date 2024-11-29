@@ -1,28 +1,48 @@
 package Version2.src.View;
 
-import Version2.src.Controller.RecommendDGTDController;
 import Version2.src.Controller.RecommendTHPTController;
+import Version2.src.Model.TinhDiemTHPT;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
 public class RecommendTHPTView extends JPanel {
-    private final JTextField textNhapDiem;
+    private final JTextField textNhapDiem1;
+    private final JTextField textNhapDiem2;
+    private final JTextField textNhapDiem3;
+    private final JLabel labelMon1 = new JLabel("Môn 1:");
+    private final JLabel labelMon2 = new JLabel("Môn 2:");
+    private final JLabel labelMon3 = new JLabel("Môn 3:");
     private final JComboBox<String> comboBoxChonNganh;
     private final JTable bangGoiY;
     private final JButton goiYTruongDaiHoc;
     private final RecommendTHPTController controller;
     private final JComboBox<String> comboBoxChonToHopMon;
+    private final JComboBox<String> comboBoxKhuVuc;
+    private final JComboBox<String> comboBoxDoiTuongUuTien;
 
     public RecommendTHPTView() throws Exception {
         controller = new RecommendTHPTController();
         setLayout(new BorderLayout());
 
         // Khởi tạo giao diện
-        textNhapDiem = new JTextField(10);
+        textNhapDiem1 = new JTextField(10);
+        textNhapDiem2 = new JTextField(10);
+        textNhapDiem3 = new JTextField(10);
         comboBoxChonNganh = new JComboBox<>();
         comboBoxChonToHopMon = new JComboBox<>(new String[]{"Tổ Hợp Mặc Định"});
+        comboBoxKhuVuc = new JComboBox<>(new String[]{"KV1", "KV2-NT", "KV2", "KV3"});
+        comboBoxDoiTuongUuTien = new JComboBox<>(new String[]{
+                "Không có ưu tiên",
+                "Đối tượng 1",
+                "Đối tượng 2",
+                "Đối tượng 3",
+                "Đối tượng 4",
+                "Đối tượng 5",
+                "Đối tượng 6",
+                "Đối tượng 7"
+        });
         goiYTruongDaiHoc = new JButton("Gợi ý trường đại học");
         bangGoiY = new JTable(new DefaultTableModel(
                 new String[]{"Mã Trường", "Tên Trường", "Tên Ngành", "Tổ Hợp Môn", "Điểm THPT"}, 0));
@@ -37,14 +57,29 @@ public class RecommendTHPTView extends JPanel {
     }
 
     private void setupUI() {
-        JPanel topPanel = new JPanel(new GridLayout(3, 2));
-        topPanel.add(new JLabel("Nhập điểm:"));
-        topPanel.add(textNhapDiem);
-        topPanel.add(new JLabel("Chọn ngành:"));
-        topPanel.add(comboBoxChonNganh);
+        JPanel topPanel = new JPanel(new GridLayout(4, 2));
         topPanel.add(new JLabel("Chọn tổ hợp môn:"));
         topPanel.add(comboBoxChonToHopMon);
-        getPanel().setPreferredSize(new Dimension(800, 500)); // Ví dụ kích thước
+
+        topPanel.add(new JLabel("Đối tượng ưu tiên:")); // Thêm nhãn Đối tượng ưu tiên
+        topPanel.add(comboBoxDoiTuongUuTien); // Thêm ComboBox chọn đối tượng ưu tiên
+
+        topPanel.add(labelMon1);
+        topPanel.add(textNhapDiem1); // Thêm JTextField nhập điểm Môn 1
+
+        topPanel.add(new JLabel("Khu vực:")); // Thêm nhãn Khu vực
+        topPanel.add(comboBoxKhuVuc); // Thêm ComboBox chọn khu vực
+
+        topPanel.add(labelMon2);
+        topPanel.add(textNhapDiem2); // Thêm JTextField nhập điểm Môn 2
+
+        topPanel.add(new JLabel("Chọn ngành:"));
+        topPanel.add(comboBoxChonNganh);
+
+        topPanel.add(labelMon3);
+        topPanel.add(textNhapDiem3); // Thêm JTextField nhập điểm Môn 3
+
+        getPanel().setPreferredSize(new Dimension(1500, 750)); // Ví dụ kích thước
 
         add(topPanel, BorderLayout.NORTH);
         add(new JScrollPane(bangGoiY), BorderLayout.CENTER);
@@ -52,18 +87,75 @@ public class RecommendTHPTView extends JPanel {
     }
 
     private void setupEvents() {
-        goiYTruongDaiHoc.addActionListener(e -> {
-            try {
-                int diem = Integer.parseInt(textNhapDiem.getText());
-                String selectedNganh = (String) comboBoxChonNganh.getSelectedItem();
-                String selectedToHopMon = String.valueOf(comboBoxChonToHopMon.getSelectedItem().equals("Tổ Hợp Mặc Định"));
+        comboBoxChonToHopMon.addActionListener(e -> {
+            String selectedItem = (String) comboBoxChonToHopMon.getSelectedItem();
+            if (selectedItem != null && !selectedItem.equals("Chọn tổ hợp môn")) {
+                String[] parts = selectedItem.split(" - ");
+                if (parts.length > 1) {
+                    String[] subjects = parts[1].split(", ");
+                    labelMon1.setText("Nhập điểm thi môn : " + (subjects.length > 0 ? subjects[0] : ""));
+                    labelMon2.setText("Nhập điểm thi môn : " + (subjects.length > 1 ? subjects[1] : ""));
+                    labelMon3.setText("Nhập điểm thi môn : " + (subjects.length > 2 ? subjects[2] : ""));
 
-                // Gọi controller để lấy dữ liệu
-                controller.getUniversitySuggestionsByTHPT(diem, selectedNganh, selectedToHopMon, bangGoiY);
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(this, "Vui lòng nhập điểm hợp lệ!");
+                    // Reset các trường nhập điểm
+                    textNhapDiem1.setText("");
+                    textNhapDiem2.setText("");
+                    textNhapDiem3.setText("");
+                }
+            } else {
+                // Reset giao diện khi chọn mặc định
+                labelMon1.setText("Môn 1:");
+                labelMon2.setText("Môn 2:");
+                labelMon3.setText("Môn 3:");
+                textNhapDiem1.setText("");
+                textNhapDiem2.setText("");
+                textNhapDiem3.setText("");
             }
         });
+        goiYTruongDaiHoc.addActionListener(e -> {
+            try {
+                // Lấy thông tin từ giao diện
+                double diemMon1 = Double.parseDouble(textNhapDiem1.getText().trim());
+                double diemMon2 = Double.parseDouble(textNhapDiem2.getText().trim());
+                double diemMon3 = Double.parseDouble(textNhapDiem3.getText().trim());
+                String khuVuc = (String) comboBoxKhuVuc.getSelectedItem();
+                String doiTuong = (String) comboBoxDoiTuongUuTien.getSelectedItem();
+                String selectedNganh = (String) comboBoxChonNganh.getSelectedItem();
+                String selectedToHopMon = (String) comboBoxChonToHopMon.getSelectedItem();
+
+                // Mã tổ hợp môn (lấy từ comboBox)
+                String maToHop = selectedToHopMon.split(" - ")[0]; // Giả định mã tổ hợp môn là phần đầu
+
+                // Tạo đối tượng TinhDiemTHPT
+                TinhDiemTHPT tinhDiem = new TinhDiemTHPT(
+                        maToHop,
+                        diemMon1,
+                        diemMon2,
+                        diemMon3,
+                        0, // Điểm ưu tiên mặc định là 0, có thể tính thêm nếu cần
+                        khuVuc,
+                        doiTuong
+                );
+
+                // Tính điểm xét tuyển
+                double diemXetTuyen = tinhDiem.tinhDiemXetTuyen();
+
+                // Gửi truy vấn đến cơ sở dữ liệu để lấy các ngành phù hợp
+                controller.getUniversitySuggestionsByTHPT(diemXetTuyen, selectedNganh, maToHop, bangGoiY);
+
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this,
+                        "Vui lòng nhập đầy đủ và chính xác điểm số.",
+                        "Lỗi",
+                        JOptionPane.ERROR_MESSAGE);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this,
+                        "Đã xảy ra lỗi: " + ex.getMessage(),
+                        "Lỗi",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
     }
 
     public JPanel getPanel() {

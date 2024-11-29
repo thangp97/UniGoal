@@ -34,7 +34,7 @@ public class RecommendTHPTController {
                 String tenTruong = resultSet.getString("tenTruong");
                 String tenNganh = resultSet.getString("tenNganh");
                 String toHopMon = resultSet.getString("toHopMon");
-                int diemTrungTuyen = resultSet.getInt("diemTrungTuyen");
+                double diemTrungTuyen = resultSet.getDouble("diemTrungTuyen");
 
                 model.addRow(new Object[]{maTruong, tenTruong, tenNganh, toHopMon, diemTrungTuyen});
             }
@@ -83,31 +83,34 @@ public class RecommendTHPTController {
             JOptionPane.showMessageDialog(null, "Error loading ngành data: " + e.getMessage());
         }
     }
-    public void getUniversitySuggestionsByTHPT(int diem, String selectedNganh, String selectedToHopMon, JTable bangGoiY) {
+    public void getUniversitySuggestionsByTHPT(double diemXetTuyen, String selectedNganh, String selectedToHopMon, JTable bangGoiY) {
         String sql;
         if ("Tất Cả Các Ngành".equals(selectedNganh)) {
             sql = "SELECT DISTINCT t.maTruong, t.tenTruong, c.tenNganh, dt.toHopMon, dt.diemTrungTuyen " +
                     "FROM truongdaihoc t " +
-                    "JOIN chuyennganh c ON t.maTruong = c.maTruong " +
-                    "JOIN diemtrungtuyen dt ON c.toHopMon = dt.toHopMon " + // Kết nối bảng diemtrungtuyen với chuyennganh
-                    "WHERE dt.toHopMon = ? AND dt.diemTrungTuyen <= ?";
+                    "JOIN diemtrungtuyen dt ON t.maTruong = dt.maTruong " +
+                    "JOIN chuyennganh c ON dt.maNganh = c.maNganh " +
+                    "WHERE dt.toHopMon LIKE ? AND dt.diemTrungTuyen <= ?";
         } else {
             sql = "SELECT DISTINCT t.maTruong, t.tenTruong, c.tenNganh, dt.toHopMon, dt.diemTrungTuyen " +
                     "FROM truongdaihoc t " +
-                    "JOIN chuyennganh c ON t.maTruong = c.maTruong " +
-                    "JOIN diemtrungtuyen dt ON c.toHopMon = dt.toHopMon " +
-                    "WHERE c.tenNganh = ? AND dt.toHopMon = ? AND dt.diemTrungTuyen <= ?";
+                    "JOIN diemtrungtuyen dt ON t.maTruong = dt.maTruong " +
+                    "JOIN chuyennganh c ON dt.maNganh = c.maNganh " +
+                    "WHERE c.tenNganh = ? AND dt.toHopMon LIKE ? AND dt.diemTrungTuyen <= ?";
         }
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            // Kiểm tra và đặt giá trị vào câu lệnh SQL
+            // Tính ngưỡng điểm xét tuyển
+            double diemThreshold = diemXetTuyen + 0.5;
+
+            // Nếu chọn tất cả các ngành
             if ("Tất Cả Các Ngành".equals(selectedNganh)) {
-                preparedStatement.setString(1, selectedToHopMon);
-                preparedStatement.setInt(2, diem);
+                preparedStatement.setString(1, "%" + selectedToHopMon + "%"); // Tìm tổ hợp môn trong chuỗi
+                preparedStatement.setDouble(2, diemThreshold);
             } else {
                 preparedStatement.setString(1, selectedNganh);
-                preparedStatement.setString(2, selectedToHopMon);
-                preparedStatement.setInt(3, diem);
+                preparedStatement.setString(2, "%" + selectedToHopMon + "%"); // Tìm tổ hợp môn trong chuỗi
+                preparedStatement.setDouble(3, diemThreshold);
             }
 
             // Thực thi truy vấn
@@ -123,17 +126,15 @@ public class RecommendTHPTController {
                 String tenTruong = resultSet.getString("tenTruong");
                 String tenNganh = resultSet.getString("tenNganh");
                 String toHopMon = resultSet.getString("toHopMon");
-                int diemTrungTuyen = resultSet.getInt("diemTrungTuyen");
+                double diemTrungTuyen = resultSet.getDouble("diemTrungTuyen");
 
-                // So sánh điểm thi tốt nghiệp với điểm trung tuyển
-                if (diem >= diemTrungTuyen) {
-                    model.addRow(new Object[]{maTruong, tenTruong, tenNganh, toHopMon});
-                    hasResults = true;
-                }
+                // Thêm dữ liệu vào bảng
+                model.addRow(new Object[]{maTruong, tenTruong, tenNganh, toHopMon, diemTrungTuyen});
+                hasResults = true;
             }
 
             if (!hasResults) {
-                JOptionPane.showMessageDialog(null, "Không tìm thấy trường phù hợp với điểm của bạn.");
+                JOptionPane.showMessageDialog(null, "Không tìm thấy ngành nào phù hợp với điểm của bạn.");
             }
 
         } catch (SQLException e) {
