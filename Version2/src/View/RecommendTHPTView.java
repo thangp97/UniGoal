@@ -11,6 +11,7 @@ public class RecommendTHPTView extends JPanel {
     private final JTextField textNhapDiem1;
     private final JTextField textNhapDiem2;
     private final JTextField textNhapDiem3;
+    private final JLabel DiemXetTuyen = new JLabel("Điểm Xét Tuyển:");
     private final JLabel labelMon1 = new JLabel("Môn 1:");
     private final JLabel labelMon2 = new JLabel("Môn 2:");
     private final JLabel labelMon3 = new JLabel("Môn 3:");
@@ -77,7 +78,9 @@ public class RecommendTHPTView extends JPanel {
         topPanel.add(comboBoxChonNganh);
 
         topPanel.add(labelMon3);
-        topPanel.add(textNhapDiem3); // Thêm JTextField nhập điểm Môn 3
+        topPanel.add(textNhapDiem3);
+
+        topPanel.add(DiemXetTuyen);
 
         getPanel().setPreferredSize(new Dimension(1500, 750)); // Ví dụ kích thước
 
@@ -101,6 +104,9 @@ public class RecommendTHPTView extends JPanel {
                     textNhapDiem1.setText("");
                     textNhapDiem2.setText("");
                     textNhapDiem3.setText("");
+                    controller.loadAllUniversitySuggestions(bangGoiY);
+                    DiemXetTuyen.setText("Điểm xét tuyển:");
+
                 }
             } else {
                 // Reset giao diện khi chọn mặc định
@@ -139,6 +145,7 @@ public class RecommendTHPTView extends JPanel {
 
                 // Tính điểm xét tuyển
                 double diemXetTuyen = tinhDiem.tinhDiemXetTuyen();
+                DiemXetTuyen.setText("Điểm xét tuyển:    " + diemXetTuyen);
 
                 // Gửi truy vấn đến cơ sở dữ liệu để lấy các ngành phù hợp
                 controller.getUniversitySuggestionsByTHPT(diemXetTuyen, selectedNganh, maToHop, bangGoiY);
