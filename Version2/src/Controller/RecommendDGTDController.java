@@ -1,10 +1,12 @@
 package Version2.src.Controller;
 
 import Version2.src.Utils.DatabaseConnection;
+import Version2.src.Utils.NonEditableTableModel;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.sql.*;
+import java.util.ArrayList;
 
 public class RecommendDGTDController {
     private final Connection connection;
@@ -21,9 +23,7 @@ public class RecommendDGTDController {
         try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(sql)) {
 
-            DefaultTableModel model = (DefaultTableModel) bangGoiY.getModel();
-            model.setRowCount(0); // Xóa dữ liệu cũ
-
+            ArrayList<Object[]> data = new ArrayList<>();
             while (resultSet.next()) {
                 String maTruong = resultSet.getString("maTruong");
                 String tenTruong = resultSet.getString("tenTruong");
@@ -31,8 +31,14 @@ public class RecommendDGTDController {
                 String toHopMon = resultSet.getString("toHopMon");
                 int diemChuan = resultSet.getInt("diemChuan");
 
-                model.addRow(new Object[]{maTruong, tenTruong, tenNganh, toHopMon, diemChuan});
+                data.add(new Object[]{maTruong, tenTruong, tenNganh, toHopMon, diemChuan});
             }
+
+            Object[][] dataArray = data.toArray(new Object[0][]);
+            String[] columnNames = {"Mã Trường", "Tên Trường", "Tên Ngành", "Tổ Hợp Môn", "Điểm chuẩn"};
+
+            NonEditableTableModel model = new NonEditableTableModel(dataArray, columnNames);
+            bangGoiY.setModel(model);
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Error loading all data: " + e.getMessage());
         }
