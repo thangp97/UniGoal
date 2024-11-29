@@ -19,7 +19,7 @@ import static Version2.src.Utils.Constants.SEARCH_ICON_PATH;
 public class UniversitySearchView extends JPanel {
     private final JTextField maTruongField, maNganhField, tenTruongField, tenNganhField, diemTrungTuyenField;
     private final JTable universityTable;
-    private final JButton searchButton;
+    private JButton searchButton;
     private JButtonConfig addToFavoritesButton;
     private DefaultListModel<FavoriteItem> favoriteListModel;
     private JList<FavoriteItem> favoriteList;
@@ -35,7 +35,6 @@ public class UniversitySearchView extends JPanel {
         tenTruongField = new JTextField(10);
         tenNganhField = new JTextField(10);
         diemTrungTuyenField = new JTextField(10);
-        searchButton = new JButton("Tìm kiếm", new ImageIcon(SEARCH_ICON_PATH));
 
         universityTable = new JTable(new DefaultTableModel(
                 new String[]{"Mã Trường", "Tên Trường", "Điểm Sàn"}, 0));
@@ -49,8 +48,7 @@ public class UniversitySearchView extends JPanel {
         // Căn giữa dữ liệu trong bảng
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-        universityTable.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
-        universityTable.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
+        universityTable.setDefaultRenderer(Object.class, centerRenderer);
 
         // khởi tạo giao diện
         setupUI();
@@ -82,6 +80,8 @@ public class UniversitySearchView extends JPanel {
         searchPanel.add(tenNganhField);
         searchPanel.add(new JLabel("Điểm Trúng Tuyển:"));
         searchPanel.add(diemTrungTuyenField);
+        searchButton = new JButton("Tìm kiếm", new ImageIcon(SEARCH_ICON_PATH));
+        searchPanel.add(new JLabel());
         searchPanel.add(searchButton);
 
         // Bảng kết quả tìm kiếm
