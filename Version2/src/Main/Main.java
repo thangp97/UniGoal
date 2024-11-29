@@ -1,7 +1,6 @@
 package Version2.src.Main;
 
 import Version2.src.View.*;
-import Version2.src.Controller.UniversitySearch;
 
 import javax.swing.*;
 
