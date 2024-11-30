@@ -1,6 +1,7 @@
 package Version2.src.View;
 
 import Version2.src.Controller.RecommendDGTDController;
+import Version2.src.Utils.NonEditableTableModel;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -41,8 +42,10 @@ public class RecommendDGTDView extends JPanel {
             }
         });
 
-        bangGoiY = new JTable(new DefaultTableModel(
-                new String[]{"Mã Trường", "Tên Trường", "Tên Ngành", "Tổ Hợp Môn", "Điểm Đánh Giá Tư Duy"}, 0));
+        bangGoiY = new JTable(new NonEditableTableModel(
+                new Object[][]{}, // Dữ liệu mặc định trống
+                new String[]{"Mã Trường", "Tên Trường", "Tên Ngành", "Tổ Hợp Môn", "Điểm THPT"} // Tiêu đề cột
+        ));
         bangGoiY.setRowHeight(25);
         bangGoiY.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
         bangGoiY.getTableHeader().setBackground(Color.LIGHT_GRAY);
