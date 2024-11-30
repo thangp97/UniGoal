@@ -4,6 +4,7 @@ import Version2.src.Controller.RecommendTHPTController;
 import Version2.src.Model.TinhDiemTHPT;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
@@ -64,7 +65,15 @@ public class RecommendTHPTView extends JPanel {
 
         bangGoiY = new JTable(new DefaultTableModel(
                 new String[]{"Mã Trường", "Tên Trường", "Tên Ngành", "Tổ Hợp Môn", "Điểm THPT"}, 0));
+        bangGoiY.setRowHeight(25);
+        bangGoiY.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
+        bangGoiY.getTableHeader().setBackground(Color.LIGHT_GRAY);
+        bangGoiY.setSelectionBackground(Color.YELLOW);
+        bangGoiY.setSelectionForeground(Color.BLACK);
         bangGoiY.setAutoCreateRowSorter(true);
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+        bangGoiY.setDefaultRenderer(Object.class, centerRenderer);
         setupUI();
         setupEvents();
 
