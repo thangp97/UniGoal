@@ -3,10 +3,13 @@ package Version2.src.View;
 import Version2.src.Controller.RecommendDGTDController;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
-public class        RecommendDGTDView extends JPanel {
+import static Version2.src.Utils.Constants.SEARCH_ICON_PATH;
+
+public class RecommendDGTDView extends JPanel {
     private final JTextField textNhapDiem;
     private final JComboBox<String> comboBoxChonNganh;
     private final JTable bangGoiY;
@@ -22,10 +25,33 @@ public class        RecommendDGTDView extends JPanel {
         textNhapDiem = new JTextField(10);
         comboBoxChonNganh = new JComboBox<>();
         comboBoxChonToHopMon = new JComboBox<>(new String[]{"Tổ Hợp Mặc Định", "Tổ Hợp K00"});
-        goiYTruongDaiHoc = new JButton("Gợi ý trường đại học");
+        goiYTruongDaiHoc = new JButton("Gợi ý trường đại học",new ImageIcon(SEARCH_ICON_PATH));
+        goiYTruongDaiHoc.setBackground(new Color(0,123,255));
+        goiYTruongDaiHoc.setForeground(Color.WHITE);
+        goiYTruongDaiHoc.setPreferredSize(new Dimension(200,40));
+        goiYTruongDaiHoc.setFocusPainted(false);
+        goiYTruongDaiHoc.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        goiYTruongDaiHoc.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                goiYTruongDaiHoc.setBackground(new Color(0, 105, 217));
+            }
+
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                goiYTruongDaiHoc.setBackground(new Color(0, 123, 255));
+            }
+        });
+
         bangGoiY = new JTable(new DefaultTableModel(
                 new String[]{"Mã Trường", "Tên Trường", "Tên Ngành", "Tổ Hợp Môn", "Điểm Đánh Giá Tư Duy"}, 0));
+        bangGoiY.setRowHeight(25);
+        bangGoiY.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
+        bangGoiY.getTableHeader().setBackground(Color.LIGHT_GRAY);
+        bangGoiY.setSelectionBackground(Color.YELLOW);
+        bangGoiY.setSelectionForeground(Color.BLACK);
         bangGoiY.setAutoCreateRowSorter(true);
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+        bangGoiY.setDefaultRenderer(Object.class, centerRenderer);
         setupUI();
         setupEvents();
 
@@ -44,7 +70,7 @@ public class        RecommendDGTDView extends JPanel {
         topPanel.add(comboBoxChonNganh);
         topPanel.add(new JLabel("Chọn tổ hợp môn:"));
         topPanel.add(comboBoxChonToHopMon);
-        getPanel().setPreferredSize(new Dimension(800, 500)); // Ví dụ kích thước
+        getPanel().setPreferredSize(new Dimension(1500, 750)); // Ví dụ kích thước
 
         add(topPanel, BorderLayout.NORTH);
         add(new JScrollPane(bangGoiY), BorderLayout.CENTER);

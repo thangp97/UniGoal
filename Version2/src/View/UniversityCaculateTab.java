@@ -16,14 +16,6 @@ import java.util.Map;
 
 public class UniversityCaculateTab {
     private JPanel tab2;
-
-    private static final Map<String, Double> khuVucPoints = new HashMap<>();
-    static {
-        khuVucPoints.put("KV1", 1.0); // Khu vực 1 cộng 1 điểm
-        khuVucPoints.put("KV2", 0.5); // Khu vực 2 cộng 0.5 điểm
-        khuVucPoints.put("KV2-NT", 0.5); // Khu vực 2-NT cộng 0.5 điểm
-        khuVucPoints.put("KV3", 0.0); // Khu vực 3 không cộng điểm
-    }
     public UniversityCaculateTab() {
         tab2 = new JPanel();
         tab2.setLayout(new GridBagLayout());
@@ -86,11 +78,7 @@ public class UniversityCaculateTab {
             dynamicPanel.add(recommendDGTDView.getPanel(), gbcDynamic);
 
         }
-
         dynamicPanel.revalidate();
         dynamicPanel.repaint();
     }
-
-
-
 }

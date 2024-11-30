@@ -1,7 +1,6 @@
 package Version2.src.Model;
 
 public class TinhDiemTHPT {
-    private String hoTen;
     private String maToHop;
     private double diemMon1;
     private double diemMon2;
@@ -11,9 +10,8 @@ public class TinhDiemTHPT {
     private String doiTuong; // Đối tượng ưu tiên (VD: 01 - đối tượng 1, 02 - đối tượng 2, v.v.)
 
     // Constructor
-    public TinhDiemTHPT(String hoTen, String maToHop, double diemMon1, double diemMon2, double diemMon3,
-                   double diemUuTien, String khuVuc, String doiTuong) {
-        this.hoTen = hoTen;
+    public TinhDiemTHPT( String maToHop, double diemMon1, double diemMon2, double diemMon3,
+                         double diemUuTien, String khuVuc, String doiTuong) {
         this.maToHop = maToHop;
         this.diemMon1 = diemMon1;
         this.diemMon2 = diemMon2;
@@ -21,11 +19,6 @@ public class TinhDiemTHPT {
         this.diemUuTien = diemUuTien;
         this.khuVuc = khuVuc;
         this.doiTuong = doiTuong;
-    }
-
-    // Getters
-    public String getHoTen() {
-        return hoTen;
     }
 
     public String getMaToHop() {
@@ -60,16 +53,16 @@ public class TinhDiemTHPT {
     private double tinhDiemKhuVuc() {
         double diemKhuVuc = 0.0;
         switch (khuVuc) {
-            case "KhuVuc1": // Khu vực 1
+            case "KV1": // Khu vực 1
                 diemKhuVuc = 1.0;
                 break;
-            case "KhuVuc2NT": // Khu vực 2-NT (Nội thành)
+            case "KV2-NT": // Khu vực 2-NT (Nội thành)
                 diemKhuVuc = 0.75;
                 break;
-            case "KhuVuc2": // Khu vực 2
+            case "KV2": // Khu vực 2
                 diemKhuVuc = 0.5;
                 break;
-            case "KhuVuc3": // Khu vực 3
+            case "KV3": // Khu vực 3
                 diemKhuVuc = 0.0;
                 break;
             default:
@@ -82,14 +75,26 @@ public class TinhDiemTHPT {
     private double tinhDiemDoiTuong() {
         double diemDoiTuong = 0.0;
         switch (doiTuong) {
-            case "01": // Đối tượng 1
+            case "Đối tượng 1": // Đối tượng 1
                 diemDoiTuong = 2.5;
                 break;
-            case "02": // Đối tượng 2
+            case "Đối tượng 2": // Đối tượng 2
                 diemDoiTuong = 1.5;
                 break;
-            case "03": // Đối tượng 3
+            case "Đối tượng 3": // Đối tượng 3
                 diemDoiTuong = 1.0;
+                break;
+            case "Đối tượng 4": // Đối tượng 4
+                diemDoiTuong = 0.5;
+                break;
+            case "Đối tượng 5": // Đối tượng 5
+                diemDoiTuong = 0.0;
+                break;
+            case "Đối tượng 6": // Đối tượng 6
+                diemDoiTuong = 0.0;
+                break;
+            case "Đối tượng 7": // Đối tượng 7
+                diemDoiTuong = 0.0;
                 break;
             default:
                 diemDoiTuong = 0.0; // Nếu không có đối tượng hợp lệ, không cộng điểm
@@ -102,7 +107,13 @@ public class TinhDiemTHPT {
         double diemKhuVuc = tinhDiemKhuVuc();
         double diemDoiTuong = tinhDiemDoiTuong();
 
-        return diemMon1 + diemMon2 + diemMon3 + diemUuTien + diemKhuVuc + diemDoiTuong;
+        // Tính điểm tổng: điểm môn
+        double tongDiem = diemMon1 + diemMon2 + diemMon3;
+
+        // Công thức tính điểm ưu tiên thí sinh được hưởng
+        double diemUuTienThucTe = ((30 - tongDiem) / 7.5) * diemDoiTuong;
+
+        return tongDiem + diemUuTienThucTe;
     }
 
 }
