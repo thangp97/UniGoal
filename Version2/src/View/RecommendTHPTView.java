@@ -171,7 +171,12 @@ public class RecommendTHPTView extends JPanel {
 
                 // Tính điểm xét tuyển
                 double diemXetTuyen = tinhDiem.tinhDiemXetTuyen();
-                DiemXetTuyen.setText("Điểm xét tuyển:    " + diemXetTuyen);
+                DiemXetTuyen.setText(
+                        "<html>Điểm xét tuyển: <span style='font-family:Arial; font-weight:bold; font-size:16px;'>"
+                                + diemXetTuyen
+                                + "</span></html>"
+                );
+
 
                 // Gửi truy vấn đến cơ sở dữ liệu để lấy các ngành phù hợp
                 controller.getUniversitySuggestionsByTHPT(diemXetTuyen, selectedNganh, maToHop, bangGoiY);
