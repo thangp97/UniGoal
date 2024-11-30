@@ -11,7 +11,7 @@ public class TinhDiemTHPT {
 
     // Constructor
     public TinhDiemTHPT( String maToHop, double diemMon1, double diemMon2, double diemMon3,
-                         double diemUuTien, String khuVuc, String doiTuong) {
+                        double diemUuTien, String khuVuc, String doiTuong) {
         this.maToHop = maToHop;
         this.diemMon1 = diemMon1;
         this.diemMon2 = diemMon2;
