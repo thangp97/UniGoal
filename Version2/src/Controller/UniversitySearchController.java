@@ -6,9 +6,11 @@ import Version2.src.Model.DaiHocFavoriteData;
 import Version2.src.Utils.DatabaseConnection;
 import Version2.src.Utils.NonEditableTableModel;
 
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
+import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -154,4 +156,35 @@ public class UniversitySearchController {
     }
 
 
+    public void exportFavoritesToCSV(DefaultListModel<DaiHocFavoriteData> favoriteListModel) {
+        // Mở hộp thoại để người dùng chọn vị trí lưu file
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Lưu danh sách yêu thích");
+        fileChooser.setSelectedFile(new File("DanhSachYeuThich.csv")); // Đặt tên file mặc định
+
+        int userSelection = fileChooser.showSaveDialog(null);
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File csvFile = fileChooser.getSelectedFile();
+
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(csvFile))) {
+                // Ghi tiêu đề cho các cột
+                writer.write("Mã Trường,Tên Trường,Tên Ngành,Điểm Trúng Tuyển");
+                writer.newLine();
+
+                // Ghi dữ liệu từ danh sách yêu thích vào file
+                for (int i = 0; i < favoriteListModel.size(); i++) {
+                    DaiHocFavoriteData favoriteData = favoriteListModel.getElementAt(i);
+                    writer.write(favoriteData.getMaTruong() + "," +
+                            favoriteData.getTenTruong() + "," +
+                            favoriteData.getTenNganh() + "," +
+                            favoriteData.getDiemTrungTuyen());
+                    writer.newLine();
+                }
+
+                JOptionPane.showMessageDialog(null, "Đã xuất danh sách yêu thích thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(null, "Lỗi khi xuất danh sách: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
 }
