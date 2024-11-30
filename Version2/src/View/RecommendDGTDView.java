@@ -6,6 +6,8 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
+import static Version2.src.Utils.Constants.SEARCH_ICON_PATH;
+
 public class RecommendDGTDView extends JPanel {
     private final JTextField textNhapDiem;
     private final JComboBox<String> comboBoxChonNganh;
@@ -22,7 +24,22 @@ public class RecommendDGTDView extends JPanel {
         textNhapDiem = new JTextField(10);
         comboBoxChonNganh = new JComboBox<>();
         comboBoxChonToHopMon = new JComboBox<>(new String[]{"Tổ Hợp Mặc Định", "Tổ Hợp K00"});
-        goiYTruongDaiHoc = new JButton("Gợi ý trường đại học");
+        goiYTruongDaiHoc = new JButton("Gợi ý trường đại học",new ImageIcon(SEARCH_ICON_PATH));
+        goiYTruongDaiHoc.setBackground(new Color(0,123,255));
+        goiYTruongDaiHoc.setForeground(Color.WHITE);
+        goiYTruongDaiHoc.setPreferredSize(new Dimension(200,40));
+        goiYTruongDaiHoc.setFocusPainted(false);
+        goiYTruongDaiHoc.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        goiYTruongDaiHoc.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                goiYTruongDaiHoc.setBackground(new Color(0, 105, 217));
+            }
+
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                goiYTruongDaiHoc.setBackground(new Color(0, 123, 255));
+            }
+        });
+
         bangGoiY = new JTable(new DefaultTableModel(
                 new String[]{"Mã Trường", "Tên Trường", "Tên Ngành", "Tổ Hợp Môn", "Điểm Đánh Giá Tư Duy"}, 0));
         bangGoiY.setAutoCreateRowSorter(true);

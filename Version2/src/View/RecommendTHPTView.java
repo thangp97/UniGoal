@@ -7,6 +7,8 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
+import static Version2.src.Utils.Constants.SEARCH_ICON_PATH;
+
 public class RecommendTHPTView extends JPanel {
     private final JTextField textNhapDiem1;
     private final JTextField textNhapDiem2;
@@ -44,7 +46,22 @@ public class RecommendTHPTView extends JPanel {
                 "Đối tượng 6",
                 "Đối tượng 7"
         });
-        goiYTruongDaiHoc = new JButton("Gợi ý trường đại học");
+        goiYTruongDaiHoc = new JButton("Tính toán điểm xét tuyển và gợi ý trường đại học",new ImageIcon(SEARCH_ICON_PATH));
+        goiYTruongDaiHoc.setBackground(new Color(0,123,255));
+        goiYTruongDaiHoc.setForeground(Color.WHITE);
+        goiYTruongDaiHoc.setPreferredSize(new Dimension(200,40));
+        goiYTruongDaiHoc.setFocusPainted(false);
+        goiYTruongDaiHoc.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        goiYTruongDaiHoc.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                goiYTruongDaiHoc.setBackground(new Color(0, 105, 217));
+            }
+
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                goiYTruongDaiHoc.setBackground(new Color(0, 123, 255));
+            }
+        });
+
         bangGoiY = new JTable(new DefaultTableModel(
                 new String[]{"Mã Trường", "Tên Trường", "Tên Ngành", "Tổ Hợp Môn", "Điểm THPT"}, 0));
         bangGoiY.setAutoCreateRowSorter(true);

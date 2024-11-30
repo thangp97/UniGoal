@@ -81,6 +81,21 @@ public class UniversitySearchView extends JPanel {
         searchPanel.add(new JLabel("Điểm Trúng Tuyển:"));
         searchPanel.add(diemTrungTuyenField);
         searchButton = new JButton("Tìm kiếm", new ImageIcon(SEARCH_ICON_PATH));
+        searchButton.setBackground(new Color(0,123,255));
+        searchButton.setForeground(Color.WHITE);
+        searchButton.setPreferredSize(new Dimension(200,40));
+        searchButton.setFocusPainted(false);
+        searchButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        searchButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                searchButton.setBackground(new Color(0, 105, 217));
+            }
+
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                searchButton.setBackground(new Color(0, 123, 255));
+            }
+        });
+
         searchPanel.add(new JLabel());
         searchPanel.add(searchButton);
 
