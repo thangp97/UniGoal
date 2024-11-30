@@ -54,13 +54,13 @@ public class TinhDiemTHPT {
         double diemKhuVuc = 0.0;
         switch (khuVuc) {
             case "KV1": // Khu vực 1
-                diemKhuVuc = 1.0;
-                break;
-            case "KV2-NT": // Khu vực 2-NT (Nội thành)
                 diemKhuVuc = 0.75;
                 break;
-            case "KV2": // Khu vực 2
+            case "KV2-NT": // Khu vực 2-NT (Nội thành)
                 diemKhuVuc = 0.5;
+                break;
+            case "KV2": // Khu vực 2
+                diemKhuVuc = 0.25;
                 break;
             case "KV3": // Khu vực 3
                 diemKhuVuc = 0.0;
@@ -76,25 +76,25 @@ public class TinhDiemTHPT {
         double diemDoiTuong = 0.0;
         switch (doiTuong) {
             case "Đối tượng 1": // Đối tượng 1
-                diemDoiTuong = 2.5;
+                diemDoiTuong = 2;
                 break;
             case "Đối tượng 2": // Đối tượng 2
-                diemDoiTuong = 1.5;
+                diemDoiTuong = 2;
                 break;
             case "Đối tượng 3": // Đối tượng 3
-                diemDoiTuong = 1.0;
+                diemDoiTuong = 2;
                 break;
             case "Đối tượng 4": // Đối tượng 4
-                diemDoiTuong = 0.5;
+                diemDoiTuong = 2;
                 break;
             case "Đối tượng 5": // Đối tượng 5
-                diemDoiTuong = 0.0;
+                diemDoiTuong = 1;
                 break;
             case "Đối tượng 6": // Đối tượng 6
-                diemDoiTuong = 0.0;
+                diemDoiTuong = 1;
                 break;
             case "Đối tượng 7": // Đối tượng 7
-                diemDoiTuong = 0.0;
+                diemDoiTuong = 1;
                 break;
             default:
                 diemDoiTuong = 0.0; // Nếu không có đối tượng hợp lệ, không cộng điểm
@@ -109,9 +109,10 @@ public class TinhDiemTHPT {
 
         // Tính điểm tổng: điểm môn
         double tongDiem = diemMon1 + diemMon2 + diemMon3;
+        double diemcong = diemKhuVuc + diemDoiTuong;
 
         // Công thức tính điểm ưu tiên thí sinh được hưởng
-        double diemUuTienThucTe = ((30 - tongDiem) / 7.5) * diemDoiTuong;
+        double diemUuTienThucTe = ((30 - tongDiem) / 7.5) * diemcong;
 
         return tongDiem + diemUuTienThucTe;
     }

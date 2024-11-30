@@ -1,15 +1,10 @@
 package Version2.src.Controller;
 
-import Version2.src.Model.TinhDiemTHPT;
-import Version2.src.Model.ToHopMon;
 import Version2.src.Utils.DatabaseConnection;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.sql.*;
-import java.text.DecimalFormat;
-
-import static Version2.src.Utils.DatabaseConnection.getConnection;
 
 public class RecommendTHPTController {
     private final Connection connection;
