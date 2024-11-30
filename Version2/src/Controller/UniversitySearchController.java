@@ -2,7 +2,7 @@ package Version2.src.Controller;
 
 import Version2.src.Model.DaiHocLoadData;
 import Version2.src.Model.DaiHocSearchResult;
-import Version2.src.Model.FavoriteItem;
+import Version2.src.Model.DaiHocFavoriteData;
 import Version2.src.Utils.DatabaseConnection;
 import Version2.src.Utils.NonEditableTableModel;
 
@@ -117,18 +117,41 @@ public class UniversitySearchController {
         }
     }
 
-    public void addToFavorites(JTable universityTable, DefaultListModel<FavoriteItem> favoriteListModel) {
+    public void addToFavorites(JTable universityTable, DefaultListModel<DaiHocFavoriteData> favoriteListModel) {
         int selectedRow = universityTable.getSelectedRow();
         if (selectedRow != -1) {
-            String maTruong = (String) universityTable.getValueAt(selectedRow, 0); // Cột 0
-            String tenTruong = (String) universityTable.getValueAt(selectedRow, 1); // Cột 1
-            String tenNganh = (String) universityTable.getValueAt(selectedRow, 3);
-            double diemSan = (double) universityTable.getValueAt(selectedRow, 2);   // Cột 2
+            // Lấy mã trường và tên ngành từ bảng
+            String selectedMaTruong = (String) universityTable.getValueAt(selectedRow, 0);
+            String selectedTenNganh = (String) universityTable.getValueAt(selectedRow, 3);
 
-            FavoriteItem favoriteItem = new FavoriteItem(maTruong, tenTruong, tenNganh, diemSan);
-            favoriteListModel.addElement(favoriteItem);
+            // Kiểm tra nếu mã trường và tên ngành đã tồn tại trong danh sách yêu thích
+            for (int i = 0; i < favoriteListModel.size(); i++) {
+                DaiHocFavoriteData existingFavorite = favoriteListModel.getElementAt(i);
+                if (existingFavorite.getMaTruong().equals(selectedMaTruong) &&
+                        existingFavorite.getTenNganh().equals(selectedTenNganh)) {
+                    JOptionPane.showMessageDialog(universityTable,
+                            "Trường và ngành này đã có trong danh sách yêu thích.",
+                            "Thông báo",
+                            JOptionPane.WARNING_MESSAGE);
+                    return; // Không thêm nếu đã tồn tại
+                }
+            }
+
+            // Nếu không tồn tại, thêm vào danh sách yêu thích
+            DaiHocFavoriteData daiHocFavoriteData = new DaiHocFavoriteData("", "", "", 0, "", 0);
+            daiHocFavoriteData.setMaTruong(selectedMaTruong);
+            daiHocFavoriteData.setTenTruong((String) universityTable.getValueAt(selectedRow, 1));
+            daiHocFavoriteData.setTenNganh(selectedTenNganh);
+            daiHocFavoriteData.setDiemTrungTuyen((double) universityTable.getValueAt(selectedRow, 2));
+
+            favoriteListModel.addElement(daiHocFavoriteData);
         } else {
-            JOptionPane.showMessageDialog(universityTable, "Vui lòng chọn một trường để thêm vào yêu thích.");
+            JOptionPane.showMessageDialog(universityTable,
+                    "Vui lòng chọn một trường và ngành để thêm vào danh sách yêu thích.",
+                    "Thông báo",
+                    JOptionPane.WARNING_MESSAGE);
         }
     }
+
+
 }

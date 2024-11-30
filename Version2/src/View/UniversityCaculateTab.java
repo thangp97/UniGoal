@@ -82,3 +82,6 @@ public class UniversityCaculateTab {
         dynamicPanel.repaint();
     }
 }
+
+
+
