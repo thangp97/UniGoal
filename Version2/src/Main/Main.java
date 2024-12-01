@@ -25,7 +25,7 @@ public class Main {
 
             // Tạo thanh điều hướng
             JPanel navigationPanel = new JPanel();
-            navigationPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10)); // Giảm khoảng cách giữa các nút
+            navigationPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5)); // Giảm khoảng cách giữa các nút
             navigationPanel.setBackground(new Color(100, 149, 237)); // Màu xanh nhẹ
             navigationPanel.setBorder(new EmptyBorder(5, 5, 5, 5)); // Giảm padding của navigation panel
 
@@ -44,15 +44,15 @@ public class Main {
             JButton aboutButton = createNavigationButton("Giới thiệu");
             JButton calculateButton = createNavigationButton("Tính điểm tốt nghiệp");
             JButton searchButton = createNavigationButton("Tìm kiếm thông tin");
-            JButton tabViewButton = createNavigationButton("Tab Xét tuyển");
+            JButton tabViewButton = createNavigationButton("Xét tuyển Đại học");
             JButton exitButton = createNavigationButton("Thoát");
 
             // Điều chỉnh kích thước nút và font chữ
             aboutButton.setPreferredSize(new Dimension(120, 30));
-            calculateButton.setPreferredSize(new Dimension(120, 30));
-            searchButton.setPreferredSize(new Dimension(120, 30));
-            tabViewButton.setPreferredSize(new Dimension(120, 30));
-            exitButton.setPreferredSize(new Dimension(120, 30));
+            calculateButton.setPreferredSize(new Dimension(200, 30));
+            searchButton.setPreferredSize(new Dimension(200, 30));
+            tabViewButton.setPreferredSize(new Dimension(200, 30));
+            exitButton.setPreferredSize(new Dimension(100, 30));
 
 
             // Thêm hành động cho các nút
