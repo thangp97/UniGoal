@@ -111,7 +111,7 @@ public class RecommendTHPTView extends JPanel {
 
         topPanel.add(DiemXetTuyen);
 
-        getPanel().setPreferredSize(new Dimension(1500, 750)); // Ví dụ kích thước
+        getPanel().setPreferredSize(new Dimension(1475, 675)); // Ví dụ kích thước
 
         add(topPanel, BorderLayout.NORTH);
         add(new JScrollPane(bangGoiY), BorderLayout.CENTER);

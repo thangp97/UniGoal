@@ -25,7 +25,7 @@ public class Main {
 
             // Tạo thanh điều hướng
             JPanel navigationPanel = new JPanel();
-            navigationPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5)); // Giảm khoảng cách giữa các nút
+            navigationPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10)); // Giảm khoảng cách giữa các nút
             navigationPanel.setBackground(new Color(100, 149, 237)); // Màu xanh nhẹ
             navigationPanel.setBorder(new EmptyBorder(5, 5, 5, 5)); // Giảm padding của navigation panel
 
@@ -142,15 +142,15 @@ public class Main {
 
     private static JPanel createTabbedPane() throws Exception {
         JTabbedPane tabbedPane = new JTabbedPane();
-        UniversityCaculateTab tab1 = new UniversityCaculateTab();
+        RecommendTHPTView tab1 = new RecommendTHPTView();
         RecommendDGNLView tab2 = new RecommendDGNLView();
         RecommendDGTDView tab3 = new RecommendDGTDView();
 
 
 
-        tabbedPane.addTab("Tính điểm tốt nghiệp đại học", tab1.getPanel());
-        tabbedPane.addTab("Tính điểm đaị học theo ĐGNL", tab2.getPanel());
-        tabbedPane.addTab("Tính điểm đaị học theo ĐGTD", tab3.getPanel());
+        tabbedPane.addTab("Xét tuyển đại học theo điểm THPTQG", tab1.getPanel());
+        tabbedPane.addTab("Xét tuyển đại học theo điểm ĐGNL", tab2.getPanel());
+        tabbedPane.addTab("Xét tuyển đại học theo điểm ĐGTD", tab3.getPanel());
 
         JPanel tabbedPanePanel = new JPanel(new BorderLayout());
         tabbedPanePanel.add(tabbedPane, BorderLayout.CENTER);
