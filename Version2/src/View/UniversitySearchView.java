@@ -3,6 +3,7 @@ package Version2.src.View;
 import Version2.src.Controller.UniversitySearchController;
 import Version2.src.Model.DaiHocFavoriteData;
 import Version2.src.Utils.JButtonConfig;
+import Version2.src.Utils.NonEditableTableModel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,7 +19,7 @@ import static Version2.src.Utils.Constants.SEARCH_ICON_PATH;
 public class UniversitySearchView extends JPanel {
     private final JTextField maTruongField, maNganhField, tenTruongField, tenNganhField, diemTrungTuyenField;
     private final JTable universityTable;
-    private JButton searchButton, exportFavoritesButton;
+    private JButton searchButton, exportFavoritesButton, removeFavoriteButton;
     private JButtonConfig addToFavoritesButton;
     private DefaultListModel<DaiHocFavoriteData> favoriteListModel;
     private JList<DaiHocFavoriteData> favoriteList;
@@ -35,8 +36,10 @@ public class UniversitySearchView extends JPanel {
         tenNganhField = new JTextField(10);
         diemTrungTuyenField = new JTextField(10);
 
-        universityTable = new JTable(new DefaultTableModel(
-                new String[]{"Mã Trường", "Tên Trường", "Điểm Sàn"}, 0));
+        universityTable = new JTable(new NonEditableTableModel(
+                new Object[][]{},
+                new String[]{"Mã Trường", "Tên Trường", "Điểm Sàn"}
+        ));
         universityTable.setRowHeight(25);
         universityTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
         universityTable.getTableHeader().setBackground(Color.LIGHT_GRAY);
@@ -58,8 +61,6 @@ public class UniversitySearchView extends JPanel {
     }
 
     private void setupUI() {
-        // Tạo panel tìm kiếm
-//        JPanel searchPanel = new JPanel(new GridLayout(6, 2, 5, 5));
         JPanel searchPanel = new JPanel(new GridLayout(3, 4, 5, 5));
         searchPanel.setBorder(BorderFactory.createTitledBorder(
                 BorderFactory.createLineBorder(Color.GRAY, 1),
@@ -108,8 +109,18 @@ public class UniversitySearchView extends JPanel {
         exportFavoritesButton.setFocusPainted(false);
         exportFavoritesButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
+        removeFavoriteButton = new JButton("Xóa khỏi yêu thích");
+        removeFavoriteButton.setBackground(new Color(40, 167, 69));
+        removeFavoriteButton.setForeground(Color.WHITE);
+        removeFavoriteButton.setFocusPainted(false);
+        removeFavoriteButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        removeFavoriteButton.setBorder(BorderFactory.createLineBorder(new Color(220, 53, 69), 1));
+
         bottomPanel.add(addToFavoritesButton, BorderLayout.NORTH);
         bottomPanel.add(exportFavoritesButton, BorderLayout.SOUTH);
+        bottomPanel.add(removeFavoriteButton, BorderLayout.EAST);
+
+
 
         // Favorite List
         favoriteListModel = new DefaultListModel<>();
@@ -153,6 +164,13 @@ public class UniversitySearchView extends JPanel {
                 controller.exportFavoritesToCSV(favoriteListModel);
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, "Có lỗi xảy ra trong quá trình xuất danh sách yêu thích!");
+            }
+        });
+
+        removeFavoriteButton.addActionListener(e -> {
+            int selectedIndex = favoriteList.getSelectedIndex();
+            if (selectedIndex != -1) {
+                favoriteListModel.remove(selectedIndex);
             }
         });
     }
