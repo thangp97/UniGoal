@@ -2,9 +2,9 @@ package Version2.src.Main;
 
 import Version2.src.Controller.CountdownTimerController;
 import Version2.src.View.*;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.sql.SQLException;
 
@@ -117,9 +117,6 @@ public class Main {
         aboutPanel.setBackground(new Color(245, 245, 245));
         CountdownTimerController controller = new CountdownTimerController();
 
-//        JPanel countdownPanel = createCountdownTimer();
-//        JPanel eventSchedulePanel = createEventSchedulePanel();
-
         JTextArea aboutText = new JTextArea("Chào mừng bạn đến với UNIGOAL!\n\n" +
                 "UniGOAL hỗ trợ học sinh THPT trong việc:\n" +
                 "- Tính điểm tốt nghiệp THPT.\n" +
@@ -210,46 +207,6 @@ public class Main {
 //        eventPanel.add(controlPanel, BorderLayout.SOUTH);
 //        return eventPanel;
 //    }
-
-//    private static JPanel createCountdownTimer() {
-//        JPanel countdownPanel = new JPanel(new BorderLayout());
-//        countdownPanel.setBorder(BorderFactory.createTitledBorder(
-//                BorderFactory.createLineBorder(new Color(70, 130, 180)), "Đếm ngược đến ngày thi",
-//                TitledBorder.CENTER, TitledBorder.TOP, new Font("Arial", Font.BOLD, 16), Color.BLUE));
-//        countdownPanel.setBackground(new Color(245, 245, 245));
-//
-//        JLabel countdownLabel = new JLabel("", SwingConstants.CENTER);
-//        countdownLabel.setFont(new Font("Arial", Font.BOLD, 24));
-//        countdownPanel.add(countdownLabel, BorderLayout.CENTER);
-//
-//        Timer timer = new Timer(1000, e -> {
-//            try {
-//                String examDateTime = "202-07-01T08:00:00"; // Thời gian thi THPT: 8:00 sáng
-//                java.time.LocalDateTime now = java.time.LocalDateTime.now();
-//                java.time.LocalDateTime examTime = java.time.LocalDateTime.parse(examDateTime);
-//
-//                if (now.isBefore(examTime)) {
-//                    java.time.Duration diff = java.time.Duration.between(now, examTime);
-//
-//                    long days = diff.toDays();
-//                    long hours = diff.toHours() % 24;
-//                    long minutes = diff.toMinutes() % 60;
-//                    long seconds = diff.getSeconds() % 60;
-//
-//                    String timeLeft = String.format("Còn %d ngày %02d:%02d:%02d đến kỳ thi!", days, hours, minutes, seconds);
-//                    countdownLabel.setText(timeLeft);
-//                } else {
-//                    countdownLabel.setText("Kỳ thi đã bắt đầu hoặc kết thúc!");
-//                }
-//            } catch (Exception ex) {
-//                countdownLabel.setText("Lỗi trong tính toán thời gian!");
-//            }
-//        });
-//        timer.start();
-//
-//        return countdownPanel;
-//    }
-
 
 
     private static void showPanel(JPanel panel) {
