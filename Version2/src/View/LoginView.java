@@ -83,7 +83,7 @@ public class LoginView {
     }
 
     public void showMessage(String message) {
-        statusLabel.setText(message);
+        JOptionPane.showMessageDialog(this.getFrame(), message);
     }
 
     public JFrame getFrame() {

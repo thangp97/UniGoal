@@ -34,21 +34,10 @@ public class LoginController {
                 if (model.login(username, password)) {
                     view.showMessage("Đăng nhập thành công!");
                     view.getFrame().dispose();
-                    if (model.login(username, password)) {
-                        view.showMessage("Đăng nhập thành công!");
-                        if (view.getLoginSuccessListener() != null) {
-                            view.getLoginSuccessListener().onLoginSuccess(username);
-                        }
-                        view.setVisible(false);
+                    if (view.getLoginSuccessListener() != null) {
+                        view.getLoginSuccessListener().onLoginSuccess(username);
                     }
-                    if (model.login(username, password)) {
-                        view.showMessage("Đăng nhập thành công!");
-                        if (view.getLoginSuccessListener() != null) {
-                            view.getLoginSuccessListener().onLoginSuccess(username);
-                        }
-                        view.setVisible(false);
-                    }
-
+                    view.setVisible(false);
                 } else {
                     view.showMessage("Sai tên đăng nhập hoặc mật khẩu.");
                 }
@@ -57,7 +46,6 @@ public class LoginController {
             }
         }
     }
-
     class RegisterListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
