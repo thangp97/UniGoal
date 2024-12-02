@@ -1,15 +1,13 @@
 package Version2.src.Main;
 
-import Version2.src.Controller.ChangePasswordController;
-import Version2.src.Controller.CountdownTimerController;
-import Version2.src.Controller.EventScheduleController;
-import Version2.src.Controller.LoginController;
+import Version2.src.Controller.*;
 import Version2.src.Model.User;
 import Version2.src.Utils.DatabaseConnection;
 import Version2.src.View.*;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.SQLException;
 
@@ -43,6 +41,27 @@ public class Main {
         });
     }
 
+    public static void openFavoriteListPanel() throws SQLException {
+        // Tạo một bảng mới để hiển thị danh sách yêu thích
+        DefaultTableModel model = new DefaultTableModel(new Object[]{"Mã Trường", "Tên Trường", "Tên Ngành", "Điểm Trúng Tuyển"}, 0);
+        JTable favoriteTable = new JTable(model);
+
+        // Tạo một cuộn bảng để dễ dàng xem dữ liệu
+        JScrollPane scrollPane = new JScrollPane(favoriteTable);
+        favoriteTable.setFillsViewportHeight(true);  // Làm cho bảng tự động điều chỉnh kích thước
+
+        // Tạo một panel để chứa bảng
+        JPanel panel = new JPanel();
+        panel.setLayout(new BorderLayout());
+        panel.add(scrollPane, BorderLayout.CENTER);
+
+        // Hiển thị dialog hoặc frame mới để hiển thị danh sách yêu thích
+        JOptionPane.showMessageDialog(null, panel, "Danh sách yêu thích", JOptionPane.INFORMATION_MESSAGE);
+
+        // Gọi phương thức để tải danh sách yêu thích từ cơ sở dữ liệu
+        UniversitySearchController controller = new UniversitySearchController();
+        controller.loadFavoritesFromDatabase(favoriteTable, currentUsername);
+    }
 
     private static JPopupMenu createUserMenu(JPanel navigationPanel) {
         JPopupMenu userMenu = new JPopupMenu();
@@ -57,7 +76,13 @@ public class Main {
 
         // Tùy chọn 3: Kiểm tra danh sách yêu thích
         JMenuItem favoriteListItem = new JMenuItem("Danh sách yêu thích");
-        // favoriteListItem.addActionListener(e -> openFavoriteListPanel());
+        favoriteListItem.addActionListener(e -> {
+            try {
+                openFavoriteListPanel();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
 
         // Tùy chọn 4: Đăng xuất
         JMenuItem logoutItem = new JMenuItem("Đăng xuất");
@@ -85,37 +110,48 @@ public class Main {
 
         loginView.setVisible(true);
     }
-    private static void logoutUser (JPanel navigationPanel) {
-        // Đặt lại currentUsername thành null để biểu thị người dùng đã đăng xuất
-        currentUsername = null;
-        // Cập nhật lại nút Đăng nhập
+    private static void logoutUser(JPanel navigationPanel) {
+        // Clear the current username
+        currentUsername =    null;
+        System.out.println("Logout initiated."); // Debug statement
+        // Update the login button
         updateLoginButton(navigationPanel);
     }
-
     private static void updateLoginButton(JPanel navigationPanel) {
-        JButton loginButton = (JButton) navigationPanel.getComponent(5);  // Thay đổi số 5 nếu cần cho đúng vị trí nút
+        for (Component component : navigationPanel.getComponents()) {
+            if (component instanceof JButton && ((JButton) component).getText().equals("Đăng nhập")) {
+                JButton loginButton = (JButton) component;
 
-        // Kiểm tra xem người dùng đã đăng nhập chưa
-        if (currentUsername != null || currentUsername == "") {
-            // Nếu đã đăng nhập, thay đổi hành động của nút và hiển thị tên người dùng
-            loginButton.setText("Chào, " + currentUsername);
-            loginButton.addActionListener(e -> {
-                // Tạo và hiển thị menu khi người dùng nhấp vào tên
-                JPopupMenu userMenu = createUserMenu(navigationPanel);
-                userMenu.show(loginButton, 0, loginButton.getHeight()); // Hiển thị menu dưới nút
-            });
-        } else {
-            // Nếu chưa đăng nhập, khôi phục lại chức năng đăng nhập ban đầu
-            loginButton.setText("Đăng nhập");
-            loginButton.addActionListener(e -> {
-                try {
-                    openLoginDialog((JFrame) SwingUtilities.getWindowAncestor(navigationPanel), navigationPanel);
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
+                if (currentUsername == null) {
+                    // Set back to "Đăng nhập"
+                    loginButton.setText("Đăng nhập");
+                    // Remove any mouse listeners
+                    for (java.awt.event.MouseListener ml : loginButton.getMouseListeners()) {
+                        loginButton.removeMouseListener(ml);
+                    }
+                } else {
+                    // Update button to show username
+                    loginButton.setText(currentUsername);
+                    // Set up user menu
+                    JPopupMenu userMenu = createUserMenu(navigationPanel);
+                    // Remove old MouseListeners
+                    for (java.awt.event.MouseListener ml : loginButton.getMouseListeners()) {
+                        loginButton.removeMouseListener(ml);
+                    }
+                    // Add MouseListener to show user menu
+                    loginButton.addMouseListener(new java.awt.event.MouseAdapter() {
+                        @Override
+                        public void mousePressed(java.awt.event.MouseEvent e) {
+                            if (SwingUtilities.isLeftMouseButton(e)) {
+                                userMenu.show(loginButton, e.getX(), e.getY());
+                            }
+                        }
+                    });
+                    break;
                 }
-            });
+            }
         }
-        // Revalidate và repaint navigation panel
+        // Revalidate and repaint the navigation panel
         navigationPanel.revalidate();
         navigationPanel.repaint();
     }
@@ -198,8 +234,6 @@ public class Main {
                     }
                 }
             });
-
-
 
             // Thêm các thành phần vào navigation panel
             navigationPanel.add(logoButton);

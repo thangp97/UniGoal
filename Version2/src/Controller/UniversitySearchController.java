@@ -5,6 +5,7 @@ import Version2.src.Model.DaiHocSearchResult;
 import Version2.src.Model.DaiHocFavoriteData;
 import Version2.src.Utils.DatabaseConnection;
 import Version2.src.Utils.NonEditableTableModel;
+import Version2.src.View.LoginView;
 
 
 import javax.swing.*;
@@ -16,12 +17,63 @@ import java.util.ArrayList;
 
 public class UniversitySearchController {
     private Connection connection;
+    private LoginView loginView;
 
     public UniversitySearchController() throws SQLException {
         try {
             connection = DatabaseConnection.getConnection();
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+    public void saveFavoriteToDatabase(DaiHocFavoriteData favoriteData, String username) {
+        String query = "INSERT INTO danh_sach_yeu_thich (username, maTruong, tenTruong, tenNganh, diemTrungTuyen) " +
+                "VALUES (?, ?, ?, ?, ?)";
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+
+            stmt.setString(1, username);
+            stmt.setString(2, favoriteData.getMaTruong());
+            stmt.setString(3, favoriteData.getTenTruong());
+            stmt.setString(4, favoriteData.getTenNganh());
+            stmt.setDouble(5, favoriteData.getDiemTrungTuyen());
+
+            int rowsInserted = stmt.executeUpdate();
+            if (rowsInserted > 0) {
+                JOptionPane.showMessageDialog(null, "Đã thêm trường và ngành vào danh sách yêu thích.",
+                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Lỗi khi lưu vào cơ sở dữ liệu: " + e.getMessage(),
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace(); // In ra lỗi chi tiết để debug
+        }
+    }
+
+    public void loadFavoritesFromDatabase(JTable universityTable, String username) {
+        String query = "String query = \"SELECT maTruong, tenTruong, tenNganh, diemTrungTuyen FROM danh_sach_yeu_thich WHERE username = ?\";\n";
+
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, username);  // Thay đổi username với tên người dùng hiện tại
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                DefaultTableModel model = (DefaultTableModel) universityTable.getModel();
+                model.setRowCount(0);  // Clear old data
+
+                // Lặp qua các kết quả và thêm chúng vào bảng
+                while (rs.next()) {
+                    String maTruong = rs.getString("maTruong");
+                    String tenTruong = rs.getString("tenTruong");
+                    String tenNganh = rs.getString("tenNganh");
+                    double diemTrungTuyen = rs.getDouble("diemTrungTuyen");
+
+                    // Thêm dữ liệu vào bảng
+                    model.addRow(new Object[]{maTruong, tenTruong, tenNganh, diemTrungTuyen});
+                }
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Lỗi khi tải danh sách yêu thích: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -157,13 +209,39 @@ public class UniversitySearchController {
             }
 
             // Nếu không tồn tại, thêm vào danh sách yêu thích
-            DaiHocFavoriteData daiHocFavoriteData = new DaiHocFavoriteData("", "", "", 0, "", 0);
+            DaiHocFavoriteData daiHocFavoriteData = new DaiHocFavoriteData("", "", "", 0, "", 0,"");
             daiHocFavoriteData.setMaTruong(selectedMaTruong);
             daiHocFavoriteData.setTenTruong((String) universityTable.getValueAt(selectedRow, 1));
             daiHocFavoriteData.setTenNganh(selectedTenNganh);
             daiHocFavoriteData.setDiemTrungTuyen((double) universityTable.getValueAt(selectedRow, 2));
+            daiHocFavoriteData.setUsername(loginView.getUsername());
 
+            // Thêm vào mô hình danh sách yêu thích
             favoriteListModel.addElement(daiHocFavoriteData);
+
+            // Lưu dữ liệu vào cơ sở dữ liệu
+            try (Connection connection = DatabaseConnection.getConnection()) {
+                String sql = "INSERT INTO dsyeuthich (maTruong, tenTruong, tenNganh, diemTrungTuyen, username) " +
+                        "VALUES (?, ?, ?, ?,?)";
+
+                try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                    preparedStatement.setString(1, selectedMaTruong);
+                    preparedStatement.setString(2, (String) universityTable.getValueAt(selectedRow, 1));
+                    preparedStatement.setString(3, selectedTenNganh);
+                    preparedStatement.setDouble(4, (double) universityTable.getValueAt(selectedRow, 2));
+                    preparedStatement.setString(5, loginView.getUsername());
+
+                    // Thực thi câu truy vấn
+                    preparedStatement.executeUpdate();
+                }
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(universityTable,
+                        "Có lỗi xảy ra trong quá trình thêm vào cơ sở dữ liệu!",
+                        "Thông báo lỗi",
+                        JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+            }
+
         } else {
             JOptionPane.showMessageDialog(universityTable,
                     "Vui lòng chọn một trường và ngành để thêm vào danh sách yêu thích.",
@@ -171,8 +249,6 @@ public class UniversitySearchController {
                     JOptionPane.WARNING_MESSAGE);
         }
     }
-
-
     public void exportFavoritesToCSV(DefaultListModel<DaiHocFavoriteData> favoriteListModel) {
         // Mở hộp thoại để người dùng chọn vị trí lưu file
         JFileChooser fileChooser = new JFileChooser();
