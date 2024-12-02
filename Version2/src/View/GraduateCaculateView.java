@@ -1,7 +1,5 @@
 package Version2.src.View;
 
-import Version2.src.Model.GraduateScoreResult;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.HashMap;
@@ -12,6 +10,13 @@ public class GraduateCaculateView {
     private JTextField[] subjectTextFields;
     private JTextField tb12Field, khuyenKhichField, uuTienField;
     private String khuVuc;
+
+    public static double calculateGraduationScore(double mathScore, double literatureScore, double englishScore,
+                                                  double avgCombinationScore, double tb12, double khuyenKhich, double doiTuong) {
+        double totalScore = mathScore + literatureScore + englishScore + avgCombinationScore;
+        double avgScore = (totalScore + khuyenKhich) / 4;
+        return ((avgScore * 7) + (tb12 * 3)) / 10 + doiTuong;
+    }
 
     // Tạo bản đồ điểm cộng cho các khu vực
     private static final Map<String, Double> khuVucPoints = new HashMap<>();
@@ -254,7 +259,7 @@ public class GraduateCaculateView {
             }
 
             // Tính điểm tốt nghiệp
-            double result = GraduateScoreResult.calculateGraduationScore(
+            double result = calculateGraduationScore(
                     mathScore, literatureScore, englishScore, avgCombinationScore, tb12, khuyenKhich, uuTien);
             String x = "";
             if(result >=5) x = "Bạn đã đủ điều kiện xét tốt nghiệp THPT.";
