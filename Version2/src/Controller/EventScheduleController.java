@@ -26,33 +26,8 @@ public class EventScheduleController {
         // Thêm bảng lịch vào panel
         eventPanel.add(calendarPanel, BorderLayout.CENTER);
 
-        // Panel điều khiển thêm sự kiện
-        JPanel controlPanel = createControlPanel();
-        eventPanel.add(controlPanel, BorderLayout.SOUTH);
 
         return eventPanel;
-    }
-
-    private JPanel createControlPanel() {
-        JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-
-        // Các trường nhập liệu và nút thêm ghi chú
-        JButton addEventButton = new JButton("Thêm ghi chú");
-        addEventButton.addActionListener(e -> {
-            String note = descriptionField.getText();
-            if (!note.isEmpty()) {
-                calendarPanel.addNoteToSelectedDate(note);
-                descriptionField.setText("");  // Reset trường nhập liệu
-            } else {
-                JOptionPane.showMessageDialog(null, "Vui lòng nhập ghi chú trước!", "Thông báo", JOptionPane.WARNING_MESSAGE);
-            }
-        });
-
-        controlPanel.add(new JLabel("Ghi chú:"));
-        controlPanel.add(descriptionField);
-        controlPanel.add(addEventButton);
-
-        return controlPanel;
     }
 }
 
