@@ -19,10 +19,9 @@ public class Calendar {
 
     public void updateNote(LocalDate date, String newContent) {
         if (notes.containsKey(date)) {
-            notes.get(date).setContent(newContent);  // Cập nhật ghi chú cho ngày
+            notes.get(date).setContent(newContent);
         }
     }
-
 
     public Note getNoteForDate(LocalDate date) {
         return notes.get(date);
