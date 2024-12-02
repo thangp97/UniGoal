@@ -5,21 +5,11 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.sql.SQLException;
 
 public class Main {
 
     private static JPanel mainPanel;
-    private static Image resizeImage(Image originalImage, int targetWidth, int targetHeight) {
-        BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = resizedImage.createGraphics();
-        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-        g2d.drawImage(originalImage, 0, 0, targetWidth, targetHeight, null);
-        g2d.dispose();
-        return resizedImage;
-    }
-
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
@@ -30,7 +20,7 @@ public class Main {
             frame.setLocationRelativeTo(null); // Đặt cửa sổ ở giữa màn hình
 
             // Thêm icon cho ứng dụng
-            ImageIcon icon = new ImageIcon("Version2/src/Utils/Icons/UniGOAL (1).png");
+            ImageIcon icon = new ImageIcon("D:/UniGOAL (1).png");
             frame.setIconImage(icon.getImage());
 
             // Tạo thanh điều hướng
@@ -39,22 +29,15 @@ public class Main {
             navigationPanel.setBackground(new Color(100, 149, 237)); // Màu xanh nhẹ
             navigationPanel.setBorder(new EmptyBorder(5, 5, 5, 5)); // Giảm padding của navigation panel
 
-            String logoPath = "Version2/src/Utils/Icons/UniGOAL (1).png";
-
-            ImageIcon iconx = new ImageIcon(logoPath);
-
-// Chỉnh lại kích thước logo với chất lượng cao
-            Image resizedImg = resizeImage(icon.getImage(), 70, 70); // Thay đổi kích thước logo thành 40x40
-            ImageIcon resizedIcon = new ImageIcon(resizedImg);
-
-// Tạo JButton hiển thị logo
-            JButton logoButton = new JButton(resizedIcon);
-            logoButton.setPreferredSize(new Dimension(70, 70)); // Đảm bảo kích thước nút không quá lớn
-            logoButton.setBorderPainted(false);   // Tắt viền nút
-            logoButton.setContentAreaFilled(false); // Tắt nền nút
-            logoButton.setFocusPainted(false);    // Tắt viền khi nhấn nút
-            logoButton.setOpaque(false);
-            logoButton.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Thêm hiệu ứng con trỏ
+            // Thêm chữ "UNIGOAL" vào thanh điều hướng
+            JButton logoButton = new JButton("UNIGOAL");
+            logoButton.setFont(new Font("Arial", Font.BOLD, 18)); // Giảm kích thước font chữ
+            logoButton.setForeground(Color.WHITE);
+            logoButton.setBackground(new Color(100, 149, 237)); // Trùng màu nền
+            logoButton.setBorderPainted(false);
+            logoButton.setFocusPainted(false);
+            logoButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            logoButton.setPreferredSize(new Dimension(120, 30)); // Giảm kích thước nút
             logoButton.addActionListener(e -> showPanel(createAboutPanel()));
 
             // Thêm các nút điều hướng
@@ -135,15 +118,11 @@ public class Main {
         aboutPanel.setBackground(new Color(245, 245, 245));
 
         JTextArea aboutText = new JTextArea("Chào mừng bạn đến với UNIGOAL!\n\n" +
-                "UniGOAL là ứng dụng hỗ trợ học sinh THPT trong việc:\n" +
-                "\n" +
-                "-  Tính điểm tốt nghiệp THPT: Dễ dàng nhập điểm, ứng dụng tự động tính toán và hiển thị kết quả chính xác.\n" +
-                "-  Tìm kiếm thông tin tuyển sinh đại học: Cung cấp thông tin về các trường đại học và gợi ý xét tuyển dựa trên điểm số cá nhân.\n" +
-                "\nUniGOAL giúp tối ưu hóa quá trình chuẩn bị hồ sơ và chọn trường, đồng hành cùng sinh viên trên hành trình chinh phục ước mơ đại học.");
+                "Ứng dụng hỗ trợ sinh viên tính điểm tốt nghiệp và tìm kiếm thông tin trường đại học.");
         aboutText.setEditable(false);
         aboutText.setLineWrap(true);
         aboutText.setWrapStyleWord(true);
-        aboutText.setFont(new Font("Arial", Font.BOLD, 16));
+        aboutText.setFont(new Font("Arial", Font.PLAIN, 14));
         aboutText.setBackground(Color.WHITE);
         aboutText.setBorder(new EmptyBorder(15, 15, 15, 15));
 
