@@ -1,5 +1,6 @@
 package Version2.src.Main;
 
+import Version2.src.Controller.ChangePasswordController;
 import Version2.src.Controller.CountdownTimerController;
 import Version2.src.Controller.EventScheduleController;
 import Version2.src.Controller.LoginController;
@@ -17,12 +18,38 @@ public class Main {
     private static JPanel mainPanel;
     private static String currentUsername = null;
 
+    private static void openChangePasswordDialog() {
+        if (currentUsername == null) {
+            JOptionPane.showMessageDialog(null, "Vui lòng đăng nhập trước khi đổi mật khẩu!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        SwingUtilities.invokeLater(() -> {
+            try {
+                // Khởi tạo View
+                ChangePasswordView changePasswordView = new ChangePasswordView(currentUsername);
+
+                // Khởi tạo Model
+                User userModel = new User(Version2.src.Utils.DatabaseConnection.getConnection());
+
+                // Khởi tạo Controller
+                new ChangePasswordController(userModel, changePasswordView);
+
+                // Hiển thị View
+                changePasswordView.setVisible(true);
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(null, "Lỗi kết nối cơ sở dữ liệu: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+    }
+
+
     private static JPopupMenu createUserMenu(JPanel navigationPanel) {
         JPopupMenu userMenu = new JPopupMenu();
 
         // Tùy chọn 1: Đổi mật khẩu
         JMenuItem changePasswordItem = new JMenuItem("Đổi mật khẩu");
-        // changePasswordItem.addActionListener(e -> openChangePasswordDialog());
+        changePasswordItem.addActionListener(e -> openChangePasswordDialog());
 
         // Tùy chọn 2: Kiểm tra điểm thí sinh
         JMenuItem checkScoresItem = new JMenuItem("Kiểm tra điểm thí sinh");
