@@ -2,64 +2,63 @@ package Version2.src.Model;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableModel;
 import java.awt.*;
-import java.time.*;
-import java.util.ArrayList;
+import java.time.LocalDate;
 
 public class CalendarPanel extends JPanel {
-
-    private final JTable calendarTable;
-    private LocalDate currentDate;
-    private final ArrayList<String> notes;
+    private JTable calendarTable;
+    private Calendar calendar;
 
     public CalendarPanel() {
-        this.currentDate = LocalDate.now();
-        this.notes = new ArrayList<>();
+        this.calendar = new Calendar(LocalDate.now());
         this.setLayout(new BorderLayout());
+        initTable();
+        updateCalendar();
+    }
 
-        // Tạo bảng lịch
+    private void initTable() {
         calendarTable = new JTable(6, 7);
         calendarTable.setFont(new Font("Arial", Font.PLAIN, 14));
-        calendarTable.setRowHeight(40);
-
-        // Chắc chắn rằng các ô không thể chỉnh sửa
+        calendarTable.setRowHeight(60);
         calendarTable.setCellSelectionEnabled(true);
-        TableModel model = calendarTable.getModel();
-        for (int row = 0; row < model.getRowCount(); row++) {
-            for (int col = 0; col < model.getColumnCount(); col++) {
-                model.setValueAt("", row, col);  // Đảm bảo không có giá trị mặc định
-            }
-        }
 
-        // Tạo bảng lịch cho tháng hiện tại
-        updateCalendar();
-
-        // Cài đặt render cho các ô ngày
         DefaultTableCellRenderer renderer = (DefaultTableCellRenderer) calendarTable.getDefaultRenderer(Object.class);
         renderer.setHorizontalAlignment(SwingConstants.CENTER);
         renderer.setVerticalAlignment(SwingConstants.CENTER);
 
-        // Chỉnh sửa màu sắc cho ngày hiện tại và ngày đã chọn
-        calendarTable.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+        calendarTable.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                Component comp = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                String day = value == null ? "" : value.toString();
-                if (!day.isEmpty()) {
-                    LocalDate date = LocalDate.of(currentDate.getYear(), currentDate.getMonth(), Integer.parseInt(day));
-                    if (date.equals(LocalDate.now())) {
-                        comp.setBackground(Color.YELLOW);  // Ngày hiện tại
-                    } else {
-                        comp.setBackground(Color.WHITE);
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                int row = calendarTable.getSelectedRow();
+                int col = calendarTable.getSelectedColumn();
+
+                // Lấy giá trị của ô ngày
+                String currentValue = (String) calendarTable.getValueAt(row, col);
+
+                if (currentValue != null && currentValue.contains(" - ")) {
+                    // Nếu ô ngày đã có ghi chú, cho phép chỉnh sửa
+                    String existingNote = currentValue.split(" - ")[1];  // Lấy phần ghi chú hiện tại
+                    String newNote = JOptionPane.showInputDialog(null, "Chỉnh sửa ghi chú:", existingNote);
+
+                    if (newNote != null && !newNote.isEmpty()) {
+                        // Cập nhật ghi chú vào ô ngày
+                        String updatedValue = currentValue.split(" - ")[0] + " - " + newNote;
+                        calendarTable.setValueAt(updatedValue, row, col);
+                    }
+                } else {
+                    // Nếu ô ngày chưa có ghi chú, thêm ghi chú mới
+                    String newNote = JOptionPane.showInputDialog(null, "Thêm ghi chú:");
+
+                    if (newNote != null && !newNote.isEmpty()) {
+                        // Thêm ghi chú vào ô ngày
+                        String updatedValue = currentValue + " - " + newNote;
+                        calendarTable.setValueAt(updatedValue, row, col);
                     }
                 }
-                return comp;
             }
         });
 
         JScrollPane scrollPane = new JScrollPane(calendarTable);
-        this.add(scrollPane, BorderLayout.CENTER);
 
         // Nút điều hướng tháng
         JPanel navigationPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -79,29 +78,27 @@ public class CalendarPanel extends JPanel {
         navigationPanel.add(nextYearButton);
 
         this.add(navigationPanel, BorderLayout.SOUTH);
+        this.add(scrollPane, BorderLayout.CENTER);
     }
 
-    private void changeMonth(int increment) {
-        currentDate = currentDate.plusMonths(increment);
-        updateCalendar();
-    }
+    public void updateCalendar() {
+        LocalDate firstDayOfMonth = LocalDate.of(calendar.getCurrentDate().getYear(), calendar.getCurrentDate().getMonth(), 1);
+        int daysInMonth = calendar.getDaysInMonth();
+        int startDayOfWeek = calendar.getDayOfWeekForFirstDayOfMonth();
 
-    private void changeYear(int increment) {
-        currentDate = currentDate.plusYears(increment);
-        updateCalendar();
-    }
-
-    private void updateCalendar() {
-        LocalDate firstDayOfMonth = LocalDate.of(currentDate.getYear(), currentDate.getMonth(), 1);
-        int daysInMonth = firstDayOfMonth.lengthOfMonth();
-        int startDayOfWeek = firstDayOfMonth.getDayOfWeek().getValue();  // Chỉ số ngày đầu tiên trong tuần (1 = Monday, 7 = Sunday)
-
-        // Cập nhật các giá trị ngày tháng vào bảng
         for (int row = 0; row < 6; row++) {
             for (int col = 0; col < 7; col++) {
                 int dayIndex = row * 7 + col - startDayOfWeek + 1;
                 if (dayIndex > 0 && dayIndex <= daysInMonth) {
-                    calendarTable.setValueAt(String.valueOf(dayIndex), row, col);
+                    LocalDate date = LocalDate.of(calendar.getCurrentDate().getYear(), calendar.getCurrentDate().getMonth(), dayIndex);
+                    String displayText = String.valueOf(dayIndex);
+
+                    Note note = calendar.getNoteForDate(date);
+                    if (note != null) {
+                        displayText += note.toString();
+                    }
+
+                    calendarTable.setValueAt(displayText, row, col);
                 } else {
                     calendarTable.setValueAt("", row, col);
                 }
@@ -109,15 +106,14 @@ public class CalendarPanel extends JPanel {
         }
     }
 
-    public void addNoteToSelectedDate(String note) {
-        int row = calendarTable.getSelectedRow();
-        int col = calendarTable.getSelectedColumn();
-        if (row != -1 && col != -1 && calendarTable.getValueAt(row, col) != null) {
-            String selectedDay = calendarTable.getValueAt(row, col).toString();
-            notes.add("Ngày " + selectedDay + ": " + note);
+    public void changeMonth(int increment) {
+        calendar.changeMonth(increment);
+        updateCalendar();
+    }
 
-            // Chỉ hiển thị ghi chú trong ô đã chọn (không cho phép chỉnh sửa trực tiếp)
-            calendarTable.setValueAt(note, row, col);  // Hiển thị ghi chú trực tiếp trên bảng
-        }
+    public void changeYear(int increment) {
+        calendar.changeYear(increment);
+        updateCalendar();
     }
 }
+
