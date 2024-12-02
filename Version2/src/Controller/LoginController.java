@@ -1,6 +1,5 @@
 package Version2.src.Controller;
 
-import Version2.src.Model.Login;
 import Version2.src.Model.User;
 import Version2.src.View.LoginView;
 import Version2.src.View.SignUpView;
