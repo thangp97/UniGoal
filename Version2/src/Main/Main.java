@@ -1,5 +1,6 @@
 package Version2.src.Main;
 
+import Version2.src.Controller.CountdownTimerController;
 import Version2.src.Controller.LoginController;
 import Version2.src.Controller.SignUpController;
 import Version2.src.Model.Login;
@@ -43,15 +44,15 @@ public class Main {
             navigationPanel.setBackground(new Color(100, 149, 237)); // Màu xanh nhẹ
             navigationPanel.setBorder(new EmptyBorder(5, 5, 5, 5)); // Giảm padding của navigation panel
 
-            String logoPath = "Version2/src/Utils/Icons/UniGOAL (1).png";
-
-            // Tạo JButton hiển thị logo
-            JButton logoButton = createNavigationButton("UniGOAL");
-            logoButton.setBorderPainted(false);   // Tắt viền nút
-            logoButton.setContentAreaFilled(false); // Tắt nền nút
-            logoButton.setFocusPainted(false);    // Tắt viền khi nhấn nút
-            logoButton.setOpaque(false);
-            logoButton.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Thêm hiệu ứng con trỏ
+            // Thêm chữ "UNIGOAL" vào thanh điều hướng
+            JButton logoButton = new JButton("UNIGOAL");
+            logoButton.setFont(new Font("Arial", Font.BOLD, 18)); // Giảm kích thước font chữ
+            logoButton.setForeground(Color.WHITE);
+            logoButton.setBackground(new Color(100, 149, 237)); // Trùng màu nền
+            logoButton.setBorderPainted(false);
+            logoButton.setFocusPainted(false);
+            logoButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            logoButton.setPreferredSize(new Dimension(120, 30)); // Giảm kích thước nút
             logoButton.addActionListener(e -> showPanel(createAboutPanel()));
 
             // Thêm các nút điều hướng
@@ -136,35 +137,34 @@ public class Main {
         button.setForeground(Color.BLACK); // Chữ màu xám
         button.setFocusPainted(false);
         button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-        button.setBorderPainted(false);   // Tắt viền nút
-        button.setContentAreaFilled(false); // Tắt nền nút
-        button.setFocusPainted(false);    // Tắt viền khi nhấn nút
-        button.setOpaque(false);
+//        button.setBorderPainted(false);   // Tắt viền nút
+//        button.setContentAreaFilled(false); // Tắt nền nút
+//        button.setFocusPainted(false);    // Tắt viền khi nhấn nút
+//        button.setOpaque(false);
         button.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Thêm hiệu ứng con trỏ
         return button;
     }
 
     private static JPanel createAboutPanel() {
         JPanel aboutPanel = new JPanel(new BorderLayout());
-        aboutPanel.setBorder(BorderFactory.createTitledBorder(
-                BorderFactory.createLineBorder(new Color(70, 130, 180)), "Giới thiệu",
-                TitledBorder.CENTER, TitledBorder.TOP, new Font("Arial", Font.BOLD, 16), Color.BLUE));
         aboutPanel.setBackground(new Color(245, 245, 245));
+        CountdownTimerController controller = new CountdownTimerController();
 
         JTextArea aboutText = new JTextArea("Chào mừng bạn đến với UNIGOAL!\n\n" +
-                "UniGOAL là ứng dụng hỗ trợ học sinh THPT trong việc:\n" +
-                "\n" +
-                "-  Tính điểm tốt nghiệp THPT: Dễ dàng nhập điểm, ứng dụng tự động tính toán và hiển thị kết quả chính xác.\n" +
-                "-  Tìm kiếm thông tin tuyển sinh đại học: Cung cấp thông tin về các trường đại học và gợi ý xét tuyển dựa trên điểm số cá nhân.\n" +
-                "\nUniGOAL giúp tối ưu hóa quá trình chuẩn bị hồ sơ và chọn trường, đồng hành cùng sinh viên trên hành trình chinh phục ước mơ đại học.");
+                "UniGOAL hỗ trợ học sinh THPT trong việc:\n" +
+                "- Tính điểm tốt nghiệp THPT.\n" +
+                "- Tìm kiếm thông tin tuyển sinh đại học.\n" +
+                "- Theo dõi các sự kiện liên quan đến kỳ thi.\n" +
+                "- Quản lý lịch sự kiện cá nhân.\n");
         aboutText.setEditable(false);
-        aboutText.setLineWrap(true);
-        aboutText.setWrapStyleWord(true);
-        aboutText.setFont(new Font("Arial", Font.BOLD, 16));
+        aboutText.setFont(new Font("Arial", Font.PLAIN, 14));
         aboutText.setBackground(Color.WHITE);
-        aboutText.setBorder(new EmptyBorder(15, 15, 15, 15));
+        aboutText.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        aboutPanel.add(new JScrollPane(aboutText), BorderLayout.CENTER);
+        aboutPanel.add(new JScrollPane(aboutText), BorderLayout.NORTH);
+        aboutPanel.add(controller.getCountdownTimerPanel(), BorderLayout.CENTER);
+//        aboutPanel.add(eventSchedulePanel, BorderLayout.SOUTH);
+
         return aboutPanel;
     }
 
