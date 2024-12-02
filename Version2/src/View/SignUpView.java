@@ -61,6 +61,10 @@ public class SignUpView extends JFrame {
         return new String(passwordField.getPassword());
     }
 
+    public String getEmail() {
+        return emailField.getText();
+    }
+
     public void addRegisterListener(ActionListener listener) {
         registerButton.addActionListener(listener);
     }

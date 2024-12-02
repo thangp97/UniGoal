@@ -22,6 +22,7 @@ public class SignUpController {
         public void actionPerformed(ActionEvent e) {
             String username = view.getUsername();
             String password = view.getPassword();
+            String email = view.getEmail();
 
             if (username.isEmpty() || password.isEmpty()) {
                 view.showMessage("Vui lòng nhập đầy đủ thông tin.");
@@ -29,7 +30,7 @@ public class SignUpController {
             }
 
             try {
-                if (model.register(username, password)) {
+                if (model.register(username, password, email)) {
                     view.showMessage("Đăng ký thành công!");
                     view.setVisible(false); // Đóng form sau khi đăng ký
                 } else {

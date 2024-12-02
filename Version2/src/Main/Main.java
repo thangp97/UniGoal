@@ -59,11 +59,9 @@ public class Main {
         loginView.setVisible(true);
     }
     private static void logoutUser(JPanel navigationPanel) {
-        System.out.println("Logout initiated."); // Debug statement
-
         // Clear the current username
-        currentUsername = null;
-
+        currentUsername =    null;
+        System.out.println("Logout initiated."); // Debug statement
         // Update the login button
         updateLoginButton(navigationPanel);
     }
@@ -72,7 +70,14 @@ public class Main {
             if (component instanceof JButton && ((JButton) component).getText().equals("Đăng nhập")) {
                 JButton loginButton = (JButton) component;
 
-                if (currentUsername != null) {
+                if (currentUsername == null) {
+                    // Set back to "Đăng nhập"
+                    loginButton.setText("Đăng nhập");
+                    // Remove any mouse listeners
+                    for (java.awt.event.MouseListener ml : loginButton.getMouseListeners()) {
+                        loginButton.removeMouseListener(ml);
+                    }
+                } else {
                     // Update button to show username
                     loginButton.setText(currentUsername);
                     // Set up user menu
@@ -90,14 +95,15 @@ public class Main {
                             }
                         }
                     });
-                } else {
-                    // Set back to "Đăng nhập"
-                    loginButton.setText("Đăng nhập");
+                    break;
                 }
-                break; // Only update the first matching button
             }
         }
+        // Revalidate and repaint the navigation panel
+        navigationPanel.revalidate();
+        navigationPanel.repaint();
     }
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             // Tạo cửa sổ chính
