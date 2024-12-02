@@ -45,6 +45,23 @@ public class UniversitySearchController {
         }
     }
 
+    public void loadDetailData(String maTruong, JTable detailTable) throws SQLException {
+        String query = "SELECT diem_thpt, diem_dgnl, diem_dgtd FROM majors WHERE ma_truong = ?";
+        PreparedStatement statement = connection.prepareStatement(query);
+        statement.setString(1, maTruong);
+        ResultSet resultSet = statement.executeQuery();
+
+        DefaultTableModel model = (DefaultTableModel) detailTable.getModel();
+        model.setRowCount(0); // Xóa dữ liệu cũ
+
+        while (resultSet.next()) {
+            String diemThpt = resultSet.getString("diem_thpt");
+            String diemDgnl = resultSet.getString("diem_dgnl");
+            String diemDgtd = resultSet.getString("diem_dgtd");
+            model.addRow(new Object[]{diemThpt, diemDgnl, diemDgtd});
+        }
+    }
+
     public void searchUniversityData(String maTruong, String maNganh, String tenTruong, String tenNganh, String diemTrungTuyen, JTable universityTable) {
         StringBuilder query = new StringBuilder(
                 "SELECT DISTINCT d.maTruong, d.tenTruong, dt.diemTrungTuyen, dt.tenNganh " +

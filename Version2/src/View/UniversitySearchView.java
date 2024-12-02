@@ -25,6 +25,8 @@ public class UniversitySearchView extends JPanel {
     private JList<DaiHocFavoriteData> favoriteList;
     private final UniversitySearchController controller;
 
+
+
     public UniversitySearchView() throws SQLException {
         controller = new UniversitySearchController();
         setLayout(new BorderLayout());
@@ -183,3 +185,4 @@ public class UniversitySearchView extends JPanel {
         return controller;
     }
 }
+

@@ -1,6 +1,6 @@
 package Version2.src.Model;
 
-public class TinhDiemTHPT {
+public class THPTScoreResult {
     private String maToHop;
     private double diemMon1;
     private double diemMon2;
@@ -10,8 +10,8 @@ public class TinhDiemTHPT {
     private String doiTuong; // Đối tượng ưu tiên (VD: 01 - đối tượng 1, 02 - đối tượng 2, v.v.)
 
     // Constructor
-    public TinhDiemTHPT( String maToHop, double diemMon1, double diemMon2, double diemMon3,
-                        double diemUuTien, String khuVuc, String doiTuong) {
+    public THPTScoreResult(String maToHop, double diemMon1, double diemMon2, double diemMon3,
+                           double diemUuTien, String khuVuc, String doiTuong) {
         this.maToHop = maToHop;
         this.diemMon1 = diemMon1;
         this.diemMon2 = diemMon2;

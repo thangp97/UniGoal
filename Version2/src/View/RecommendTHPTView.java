@@ -1,12 +1,11 @@
 package Version2.src.View;
 
 import Version2.src.Controller.RecommendTHPTController;
-import Version2.src.Model.TinhDiemTHPT;
+import Version2.src.Model.THPTScoreResult;
 import Version2.src.Utils.NonEditableTableModel;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
 import static Version2.src.Utils.Constants.SEARCH_ICON_PATH;
@@ -162,7 +161,7 @@ public class RecommendTHPTView extends JPanel {
                 String maToHop = selectedToHopMon.split(" - ")[0]; // Giả định mã tổ hợp môn là phần đầu
 
                 // Tạo đối tượng TinhDiemTHPT
-                TinhDiemTHPT tinhDiem = new TinhDiemTHPT(
+                THPTScoreResult tinhDiem = new THPTScoreResult(
                         maToHop,
                         diemMon1,
                         diemMon2,
