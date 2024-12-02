@@ -26,9 +26,21 @@ public class EventScheduleController {
         // Thêm bảng lịch vào panel
         eventPanel.add(calendarPanel, BorderLayout.CENTER);
 
+        // Thêm phần hiển thị tên các ngày trong tuần
+        JPanel dayNamesPanel = new JPanel(new GridLayout(1, 7)); // GridLayout cho tên các ngày
+        String[] dayNames = {"Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"};
+
+        for (String dayName : dayNames) {
+            JLabel label = new JLabel(dayName, SwingConstants.CENTER);
+            label.setFont(new Font("Arial", Font.BOLD, 14));
+            label.setBackground(new Color(220, 220, 220));
+            label.setOpaque(true);
+            label.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+            dayNamesPanel.add(label);
+        }
+
+        eventPanel.add(dayNamesPanel, BorderLayout.NORTH);
 
         return eventPanel;
     }
 }
-
-
