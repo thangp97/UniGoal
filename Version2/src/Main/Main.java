@@ -1,16 +1,29 @@
 package Version2.src.Main;
 
-import Version2.src.Controller.CountdownTimerController;
+import Version2.src.Controller.LoginController;
+import Version2.src.Controller.SignUpController;
+import Version2.src.Model.Login;
+import Version2.src.Model.User;
+import Version2.src.Utils.DatabaseConnection;
 import Version2.src.View.*;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.sql.SQLException;
 
 public class Main {
 
     private static JPanel mainPanel;
+    private static void openLoginDialog(JFrame parentFrame) throws SQLException {
+        // Mở cửa sổ đăng nhập
+        LoginView loginView = new LoginView();
+        User model = new User(DatabaseConnection.getConnection());
+        LoginController controller = new LoginController(model, loginView);
+        loginView.setVisible(true);
+    }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
@@ -21,7 +34,7 @@ public class Main {
             frame.setLocationRelativeTo(null); // Đặt cửa sổ ở giữa màn hình
 
             // Thêm icon cho ứng dụng
-            ImageIcon icon = new ImageIcon("D:/UniGOAL (1).png");
+            ImageIcon icon = new ImageIcon("Version2/src/Utils/Icons/UniGOAL (1).png");
             frame.setIconImage(icon.getImage());
 
             // Tạo thanh điều hướng
@@ -30,15 +43,15 @@ public class Main {
             navigationPanel.setBackground(new Color(100, 149, 237)); // Màu xanh nhẹ
             navigationPanel.setBorder(new EmptyBorder(5, 5, 5, 5)); // Giảm padding của navigation panel
 
-            // Thêm chữ "UNIGOAL" vào thanh điều hướng
-            JButton logoButton = new JButton("UNIGOAL");
-            logoButton.setFont(new Font("Arial", Font.BOLD, 18)); // Giảm kích thước font chữ
-            logoButton.setForeground(Color.WHITE);
-            logoButton.setBackground(new Color(100, 149, 237)); // Trùng màu nền
-            logoButton.setBorderPainted(false);
-            logoButton.setFocusPainted(false);
-            logoButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-            logoButton.setPreferredSize(new Dimension(120, 30)); // Giảm kích thước nút
+            String logoPath = "Version2/src/Utils/Icons/UniGOAL (1).png";
+
+            // Tạo JButton hiển thị logo
+            JButton logoButton = createNavigationButton("UniGOAL");
+            logoButton.setBorderPainted(false);   // Tắt viền nút
+            logoButton.setContentAreaFilled(false); // Tắt nền nút
+            logoButton.setFocusPainted(false);    // Tắt viền khi nhấn nút
+            logoButton.setOpaque(false);
+            logoButton.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Thêm hiệu ứng con trỏ
             logoButton.addActionListener(e -> showPanel(createAboutPanel()));
 
             // Thêm các nút điều hướng
@@ -46,6 +59,7 @@ public class Main {
             JButton calculateButton = createNavigationButton("Tính điểm tốt nghiệp");
             JButton searchButton = createNavigationButton("Tìm kiếm thông tin");
             JButton tabViewButton = createNavigationButton("Xét tuyển Đại học");
+            JButton loginButton = createNavigationButton("Đăng nhập");
             JButton exitButton = createNavigationButton("Thoát");
 
             // Điều chỉnh kích thước nút và font chữ
@@ -53,6 +67,7 @@ public class Main {
             calculateButton.setPreferredSize(new Dimension(200, 30));
             searchButton.setPreferredSize(new Dimension(200, 30));
             tabViewButton.setPreferredSize(new Dimension(200, 30));
+            loginButton.setPreferredSize(new Dimension(120, 30));
             exitButton.setPreferredSize(new Dimension(100, 30));
 
 
@@ -75,7 +90,18 @@ public class Main {
                     throw new RuntimeException(ex);
                 }
             }); // Chuyển sang giao diện tab
+
             exitButton.addActionListener(e -> System.exit(0));
+
+            loginButton.addActionListener(e -> {
+                try {
+                    openLoginDialog(frame);
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
+
+
 
             // Thêm các thành phần vào navigation panel
             navigationPanel.add(logoButton);
@@ -83,6 +109,7 @@ public class Main {
             navigationPanel.add(calculateButton);
             navigationPanel.add(searchButton);
             navigationPanel.add(tabViewButton);
+            navigationPanel.add(loginButton);
             navigationPanel.add(exitButton);
 
             // Tạo main panel để chứa nội dung
@@ -101,40 +128,45 @@ public class Main {
         });
     }
 
+
     private static JButton createNavigationButton(String text) {
         JButton button = new JButton(text);
         button.setFont(new Font("Arial", Font.BOLD, 14));
-        button.setBackground(new Color(240, 248, 255)); // Màu nhạt
-        button.setForeground(Color.DARK_GRAY); // Chữ màu xám
+        button.setBackground(new Color(240, 238 , 255)); // Màu nhạt
+        button.setForeground(Color.BLACK); // Chữ màu xám
         button.setFocusPainted(false);
         button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        button.setBorderPainted(false);   // Tắt viền nút
+        button.setContentAreaFilled(false); // Tắt nền nút
+        button.setFocusPainted(false);    // Tắt viền khi nhấn nút
+        button.setOpaque(false);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Thêm hiệu ứng con trỏ
         return button;
     }
 
-
     private static JPanel createAboutPanel() {
         JPanel aboutPanel = new JPanel(new BorderLayout());
+        aboutPanel.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(new Color(70, 130, 180)), "Giới thiệu",
+                TitledBorder.CENTER, TitledBorder.TOP, new Font("Arial", Font.BOLD, 16), Color.BLUE));
         aboutPanel.setBackground(new Color(245, 245, 245));
-        CountdownTimerController controller = new CountdownTimerController();
 
         JTextArea aboutText = new JTextArea("Chào mừng bạn đến với UNIGOAL!\n\n" +
-                "UniGOAL hỗ trợ học sinh THPT trong việc:\n" +
-                "- Tính điểm tốt nghiệp THPT.\n" +
-                "- Tìm kiếm thông tin tuyển sinh đại học.\n" +
-                "- Theo dõi các sự kiện liên quan đến kỳ thi.\n" +
-                "- Quản lý lịch sự kiện cá nhân.\n");
+                "UniGOAL là ứng dụng hỗ trợ học sinh THPT trong việc:\n" +
+                "\n" +
+                "-  Tính điểm tốt nghiệp THPT: Dễ dàng nhập điểm, ứng dụng tự động tính toán và hiển thị kết quả chính xác.\n" +
+                "-  Tìm kiếm thông tin tuyển sinh đại học: Cung cấp thông tin về các trường đại học và gợi ý xét tuyển dựa trên điểm số cá nhân.\n" +
+                "\nUniGOAL giúp tối ưu hóa quá trình chuẩn bị hồ sơ và chọn trường, đồng hành cùng sinh viên trên hành trình chinh phục ước mơ đại học.");
         aboutText.setEditable(false);
-        aboutText.setFont(new Font("Arial", Font.PLAIN, 14));
+        aboutText.setLineWrap(true);
+        aboutText.setWrapStyleWord(true);
+        aboutText.setFont(new Font("Arial", Font.BOLD, 16));
         aboutText.setBackground(Color.WHITE);
-        aboutText.setBorder(new EmptyBorder(10, 10, 10, 10));
+        aboutText.setBorder(new EmptyBorder(15, 15, 15, 15));
 
-        aboutPanel.add(new JScrollPane(aboutText), BorderLayout.NORTH);
-        aboutPanel.add(controller.getCountdownTimerPanel(), BorderLayout.CENTER);
-//        aboutPanel.add(eventSchedulePanel, BorderLayout.SOUTH);
-
+        aboutPanel.add(new JScrollPane(aboutText), BorderLayout.CENTER);
         return aboutPanel;
     }
-
 
     private static JPanel createCalculatePanel() {
         JPanel calculatePanel = new GraduateCaculateView().getPanel();
@@ -162,52 +194,6 @@ public class Main {
         tabbedPanePanel.add(tabbedPane, BorderLayout.CENTER);
         return tabbedPanePanel;
     }
-
-//    private static JPanel createEventSchedulePanel() {
-//        JPanel eventPanel = new JPanel(new BorderLayout());
-//        eventPanel.setBorder(BorderFactory.createTitledBorder(
-//                BorderFactory.createLineBorder(new Color(70, 130, 180)), "Lịch sự kiện",
-//                TitledBorder.CENTER, TitledBorder.TOP, new Font("Arial", Font.BOLD, 16), Color.BLUE));
-//        eventPanel.setBackground(new Color(245, 245, 245));
-//
-//        DefaultListModel<String> eventListModel = new DefaultListModel<>();
-//        JList<String> eventList = new JList<>(eventListModel);
-//        eventList.setFont(new Font("Arial", Font.PLAIN, 14));
-//        eventPanel.add(new JScrollPane(eventList), BorderLayout.CENTER);
-//
-//        JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-//        JTextField eventNameField = new JTextField(15);
-//        JTextField startDateField = new JTextField(10);
-//        JTextField endDateField = new JTextField(10);
-//        JTextField descriptionField = new JTextField(20);
-//        JButton addEventButton = new JButton("Thêm sự kiện");
-//
-//        addEventButton.addActionListener(e -> {
-//            String eventInfo = "Tên: " + eventNameField.getText() +
-//                    ", Bắt đầu: " + startDateField.getText() +
-//                    ", Kết thúc: " + endDateField.getText() +
-//                    ", Nội dung: " + descriptionField.getText();
-//            eventListModel.addElement(eventInfo);
-//            eventNameField.setText("");
-//            startDateField.setText("");
-//            endDateField.setText("");
-//            descriptionField.setText("");
-//        });
-//
-//        controlPanel.add(new JLabel("Tên:"));
-//        controlPanel.add(eventNameField);
-//        controlPanel.add(new JLabel("Bắt đầu:"));
-//        controlPanel.add(startDateField);
-//        controlPanel.add(new JLabel("Kết thúc:"));
-//        controlPanel.add(endDateField);
-//        controlPanel.add(new JLabel("Nội dung:"));
-//        controlPanel.add(descriptionField);
-//        controlPanel.add(addEventButton);
-//
-//        eventPanel.add(controlPanel, BorderLayout.SOUTH);
-//        return eventPanel;
-//    }
-
 
     private static void showPanel(JPanel panel) {
         mainPanel.removeAll();
