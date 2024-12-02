@@ -241,18 +241,32 @@ public class Main {
 
         Timer timer = new Timer(1000, e -> {
             try {
-                String examDate = "2024-07-01"; // Ngày thi THPT
-                long diff = java.time.Duration.between(java.time.LocalDate.now().atStartOfDay(),
-                        java.time.LocalDate.parse(examDate).atStartOfDay()).toMillis();
-                long days = diff / (1000 * 60 * 60 * 24);
-                countdownLabel.setText("Còn " + days + " ngày đến kỳ thi THPT!");
+                String examDateTime = "2025-07-01T08:00:00"; // Thời gian thi THPT: 8:00 sáng
+                java.time.LocalDateTime now = java.time.LocalDateTime.now();
+                java.time.LocalDateTime examTime = java.time.LocalDateTime.parse(examDateTime);
+
+                if (now.isBefore(examTime)) {
+                    java.time.Duration diff = java.time.Duration.between(now, examTime);
+
+                    long days = diff.toDays();
+                    long hours = diff.toHours() % 24;
+                    long minutes = diff.toMinutes() % 60;
+                    long seconds = diff.getSeconds() % 60;
+
+                    String timeLeft = String.format("Còn %d ngày %02d:%02d:%02d đến kỳ thi!", days, hours, minutes, seconds);
+                    countdownLabel.setText(timeLeft);
+                } else {
+                    countdownLabel.setText("Kỳ thi đã bắt đầu hoặc kết thúc!");
+                }
             } catch (Exception ex) {
-                countdownLabel.setText("Lỗi trong tính toán ngày!");
+                countdownLabel.setText("Lỗi trong tính toán thời gian!");
             }
         });
         timer.start();
+
         return countdownPanel;
     }
+
 
 
     private static void showPanel(JPanel panel) {
