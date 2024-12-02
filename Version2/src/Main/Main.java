@@ -58,48 +58,37 @@ public class Main {
 
         loginView.setVisible(true);
     }
-    private static void logoutUser(JPanel navigationPanel) {
-        // Clear the current username
-        currentUsername =    null;
-        System.out.println("Logout initiated."); // Debug statement
-        // Update the login button
+    private static void logoutUser (JPanel navigationPanel) {
+        // Đặt lại currentUsername thành null để biểu thị người dùng đã đăng xuất
+        currentUsername = null;
+        // Cập nhật lại nút Đăng nhập
         updateLoginButton(navigationPanel);
     }
-    private static void updateLoginButton(JPanel navigationPanel) {
-        for (Component component : navigationPanel.getComponents()) {
-            if (component instanceof JButton && ((JButton) component).getText().equals("Đăng nhập")) {
-                JButton loginButton = (JButton) component;
 
-                if (currentUsername == null) {
-                    // Set back to "Đăng nhập"
-                    loginButton.setText("Đăng nhập");
-                    // Remove any mouse listeners
-                    for (java.awt.event.MouseListener ml : loginButton.getMouseListeners()) {
-                        loginButton.removeMouseListener(ml);
-                    }
-                } else {
-                    // Update button to show username
-                    loginButton.setText(currentUsername);
-                    // Set up user menu
-                    JPopupMenu userMenu = createUserMenu(navigationPanel);
-                    // Remove old MouseListeners
-                    for (java.awt.event.MouseListener ml : loginButton.getMouseListeners()) {
-                        loginButton.removeMouseListener(ml);
-                    }
-                    // Add MouseListener to show user menu
-                    loginButton.addMouseListener(new java.awt.event.MouseAdapter() {
-                        @Override
-                        public void mousePressed(java.awt.event.MouseEvent e) {
-                            if (SwingUtilities.isLeftMouseButton(e)) {
-                                userMenu.show(loginButton, e.getX(), e.getY());
-                            }
-                        }
-                    });
-                    break;
+    private static void updateLoginButton(JPanel navigationPanel) {
+        JButton loginButton = (JButton) navigationPanel.getComponent(5);  // Thay đổi số 5 nếu cần cho đúng vị trí nút
+
+        // Kiểm tra xem người dùng đã đăng nhập chưa
+        if (currentUsername != null || currentUsername == "") {
+            // Nếu đã đăng nhập, thay đổi hành động của nút và hiển thị tên người dùng
+            loginButton.setText("Chào, " + currentUsername);
+            loginButton.addActionListener(e -> {
+                // Tạo và hiển thị menu khi người dùng nhấp vào tên
+                JPopupMenu userMenu = createUserMenu(navigationPanel);
+                userMenu.show(loginButton, 0, loginButton.getHeight()); // Hiển thị menu dưới nút
+            });
+        } else {
+            // Nếu chưa đăng nhập, khôi phục lại chức năng đăng nhập ban đầu
+            loginButton.setText("Đăng nhập");
+            loginButton.addActionListener(e -> {
+                try {
+                    openLoginDialog((JFrame) SwingUtilities.getWindowAncestor(navigationPanel), navigationPanel);
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
                 }
-            }
+            });
         }
-        // Revalidate and repaint the navigation panel
+        // Revalidate và repaint navigation panel
         navigationPanel.revalidate();
         navigationPanel.repaint();
     }

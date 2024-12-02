@@ -1,6 +1,6 @@
 package Version2.src.Controller;
 
-import Version2.src.Model.CalendarPanel;
+import Version2.src.View.CalendarView;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -9,11 +9,11 @@ import java.awt.*;
 public class EventScheduleController {
 
     private final JTextField descriptionField;
-    private final CalendarPanel calendarPanel;
+    private final CalendarView calendarView;
 
     public EventScheduleController() {
         descriptionField = new JTextField(20);
-        calendarPanel = new CalendarPanel();
+        calendarView = new CalendarView();
     }
 
     public JPanel getEventSchedulePanel() {
@@ -24,7 +24,7 @@ public class EventScheduleController {
         eventPanel.setBackground(new Color(245, 245, 245));
 
         // Thêm bảng lịch vào panel
-        eventPanel.add(calendarPanel, BorderLayout.CENTER);
+        eventPanel.add(calendarView, BorderLayout.CENTER);
 
         // Thêm phần hiển thị tên các ngày trong tuần
         JPanel dayNamesPanel = new JPanel(new GridLayout(1, 7)); // GridLayout cho tên các ngày
