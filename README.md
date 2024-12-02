@@ -89,7 +89,7 @@
         - getDiemSan: Trả về Điểm Sàn
         - setDiemSan: Cập nhật Điểm Sàn
 
-- **DaiHocSearchResult (Kế thừa DaiHocLoadData) **
+- **DaiHocSearchResult (Kế thừa DaiHocLoadData)**
     - Thuộc tính:
         - tenNganh: Tên ngành
         - diemTrungTuyen: Điểm Trúng tuyển của ngành
