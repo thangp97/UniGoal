@@ -32,3 +32,4 @@ public class AboutPanelView {
         return aboutPanel;
     }
 }
+
