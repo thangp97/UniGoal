@@ -1,6 +1,7 @@
 package Version2.src.Main;
 
 import Version2.src.Controller.CountdownTimerController;
+import Version2.src.Controller.EventScheduleController;
 import Version2.src.Controller.LoginController;
 import Version2.src.Model.User;
 import Version2.src.Utils.DatabaseConnection;
@@ -8,7 +9,6 @@ import Version2.src.View.*;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.sql.SQLException;
 
@@ -99,8 +99,6 @@ public class Main {
                 }
             });
 
-
-
             // Thêm các thành phần vào navigation panel
             navigationPanel.add(logoButton);
             navigationPanel.add(aboutButton);
@@ -138,60 +136,14 @@ public class Main {
         return button;
     }
 
-    private static JPanel createEventSchedulePanel() {
-        JPanel eventPanel = new JPanel(new BorderLayout());
-        eventPanel.setBorder(BorderFactory.createTitledBorder(
-                BorderFactory.createLineBorder(new Color(70, 130, 180)), "Lịch sự kiện",
-                TitledBorder.CENTER, TitledBorder.TOP, new Font("Arial", Font.BOLD, 16), Color.BLUE));
-        eventPanel.setBackground(new Color(245, 245, 245));
-
-        DefaultListModel<String> eventListModel = new DefaultListModel<>();
-        JList<String> eventList = new JList<>(eventListModel);
-        eventList.setFont(new Font("Arial", Font.PLAIN, 14));
-        eventPanel.add(new JScrollPane(eventList), BorderLayout.CENTER);
-
-        JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JTextField eventNameField = new JTextField(15);
-        JTextField startDateField = new JTextField(10);
-        JTextField endDateField = new JTextField(10);
-        JTextField descriptionField = new JTextField(20);
-        JButton addEventButton = new JButton("Thêm sự kiện");
-
-        addEventButton.addActionListener(e -> {
-            String eventInfo = "Tên: " + eventNameField.getText() +
-                    ", Bắt đầu: " + startDateField.getText() +
-                    ", Kết thúc: " + endDateField.getText() +
-                    ", Nội dung: " + descriptionField.getText();
-            eventListModel.addElement(eventInfo);
-            eventNameField.setText("");
-            startDateField.setText("");
-            endDateField.setText("");
-            descriptionField.setText("");
-        });
-
-        controlPanel.add(new JLabel("Tên:"));
-        controlPanel.add(eventNameField);
-        controlPanel.add(new JLabel("Bắt đầu:"));
-        controlPanel.add(startDateField);
-        controlPanel.add(new JLabel("Kết thúc:"));
-        controlPanel.add(endDateField);
-        controlPanel.add(new JLabel("Nội dung:"));
-        controlPanel.add(descriptionField);
-        controlPanel.add(addEventButton);
-
-        eventPanel.add(controlPanel, BorderLayout.SOUTH);
-        return eventPanel;
-    }
-
-
     private static JPanel createAboutPanel() {
         JPanel aboutPanel = new JPanel(new BorderLayout());
-        JPanel eventSchedulePanel = createEventSchedulePanel();
         aboutPanel.setBackground(new Color(245, 245, 245));
         CountdownTimerController controller = new CountdownTimerController();
+        EventScheduleController eventController = new EventScheduleController();
 
         aboutPanel.add(controller.getCountdownTimerPanel(), BorderLayout.NORTH);
-        aboutPanel.add(eventSchedulePanel, BorderLayout.CENTER);
+        aboutPanel.add(eventController.getEventSchedulePanel(), BorderLayout.CENTER);
 
         return aboutPanel;
     }
