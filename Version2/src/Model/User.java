@@ -3,9 +3,11 @@ package Version2.src.Model;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class User {
     private Connection connection;
+    private String username;
 
     public User(Connection connection) {
         this.connection = connection;
@@ -41,6 +43,32 @@ public class User {
 
         int rowsInserted = stmt.executeUpdate();
         return rowsInserted > 0; // Trả về true nếu thêm thành công
+    }
+    public boolean changePassword(String oldPassword, String newPassword, String username) throws SQLException {
+        String query = "SELECT password FROM users WHERE username = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, username);
+
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                String currentPassword = rs.getString("password");
+                if (!currentPassword.equals(oldPassword)) {
+                    return false; // Mật khẩu cũ không đúng
+                }
+            } else {
+                throw new SQLException("Người dùng không tồn tại!");
+            }
+        }
+
+        // Cập nhật mật khẩu mới
+        String updateQuery = "UPDATE users SET password = ? WHERE username = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(updateQuery)) {
+            stmt.setString(1, newPassword);
+            stmt.setString(2, username);
+            stmt.executeUpdate();
+        }
+
+        return true;
     }
 
 }
