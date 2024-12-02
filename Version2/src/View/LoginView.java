@@ -12,6 +12,21 @@ public class LoginView {
     private JButton registerButton; // Nút đăng ký
     private JLabel statusLabel;
 
+    public LoginSuccessListener getLoginSuccessListener() {
+        return loginSuccessListener;
+    }
+
+    public interface LoginSuccessListener {
+        void onLoginSuccess(String username);
+    }
+
+    private LoginSuccessListener loginSuccessListener;
+
+    public void setLoginSuccessListener(LoginSuccessListener listener) {
+        this.loginSuccessListener = listener;
+    }
+
+
     public LoginView() {
         frame = new JFrame("Đăng nhập");
         frame.setSize(500, 250);
@@ -26,7 +41,7 @@ public class LoginView {
         JLabel passwordLabel = new JLabel("Mật khẩu:");
         passwordField = new JPasswordField(20);
         loginButton = new JButton("Đăng nhập");
-        registerButton = new JButton("Chưa có tài khoản? Đăng ký ngay."); // Nút đăng ký
+        registerButton = new JButton("Bạn chưa có tài khoản? Đăng ký ngay."); // Nút đăng ký
         registerButton.setFont(new Font("Arial", Font.ITALIC, 10));
         registerButton.setBorderPainted(false);
         registerButton.setContentAreaFilled(false);

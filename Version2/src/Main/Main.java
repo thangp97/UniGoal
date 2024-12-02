@@ -15,13 +15,77 @@ import java.sql.SQLException;
 public class Main {
 
     private static JPanel mainPanel;
-    private static void openLoginDialog(JFrame parentFrame) throws SQLException {
-        // Mở cửa sổ đăng nhập
+    private static String currentUsername = null;
+
+    private static JPopupMenu createUserMenu() {
+        JPopupMenu userMenu = new JPopupMenu();
+
+        // Tùy chọn 1: Đổi mật khẩu
+        JMenuItem changePasswordItem = new JMenuItem("Đổi mật khẩu");
+        //changePasswordItem.addActionListener(e -> openChangePasswordDialog());
+
+        // Tùy chọn 2: Kiểm tra điểm thí sinh
+        JMenuItem checkScoresItem = new JMenuItem("Kiểm tra điểm thí sinh");
+        //.addActionListener(e -> openCheckScoresPanel());
+
+        // Tùy chọn 3: Kiểm tra danh sách yêu thích
+        JMenuItem favoriteListItem = new JMenuItem("Danh sách yêu thích");
+        //favoriteListItem.addActionListener(e -> openFavoriteListPanel());
+
+        // Thêm các mục vào menu
+        userMenu.add(changePasswordItem);
+        userMenu.add(checkScoresItem);
+        userMenu.add(favoriteListItem);
+
+        return userMenu;
+    }
+
+    private static void openLoginDialog(JFrame parentFrame, JPanel navigationPanel) throws SQLException {
         LoginView loginView = new LoginView();
         User model = new User(DatabaseConnection.getConnection());
         LoginController controller = new LoginController(model, loginView);
+
+        loginView.setLoginSuccessListener(username -> {
+            currentUsername = username;
+            updateLoginButton(navigationPanel); // Cập nhật nút đăng nhập
+        });
+
         loginView.setVisible(true);
     }
+
+
+    private static void updateLoginButton(JPanel navigationPanel) {
+        if (currentUsername != null) {
+            for (Component component : navigationPanel.getComponents()) {
+                if (component instanceof JButton && ((JButton) component).getText().equals("Đăng nhập")) {
+                    JButton loginButton = (JButton) component;
+
+                    // Cập nhật nút thành username
+                    loginButton.setText(currentUsername);
+
+                    // Tạo menu ngữ cảnh
+                    JPopupMenu userMenu = createUserMenu();
+
+                    // Xóa tất cả ActionListeners cũ
+                    for (java.awt.event.ActionListener al : loginButton.getActionListeners()) {
+                        loginButton.removeActionListener(al);
+                    }
+
+                    // Gắn sự kiện chuột để hiển thị menu
+                    loginButton.addMouseListener(new java.awt.event.MouseAdapter() {
+                        @Override
+                        public void mousePressed(java.awt.event.MouseEvent e) {
+                            if (SwingUtilities.isLeftMouseButton(e)) {
+                                userMenu.show(loginButton, e.getX(), e.getY());
+                            }
+                        }
+                    });
+                    break;
+                }
+            }
+        }
+    }
+
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
@@ -62,9 +126,9 @@ public class Main {
 
             // Điều chỉnh kích thước nút và font chữ
             aboutButton.setPreferredSize(new Dimension(120, 30));
-            calculateButton.setPreferredSize(new Dimension(200, 30));
-            searchButton.setPreferredSize(new Dimension(200, 30));
-            tabViewButton.setPreferredSize(new Dimension(200, 30));
+            calculateButton.setPreferredSize(new Dimension(190, 30));
+            searchButton.setPreferredSize(new Dimension(170, 30));
+            tabViewButton.setPreferredSize(new Dimension(165, 30));
             loginButton.setPreferredSize(new Dimension(120, 30));
             exitButton.setPreferredSize(new Dimension(100, 30));
 
@@ -92,12 +156,16 @@ public class Main {
             exitButton.addActionListener(e -> System.exit(0));
 
             loginButton.addActionListener(e -> {
-                try {
-                    openLoginDialog(frame);
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
+                if (currentUsername == null) {
+                    try {
+                        openLoginDialog(frame, navigationPanel); // Truyền navigationPanel vào
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
                 }
             });
+
+
 
             // Thêm các thành phần vào navigation panel
             navigationPanel.add(logoButton);

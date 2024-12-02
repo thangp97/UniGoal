@@ -4,12 +4,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
-public class SignUpView {
+public class SignUpView extends JFrame {
     private JFrame frame;
     private JTextField usernameField;
     private JPasswordField passwordField;
     private JPasswordField repasswordField;
-    private JPasswordField emailField;
+    private JTextField emailField;
     private JButton registerButton;
     private JLabel statusLabel;
 
@@ -29,7 +29,7 @@ public class SignUpView {
         JLabel repasswordLabel = new JLabel("Nhập lại mật khẩu:");
         repasswordField = new JPasswordField(20);
         JLabel email = new JLabel("Email:");
-        emailField = new JPasswordField(20);
+        emailField = new JTextField(20);
         registerButton = new JButton("Đăng ký");
         statusLabel = new JLabel("");
 
@@ -66,6 +66,6 @@ public class SignUpView {
     }
 
     public void showMessage(String message) {
-        statusLabel.setText(message);
+        JOptionPane.showMessageDialog(this, message);
     }
 }

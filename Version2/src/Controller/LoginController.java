@@ -34,6 +34,21 @@ public class LoginController {
                 if (model.login(username, password)) {
                     view.showMessage("Đăng nhập thành công!");
                     view.getFrame().dispose();
+                    if (model.login(username, password)) {
+                        view.showMessage("Đăng nhập thành công!");
+                        if (view.getLoginSuccessListener() != null) {
+                            view.getLoginSuccessListener().onLoginSuccess(username);
+                        }
+                        view.setVisible(false);
+                    }
+                    if (model.login(username, password)) {
+                        view.showMessage("Đăng nhập thành công!");
+                        if (view.getLoginSuccessListener() != null) {
+                            view.getLoginSuccessListener().onLoginSuccess(username);
+                        }
+                        view.setVisible(false);
+                    }
+
                 } else {
                     view.showMessage("Sai tên đăng nhập hoặc mật khẩu.");
                 }
