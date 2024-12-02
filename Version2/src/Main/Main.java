@@ -110,25 +110,51 @@ public class Main {
         return button;
     }
 
+//    private static JPanel createAboutPanel() {
+//        JPanel aboutPanel = new JPanel(new BorderLayout());
+//        aboutPanel.setBorder(BorderFactory.createTitledBorder(
+//                BorderFactory.createLineBorder(new Color(70, 130, 180)), "Giới thiệu",
+//                TitledBorder.CENTER, TitledBorder.TOP, new Font("Arial", Font.BOLD, 16), Color.BLUE));
+//        aboutPanel.setBackground(new Color(245, 245, 245));
+//
+//        JTextArea aboutText = new JTextArea("Chào mừng bạn đến với UNIGOAL!\n\n" +
+//                "Ứng dụng hỗ trợ sinh viên tính điểm tốt nghiệp và tìm kiếm thông tin trường đại học.");
+//        aboutText.setEditable(false);
+//        aboutText.setLineWrap(true);
+//        aboutText.setWrapStyleWord(true);
+//        aboutText.setFont(new Font("Arial", Font.PLAIN, 14));
+//        aboutText.setBackground(Color.WHITE);
+//        aboutText.setBorder(new EmptyBorder(15, 15, 15, 15));
+//
+//        aboutPanel.add(new JScrollPane(aboutText), BorderLayout.CENTER);
+//        return aboutPanel;
+//    }
+
     private static JPanel createAboutPanel() {
         JPanel aboutPanel = new JPanel(new BorderLayout());
-        aboutPanel.setBorder(BorderFactory.createTitledBorder(
-                BorderFactory.createLineBorder(new Color(70, 130, 180)), "Giới thiệu",
-                TitledBorder.CENTER, TitledBorder.TOP, new Font("Arial", Font.BOLD, 16), Color.BLUE));
         aboutPanel.setBackground(new Color(245, 245, 245));
 
+        JPanel countdownPanel = createCountdownTimer();
+//        JPanel eventSchedulePanel = createEventSchedulePanel();
+
         JTextArea aboutText = new JTextArea("Chào mừng bạn đến với UNIGOAL!\n\n" +
-                "Ứng dụng hỗ trợ sinh viên tính điểm tốt nghiệp và tìm kiếm thông tin trường đại học.");
+                "UniGOAL hỗ trợ học sinh THPT trong việc:\n" +
+                "- Tính điểm tốt nghiệp THPT.\n" +
+                "- Tìm kiếm thông tin tuyển sinh đại học.\n" +
+                "- Theo dõi các sự kiện liên quan đến kỳ thi.\n" +
+                "- Quản lý lịch sự kiện cá nhân.\n");
         aboutText.setEditable(false);
-        aboutText.setLineWrap(true);
-        aboutText.setWrapStyleWord(true);
         aboutText.setFont(new Font("Arial", Font.PLAIN, 14));
         aboutText.setBackground(Color.WHITE);
-        aboutText.setBorder(new EmptyBorder(15, 15, 15, 15));
+        aboutText.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        aboutPanel.add(new JScrollPane(aboutText), BorderLayout.CENTER);
+        aboutPanel.add(new JScrollPane(aboutText), BorderLayout.NORTH);
+        aboutPanel.add(countdownPanel, BorderLayout.CENTER);
+//        aboutPanel.add(eventSchedulePanel, BorderLayout.SOUTH);
+
         return aboutPanel;
     }
+
 
     private static JPanel createCalculatePanel() {
         JPanel calculatePanel = new GraduateCaculateView().getPanel();
@@ -156,6 +182,78 @@ public class Main {
         tabbedPanePanel.add(tabbedPane, BorderLayout.CENTER);
         return tabbedPanePanel;
     }
+
+//    private static JPanel createEventSchedulePanel() {
+//        JPanel eventPanel = new JPanel(new BorderLayout());
+//        eventPanel.setBorder(BorderFactory.createTitledBorder(
+//                BorderFactory.createLineBorder(new Color(70, 130, 180)), "Lịch sự kiện",
+//                TitledBorder.CENTER, TitledBorder.TOP, new Font("Arial", Font.BOLD, 16), Color.BLUE));
+//        eventPanel.setBackground(new Color(245, 245, 245));
+//
+//        DefaultListModel<String> eventListModel = new DefaultListModel<>();
+//        JList<String> eventList = new JList<>(eventListModel);
+//        eventList.setFont(new Font("Arial", Font.PLAIN, 14));
+//        eventPanel.add(new JScrollPane(eventList), BorderLayout.CENTER);
+//
+//        JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+//        JTextField eventNameField = new JTextField(15);
+//        JTextField startDateField = new JTextField(10);
+//        JTextField endDateField = new JTextField(10);
+//        JTextField descriptionField = new JTextField(20);
+//        JButton addEventButton = new JButton("Thêm sự kiện");
+//
+//        addEventButton.addActionListener(e -> {
+//            String eventInfo = "Tên: " + eventNameField.getText() +
+//                    ", Bắt đầu: " + startDateField.getText() +
+//                    ", Kết thúc: " + endDateField.getText() +
+//                    ", Nội dung: " + descriptionField.getText();
+//            eventListModel.addElement(eventInfo);
+//            eventNameField.setText("");
+//            startDateField.setText("");
+//            endDateField.setText("");
+//            descriptionField.setText("");
+//        });
+//
+//        controlPanel.add(new JLabel("Tên:"));
+//        controlPanel.add(eventNameField);
+//        controlPanel.add(new JLabel("Bắt đầu:"));
+//        controlPanel.add(startDateField);
+//        controlPanel.add(new JLabel("Kết thúc:"));
+//        controlPanel.add(endDateField);
+//        controlPanel.add(new JLabel("Nội dung:"));
+//        controlPanel.add(descriptionField);
+//        controlPanel.add(addEventButton);
+//
+//        eventPanel.add(controlPanel, BorderLayout.SOUTH);
+//        return eventPanel;
+//    }
+
+    private static JPanel createCountdownTimer() {
+        JPanel countdownPanel = new JPanel(new BorderLayout());
+        countdownPanel.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(new Color(70, 130, 180)), "Đếm ngược đến ngày thi",
+                TitledBorder.CENTER, TitledBorder.TOP, new Font("Arial", Font.BOLD, 16), Color.BLUE));
+        countdownPanel.setBackground(new Color(245, 245, 245));
+
+        JLabel countdownLabel = new JLabel("", SwingConstants.CENTER);
+        countdownLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        countdownPanel.add(countdownLabel, BorderLayout.CENTER);
+
+        Timer timer = new Timer(1000, e -> {
+            try {
+                String examDate = "2024-07-01"; // Ngày thi THPT
+                long diff = java.time.Duration.between(java.time.LocalDate.now().atStartOfDay(),
+                        java.time.LocalDate.parse(examDate).atStartOfDay()).toMillis();
+                long days = diff / (1000 * 60 * 60 * 24);
+                countdownLabel.setText("Còn " + days + " ngày đến kỳ thi THPT!");
+            } catch (Exception ex) {
+                countdownLabel.setText("Lỗi trong tính toán ngày!");
+            }
+        });
+        timer.start();
+        return countdownPanel;
+    }
+
 
     private static void showPanel(JPanel panel) {
         mainPanel.removeAll();
