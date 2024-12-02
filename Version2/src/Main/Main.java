@@ -15,14 +15,89 @@ import java.sql.SQLException;
 public class Main {
 
     private static JPanel mainPanel;
-    private static void openLoginDialog(JFrame parentFrame) throws SQLException {
-        // Mở cửa sổ đăng nhập
+    private static String currentUsername = null;
+
+    private static JPopupMenu createUserMenu(JPanel navigationPanel) {
+        JPopupMenu userMenu = new JPopupMenu();
+
+        // Tùy chọn 1: Đổi mật khẩu
+        JMenuItem changePasswordItem = new JMenuItem("Đổi mật khẩu");
+        // changePasswordItem.addActionListener(e -> openChangePasswordDialog());
+
+        // Tùy chọn 2: Kiểm tra điểm thí sinh
+        JMenuItem checkScoresItem = new JMenuItem("Kiểm tra điểm thí sinh");
+        // checkScoresItem.addActionListener(e -> openCheckScoresPanel());
+
+        // Tùy chọn 3: Kiểm tra danh sách yêu thích
+        JMenuItem favoriteListItem = new JMenuItem("Danh sách yêu thích");
+        // favoriteListItem.addActionListener(e -> openFavoriteListPanel());
+
+        // Tùy chọn 4: Đăng xuất
+        JMenuItem logoutItem = new JMenuItem("Đăng xuất");
+        logoutItem.addActionListener(e -> logoutUser(navigationPanel));
+
+        // Thêm các mục vào menu
+        userMenu.add(changePasswordItem);
+        userMenu.add(checkScoresItem);
+        userMenu.add(favoriteListItem);
+        userMenu.addSeparator(); // Thêm đường phân cách
+        userMenu.add(logoutItem);
+
+        return userMenu;
+    }
+    private static void openLoginDialog(JFrame parentFrame, JPanel navigationPanel) throws SQLException {
         LoginView loginView = new LoginView();
         User model = new User(DatabaseConnection.getConnection());
         LoginController controller = new LoginController(model, loginView);
+
+        loginView.setLoginSuccessListener(username -> {
+            currentUsername = username;
+            updateLoginButton(navigationPanel); // Truyền navigationPanel
+        });
+
+
         loginView.setVisible(true);
     }
+    private static void logoutUser(JPanel navigationPanel) {
+        System.out.println("Logout initiated."); // Debug statement
 
+        // Clear the current username
+        currentUsername = null;
+
+        // Update the login button
+        updateLoginButton(navigationPanel);
+    }
+    private static void updateLoginButton(JPanel navigationPanel) {
+        for (Component component : navigationPanel.getComponents()) {
+            if (component instanceof JButton && ((JButton) component).getText().equals("Đăng nhập")) {
+                JButton loginButton = (JButton) component;
+
+                if (currentUsername != null) {
+                    // Update button to show username
+                    loginButton.setText(currentUsername);
+                    // Set up user menu
+                    JPopupMenu userMenu = createUserMenu(navigationPanel);
+                    // Remove old MouseListeners
+                    for (java.awt.event.MouseListener ml : loginButton.getMouseListeners()) {
+                        loginButton.removeMouseListener(ml);
+                    }
+                    // Add MouseListener to show user menu
+                    loginButton.addMouseListener(new java.awt.event.MouseAdapter() {
+                        @Override
+                        public void mousePressed(java.awt.event.MouseEvent e) {
+                            if (SwingUtilities.isLeftMouseButton(e)) {
+                                userMenu.show(loginButton, e.getX(), e.getY());
+                            }
+                        }
+                    });
+                } else {
+                    // Set back to "Đăng nhập"
+                    loginButton.setText("Đăng nhập");
+                }
+                break; // Only update the first matching button
+            }
+        }
+    }
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             // Tạo cửa sổ chính
@@ -40,6 +115,7 @@ public class Main {
             navigationPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5)); // Giảm khoảng cách giữa các nút
             navigationPanel.setBackground(new Color(100, 149, 237)); // Màu xanh nhẹ
             navigationPanel.setBorder(new EmptyBorder(5, 5, 5, 5)); // Giảm padding của navigation panel
+
 
             // Thêm chữ "UNIGOAL" vào thanh điều hướng
             JButton logoButton = new JButton("UNIGOAL");
@@ -62,9 +138,9 @@ public class Main {
 
             // Điều chỉnh kích thước nút và font chữ
             aboutButton.setPreferredSize(new Dimension(120, 30));
-            calculateButton.setPreferredSize(new Dimension(200, 30));
-            searchButton.setPreferredSize(new Dimension(200, 30));
-            tabViewButton.setPreferredSize(new Dimension(200, 30));
+            calculateButton.setPreferredSize(new Dimension(190, 30));
+            searchButton.setPreferredSize(new Dimension(170, 30));
+            tabViewButton.setPreferredSize(new Dimension(165, 30));
             loginButton.setPreferredSize(new Dimension(120, 30));
             exitButton.setPreferredSize(new Dimension(100, 30));
 
@@ -92,12 +168,16 @@ public class Main {
             exitButton.addActionListener(e -> System.exit(0));
 
             loginButton.addActionListener(e -> {
-                try {
-                    openLoginDialog(frame);
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
+                if (currentUsername == null) {
+                    try {
+                        openLoginDialog(frame, navigationPanel); // Truyền navigationPanel vào
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
                 }
             });
+
+
 
             // Thêm các thành phần vào navigation panel
             navigationPanel.add(logoButton);
