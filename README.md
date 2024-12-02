@@ -96,7 +96,7 @@ Hiện nay học sinh đặc biệt là những em sắp bước vào kì thi qu
         - setDiemTrungTuyen: Cập nhật điểm trúng tuyển
 ## UML
 
-![UML](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+![image](https://github.com/user-attachments/assets/ed1371f8-edf5-471f-8b96-36fbeb807f73)
 
 
 ## Xem xét hiện thực các tính chất OOP vào Project
