@@ -25,54 +25,55 @@ public class UniversitySearchController {
             e.printStackTrace();
         }
     }
-    public void saveFavoriteToDatabase(DaiHocFavoriteData favoriteData, String username) {
-        String query = "INSERT INTO danh_sach_yeu_thich (username, maTruong, tenTruong, tenNganh, diemTrungTuyen) " +
-                "VALUES (?, ?, ?, ?, ?)";
+    public static void updateTableWithFavorites(JTable table, ArrayList<Object[]> favoriteList) {
+        // Lấy mô hình bảng hiện tại
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        model.setRowCount(0); // Xóa dữ liệu cũ trong bảng
+
+        // Thêm dữ liệu từ danh sách yêu thích vào bảng
+        for (Object[] favorite : favoriteList) {
+            model.addRow(favorite); // Thêm dòng vào bảng
+        }
+    }
+
+    public static ArrayList<Object[]> getFavoritesByUsername(String username) {
+        String query = "SELECT maTruong, tenTruong, tenNganh, diemTrungTuyen FROM dsyeuthich WHERE username = ?";
+        ArrayList<Object[]> favoriteList = new ArrayList<>();
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
 
             stmt.setString(1, username);
-            stmt.setString(2, favoriteData.getMaTruong());
-            stmt.setString(3, favoriteData.getTenTruong());
-            stmt.setString(4, favoriteData.getTenNganh());
-            stmt.setDouble(5, favoriteData.getDiemTrungTuyen());
+            ResultSet rs = stmt.executeQuery();
 
-            int rowsInserted = stmt.executeUpdate();
-            if (rowsInserted > 0) {
-                JOptionPane.showMessageDialog(null, "Đã thêm trường và ngành vào danh sách yêu thích.",
-                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-            }
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Lỗi khi lưu vào cơ sở dữ liệu: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace(); // In ra lỗi chi tiết để debug
-        }
-    }
-
-    public void loadFavoritesFromDatabase(JTable universityTable, String username) {
-        String query = "String query = \"SELECT maTruong, tenTruong, tenNganh, diemTrungTuyen FROM danh_sach_yeu_thich WHERE username = ?\";\n";
-
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setString(1, username);  // Thay đổi username với tên người dùng hiện tại
-
-            try (ResultSet rs = stmt.executeQuery()) {
-                DefaultTableModel model = (DefaultTableModel) universityTable.getModel();
-                model.setRowCount(0);  // Clear old data
-
-                // Lặp qua các kết quả và thêm chúng vào bảng
-                while (rs.next()) {
-                    String maTruong = rs.getString("maTruong");
-                    String tenTruong = rs.getString("tenTruong");
-                    String tenNganh = rs.getString("tenNganh");
-                    double diemTrungTuyen = rs.getDouble("diemTrungTuyen");
-
-                    // Thêm dữ liệu vào bảng
-                    model.addRow(new Object[]{maTruong, tenTruong, tenNganh, diemTrungTuyen});
-                }
+            while (rs.next()) {
+                // Lưu dữ liệu vào mảng Object[]
+                Object[] favoriteData = new Object[] {
+                        rs.getString("maTruong"),
+                        rs.getString("tenTruong"),
+                        rs.getString("tenNganh"),
+                        rs.getDouble("diemTrungTuyen")
+                };
+                favoriteList.add(favoriteData); // Thêm vào danh sách
             }
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Lỗi khi tải danh sách yêu thích: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+        return favoriteList;
+    }
+
+
+    public static void displayFavorites(JTable universityTable) {
+        try {
+            ArrayList<Object[]> favorites = getFavoritesByUsername(Main.getCurrentUsername());
+            if (favorites.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Không có mục nào trong danh sách yêu thích.", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                updateTableWithFavorites(universityTable, favorites); // Cập nhật bảng
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Lỗi khi hiển thị danh sách yêu thích: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -96,22 +97,7 @@ public class UniversitySearchController {
         }
     }
 
-    public void loadDetailData(String maTruong, JTable detailTable) throws SQLException {
-        String query = "SELECT diem_thpt, diem_dgnl, diem_dgtd FROM majors WHERE ma_truong = ?";
-        PreparedStatement statement = connection.prepareStatement(query);
-        statement.setString(1, maTruong);
-        ResultSet resultSet = statement.executeQuery();
 
-        DefaultTableModel model = (DefaultTableModel) detailTable.getModel();
-        model.setRowCount(0); // Xóa dữ liệu cũ
-
-        while (resultSet.next()) {
-            String diemThpt = resultSet.getString("diem_thpt");
-            String diemDgnl = resultSet.getString("diem_dgnl");
-            String diemDgtd = resultSet.getString("diem_dgtd");
-            model.addRow(new Object[]{diemThpt, diemDgnl, diemDgtd});
-        }
-    }
 
     public void searchUniversityData(String maTruong, String maNganh, String tenTruong, String tenNganh, String diemTrungTuyen, JTable universityTable) {
         StringBuilder query = new StringBuilder(

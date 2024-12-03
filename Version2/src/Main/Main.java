@@ -1,6 +1,7 @@
 package Version2.src.Main;
 
 import Version2.src.Controller.*;
+import Version2.src.Model.DaiHocFavoriteData;
 import Version2.src.Model.User;
 import Version2.src.Utils.DatabaseConnection;
 import Version2.src.View.*;
@@ -9,7 +10,13 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+
+import static Version2.src.Controller.UniversitySearchController.displayFavorites;
 
 public class Main {
 
@@ -18,8 +25,6 @@ public class Main {
     public static String getCurrentUsername() {
         return currentUsername;
     }
-
-
     private static void openChangePasswordDialog() {
         if (currentUsername == null) {
             JOptionPane.showMessageDialog(null, "Vui lòng đăng nhập trước khi đổi mật khẩu!", "Thông báo", JOptionPane.WARNING_MESSAGE);
@@ -45,28 +50,6 @@ public class Main {
         });
     }
 
-    public static void openFavoriteListPanel() throws SQLException {
-        // Tạo một bảng mới để hiển thị danh sách yêu thích
-        DefaultTableModel model = new DefaultTableModel(new Object[]{"Mã Trường", "Tên Trường", "Tên Ngành", "Điểm Trúng Tuyển"}, 0);
-        JTable favoriteTable = new JTable(model);
-
-        // Tạo một cuộn bảng để dễ dàng xem dữ liệu
-        JScrollPane scrollPane = new JScrollPane(favoriteTable);
-        favoriteTable.setFillsViewportHeight(true);  // Làm cho bảng tự động điều chỉnh kích thước
-
-        // Tạo một panel để chứa bảng
-        JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout());
-        panel.add(scrollPane, BorderLayout.CENTER);
-
-        // Hiển thị dialog hoặc frame mới để hiển thị danh sách yêu thích
-        JOptionPane.showMessageDialog(null, panel, "Danh sách yêu thích", JOptionPane.INFORMATION_MESSAGE);
-
-        // Gọi phương thức để tải danh sách yêu thích từ cơ sở dữ liệu
-        UniversitySearchController controller = new UniversitySearchController();
-        controller.loadFavoritesFromDatabase(favoriteTable, currentUsername);
-    }
-
     private static JPopupMenu createUserMenu(JPanel navigationPanel) {
         JPopupMenu userMenu = new JPopupMenu();
 
@@ -81,12 +64,24 @@ public class Main {
         // Tùy chọn 3: Kiểm tra danh sách yêu thích
         JMenuItem favoriteListItem = new JMenuItem("Danh sách yêu thích");
         favoriteListItem.addActionListener(e -> {
+            JTable table = new JTable(new DefaultTableModel(
+                    new Object[]{"Mã Trường", "Tên Trường", "Tên Ngành", "Điểm Trúng Tuyển"}, 0
+            ));
+
+            JScrollPane scrollPane = new JScrollPane(table);
+
             try {
-                openFavoriteListPanel();
-            } catch (SQLException ex) {
-                throw new RuntimeException(ex);
+                // Hiển thị danh sách yêu thích trong bảng
+                displayFavorites(table);
+
+                // Tạo cửa sổ popup để hiển thị bảng
+                JOptionPane.showMessageDialog(null, scrollPane, "Danh sách yêu thích", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
         });
+
+
 
         // Tùy chọn 4: Đăng xuất
         JMenuItem logoutItem = new JMenuItem("Đăng xuất");
