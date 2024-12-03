@@ -1,6 +1,6 @@
 package Version2.src.Controller;
 
-import Version2.src.Model.CalendarPanel;
+import Version2.src.View.CalendarView;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -9,11 +9,11 @@ import java.awt.*;
 public class EventScheduleController {
 
     private final JTextField descriptionField;
-    private final CalendarPanel calendarPanel;
+    private final CalendarView calendarPanel;
 
     public EventScheduleController() {
         descriptionField = new JTextField(20);
-        calendarPanel = new CalendarPanel();
+        calendarPanel = new CalendarView();
     }
 
     public JPanel getEventSchedulePanel() {

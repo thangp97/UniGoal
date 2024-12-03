@@ -118,18 +118,21 @@
 //}
 //
 
-package Version2.src.Model;
+package Version2.src.View;
+
+import Version2.src.Model.Calendar;
+import Version2.src.Model.Note;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.time.LocalDate;
 
-public class CalendarPanel extends JPanel {
+public class CalendarView extends JPanel {
     private JTable calendarTable;
     private Calendar calendar;
 
-    public CalendarPanel() {
+    public CalendarView() {
         this.calendar = new Calendar(LocalDate.now());
         this.setLayout(new BorderLayout());
         initTable();
