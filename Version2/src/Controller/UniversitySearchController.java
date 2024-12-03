@@ -11,6 +11,7 @@ import Version2.src.Utils.NonEditableTableModel;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
+import java.awt.*;
 import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
@@ -71,6 +72,23 @@ public class UniversitySearchController {
                 JOptionPane.showMessageDialog(null, "Không có mục nào trong danh sách yêu thích.", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 updateTableWithFavorites(universityTable, favorites); // Cập nhật bảng
+
+                // Tạo một JScrollPane chứa bảng
+                JScrollPane scrollPane = new JScrollPane(universityTable);
+                scrollPane.setPreferredSize(new Dimension(900, 800)); // Thay đổi kích thước của scrollPane
+
+                // Tạo JDialog để chứa JScrollPane
+                JDialog dialog = new JDialog();
+                dialog.setTitle("Danh sách yêu thích");
+                dialog.setSize(900, 800);  // Tăng kích thước của cửa sổ pop-up
+                dialog.setLocationRelativeTo(null);  // Đặt cửa sổ ở giữa màn hình
+                dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE); // Đóng cửa sổ khi bấm nút x
+
+                // Thêm JScrollPane vào dialog
+                dialog.add(scrollPane);
+
+                // Hiển thị dialog
+                dialog.setVisible(true);
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Lỗi khi hiển thị danh sách yêu thích: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);

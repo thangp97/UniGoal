@@ -57,10 +57,6 @@ public class Main {
         JMenuItem changePasswordItem = new JMenuItem("Đổi mật khẩu");
         changePasswordItem.addActionListener(e -> openChangePasswordDialog());
 
-        // Tùy chọn 2: Kiểm tra điểm thí sinh
-        JMenuItem checkScoresItem = new JMenuItem("Kiểm tra điểm thí sinh");
-        // checkScoresItem.addActionListener(e -> openCheckScoresPanel());
-
         // Tùy chọn 3: Kiểm tra danh sách yêu thích
         JMenuItem favoriteListItem = new JMenuItem("Danh sách yêu thích");
         favoriteListItem.addActionListener(e -> {
@@ -73,9 +69,6 @@ public class Main {
             try {
                 // Hiển thị danh sách yêu thích trong bảng
                 displayFavorites(table);
-
-                // Tạo cửa sổ popup để hiển thị bảng
-                JOptionPane.showMessageDialog(null, scrollPane, "Danh sách yêu thích", JOptionPane.INFORMATION_MESSAGE);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -89,7 +82,6 @@ public class Main {
 
         // Thêm các mục vào menu
         userMenu.add(changePasswordItem);
-        userMenu.add(checkScoresItem);
         userMenu.add(favoriteListItem);
         userMenu.addSeparator(); // Thêm đường phân cách
         userMenu.add(logoutItem);
