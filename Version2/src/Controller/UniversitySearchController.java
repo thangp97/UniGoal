@@ -1,11 +1,11 @@
 package Version2.src.Controller;
 
+import Version2.src.Main.Main;
 import Version2.src.Model.DaiHocLoadData;
 import Version2.src.Model.DaiHocSearchResult;
 import Version2.src.Model.DaiHocFavoriteData;
 import Version2.src.Utils.DatabaseConnection;
 import Version2.src.Utils.NonEditableTableModel;
-import Version2.src.View.LoginView;
 
 
 import javax.swing.*;
@@ -17,7 +17,6 @@ import java.util.ArrayList;
 
 public class UniversitySearchController {
     private Connection connection;
-    private LoginView loginView;
 
     public UniversitySearchController() throws SQLException {
         try {
@@ -209,12 +208,11 @@ public class UniversitySearchController {
             }
 
             // Nếu không tồn tại, thêm vào danh sách yêu thích
-            DaiHocFavoriteData daiHocFavoriteData = new DaiHocFavoriteData("", "", "", 0, "", 0,"");
+            DaiHocFavoriteData daiHocFavoriteData = new DaiHocFavoriteData("", "", "", 0, "", 0);
             daiHocFavoriteData.setMaTruong(selectedMaTruong);
             daiHocFavoriteData.setTenTruong((String) universityTable.getValueAt(selectedRow, 1));
             daiHocFavoriteData.setTenNganh(selectedTenNganh);
             daiHocFavoriteData.setDiemTrungTuyen((double) universityTable.getValueAt(selectedRow, 2));
-            daiHocFavoriteData.setUsername(loginView.getUsername());
 
             // Thêm vào mô hình danh sách yêu thích
             favoriteListModel.addElement(daiHocFavoriteData);
@@ -229,7 +227,7 @@ public class UniversitySearchController {
                     preparedStatement.setString(2, (String) universityTable.getValueAt(selectedRow, 1));
                     preparedStatement.setString(3, selectedTenNganh);
                     preparedStatement.setDouble(4, (double) universityTable.getValueAt(selectedRow, 2));
-                    preparedStatement.setString(5, loginView.getUsername());
+                    preparedStatement.setString(5, Main.getCurrentUsername());
 
                     // Thực thi câu truy vấn
                     preparedStatement.executeUpdate();

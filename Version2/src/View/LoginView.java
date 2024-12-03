@@ -6,7 +6,7 @@ import java.awt.event.ActionListener;
 
 public class LoginView {
     private JFrame frame;
-    private static JTextField usernameField;
+    private JTextField usernameField;
     private JPasswordField passwordField;
     private JButton loginButton;
     private JButton registerButton; // Nút đăng ký

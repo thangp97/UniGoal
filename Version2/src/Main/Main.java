@@ -15,6 +15,10 @@ public class Main {
 
     private static JPanel mainPanel;
     private static String currentUsername = null;
+    public static String getCurrentUsername() {
+        return currentUsername;
+    }
+
 
     private static void openChangePasswordDialog() {
         if (currentUsername == null) {
@@ -234,7 +238,7 @@ public class Main {
                     }
                 }
             });
-
+            
             // Thêm các thành phần vào navigation panel
             navigationPanel.add(logoButton);
             navigationPanel.add(aboutButton);
