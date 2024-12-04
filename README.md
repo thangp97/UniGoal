@@ -75,6 +75,7 @@
         - login: Đăng nhập
         - register: Đăng kí
         - changePassword: Đổi mật khẩu
+        - favourite: Danh sách yêu thích của user
 
 - **DaiHocLoadData**
     - Thuộc tính:
